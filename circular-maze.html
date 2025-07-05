@@ -1,0 +1,415 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>圓形迷宮生成器</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+   <style>
+       body {
+           font-family: 'Noto Sans TC', 'Inter', sans-serif;
+           background-color: #f3f4f6; /* 確保背景色一致 */
+       }
+       /* 針對列印的樣式 */
+       @media print {
+           body {
+               -webkit-print-color-adjust: exact; /* 確保背景色和顏色能被列印 */
+               print-color-adjust: exact;
+               background-color: #ffffff; /* 列印時背景為白色 */
+           }
+           .no-print {
+               display: none !important; /* 在列印時隱藏控制項 */
+           }
+           main {
+               padding: 0;
+               margin: 0;
+               border: none;
+               box-shadow: none;
+               height: 100vh;
+               width: 100vw;
+           }
+           canvas {
+               width: 100% !important;
+               height: auto !important;
+               max-width: 100vw;
+           }
+       }
+   </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+
+   <main class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 w-full max-w-3xl">
+       <div class="text-center mb-6 no-print">
+           <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">圓形迷宮生成器</h1>
+           <p class="text-gray-500 mt-2">調整層數以生成不同難度的迷宮，並可選擇顯示答案或列印。</p>
+       </div>
+
+
+       <!-- 控制項 -->
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 no-print">
+           <!-- 層數控制 -->
+           <div class="bg-gray-50 p-4 rounded-lg">
+               <label for="rings-slider" class="block text-sm font-medium text-gray-700 mb-2">迷宮層數: <span id="rings-value" class="font-bold text-indigo-600">12</span></label>
+               <input id="rings-slider" type="range" min="3" max="25" value="12" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+           </div>
+
+
+           <!-- 功能按鈕 -->
+           <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+               <button id="generate-btn" class="col-span-2 sm:col-span-1 w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200">
+                   生成新迷宮
+               </button>
+               <label for="show-solution-toggle" class="flex items-center justify-center w-full bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 cursor-pointer">
+                   <input type="checkbox" id="show-solution-toggle" class="sr-only peer">
+                   <span class="peer-checked:hidden">顯示答案</span>
+                   <span class="hidden peer-checked:inline">隱藏答案</span>
+               </label>
+               <button id="print-btn" class="w-full bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200">
+                   列印迷宮
+               </button>
+           </div>
+       </div>
+
+
+       <!-- 迷宮畫布 -->
+       <div class="w-full aspect-square bg-white border-2 border-dashed border-gray-300 rounded-xl p-2">
+            <canvas id="maze-canvas"></canvas>
+       </div>
+
+
+   </main>
+
+
+   <script>
+       // --- DOM 元素 ---
+       const canvas = document.getElementById('maze-canvas');
+       const ctx = canvas.getContext('2d');
+       const generateBtn = document.getElementById('generate-btn');
+       const showSolutionToggle = document.getElementById('show-solution-toggle');
+       const printBtn = document.getElementById('print-btn');
+       const ringsSlider = document.getElementById('rings-slider');
+       const ringsValue = document.getElementById('rings-value');
+
+
+       // --- 全域變數 ---
+       let rings = 12; // 迷宮層數
+       let showSolution = false;
+       let grid = [];
+       let solutionPath = [];
+       let cellSize;
+
+
+       // --- Cell 類別 ---
+       // 代表迷宮中的一個單元格
+       class Cell {
+           constructor(ring, index) {
+               this.ring = ring; // 所在層
+               this.index = index; // 在該層的索引
+               this.neighbors = []; // 相鄰的單元格
+               this.links = new Map(); // 用於記錄是否與鄰居打通
+               this.visited = false; // 用於生成演算法
+
+
+               // 牆壁狀態
+               this.walls = {
+                   outward: true, // 外牆
+                   cw: true // 順時針方向的牆
+               };
+           }
+
+
+           // 取得所有未訪問的鄰居
+           getRandomUnvisitedNeighbor() {
+               const unvisited = this.neighbors.filter(n => n && !n.visited);
+               if (unvisited.length > 0) {
+                   const index = Math.floor(Math.random() * unvisited.length);
+                   return unvisited[index];
+               }
+               return undefined;
+           }
+
+
+           // 與另一個單元格打通牆壁
+           link(cell) {
+               this.links.set(cell, true);
+               // 只有當 cell 不是 null 時才設定反向連結
+               if (cell) {
+                   cell.links.set(this, true);
+               }
+           }
+          
+           // 檢查是否與另一個單元格相連
+           isLinked(cell) {
+               return this.links.has(cell);
+           }
+       }
+
+
+       // --- 迷宮邏輯 ---
+
+
+       // 初始化網格
+       function setupGrid() {
+           grid = [];
+           let cellsPerRing = 8; // 內圈的單元格數量
+          
+           for (let i = 0; i < rings; i++) {
+               const ringCells = [];
+               // 外圈有更多單元格，以保持單元格大小大致相同
+               const numCells = Math.ceil(cellsPerRing * (i + 1) * 0.5);
+               for (let j = 0; j < numCells; j++) {
+                   ringCells.push(new Cell(i, j));
+               }
+               grid.push(ringCells);
+           }
+          
+           // 設定鄰居關係
+           for (let i = 0; i < rings; i++) {
+               for (let j = 0; j < grid[i].length; j++) {
+                   const cell = grid[i][j];
+                  
+                   // 順時針和逆時針鄰居
+                   cell.neighbors.push(grid[i][(j + 1) % grid[i].length]); // CW
+                   cell.neighbors.push(grid[i][(j + grid[i].length - 1) % grid[i].length]); // CCW
+
+
+                   // 外層鄰居
+                   if (i < rings - 1) {
+                       const ratio = grid[i+1].length / grid[i].length;
+                       const correspondingNeighborIndex = Math.floor(j * ratio);
+                       cell.neighbors.push(grid[i+1][correspondingNeighborIndex]);
+                   }
+               }
+           }
+       }
+
+
+       // 生成迷宮 (使用遞迴回溯演算法)
+       function generateMaze() {
+           const stack = [];
+           const startCell = grid[0][0];
+           startCell.visited = true;
+           stack.push(startCell);
+
+
+           while (stack.length > 0) {
+               const current = stack[stack.length - 1];
+               const neighbor = current.getRandomUnvisitedNeighbor();
+
+
+               if (neighbor) {
+                   neighbor.visited = true;
+                   stack.push(neighbor);
+                  
+                   // 打通牆壁
+                   if (current.ring === neighbor.ring) {
+                       if (neighbor.index === (current.index + 1) % grid[current.ring].length) {
+                            current.walls.cw = false;
+                       } else {
+                            neighbor.walls.cw = false;
+                       }
+                   } else {
+                       if(current.ring < neighbor.ring) {
+                          current.walls.outward = false;
+                       } else {
+                          neighbor.walls.outward = false;
+                       }
+                   }
+                    current.link(neighbor);
+
+
+               } else {
+                   stack.pop();
+               }
+           }
+           // 設置出口
+           grid[rings - 1][0].walls.outward = false;
+           grid[rings - 1][0].link(null); // 標示出口
+       }
+
+
+       // 尋找解答 (使用廣度優先搜尋 BFS)
+       function solveMaze() {
+           const start = grid[0][0];
+           const end = grid[rings - 1][0]; // 出口
+           const queue = [[start]];
+           const visited = new Set([start]);
+
+
+           while (queue.length > 0) {
+               const path = queue.shift();
+               const current = path[path.length - 1];
+
+
+               if (current === end) {
+                   solutionPath = path;
+                   return;
+               }
+
+
+               for (const neighbor of current.links.keys()) {
+                   if (neighbor && !visited.has(neighbor)) {
+                       visited.add(neighbor);
+                       const newPath = [...path, neighbor];
+                       queue.push(newPath);
+                   }
+               }
+           }
+           solutionPath = [];
+       }
+
+
+
+
+       // --- 繪圖邏輯 ---
+
+
+       // 調整畫布大小
+       function resizeCanvas() {
+           const container = canvas.parentElement;
+           const size = Math.min(container.clientWidth, container.clientHeight);
+           canvas.width = size;
+           canvas.height = size;
+           cellSize = (canvas.width / 2) / rings;
+           draw();
+       }
+
+
+       // 繪製整個迷宮
+       function draw() {
+           ctx.clearRect(0, 0, canvas.width, canvas.height);
+           ctx.strokeStyle = '#374151'; // 牆壁顏色 (深灰色)
+           ctx.lineWidth = Math.max(1, cellSize * 0.1);
+
+
+           const centerX = canvas.width / 2;
+           const centerY = canvas.height / 2;
+
+
+           grid.forEach(ring => {
+               ring.forEach(cell => {
+                   const ringRadius = (cell.ring + 1) * cellSize;
+                   const numCellsInRing = grid[cell.ring].length;
+                   const anglePerCell = (2 * Math.PI) / numCellsInRing;
+                   const startAngle = cell.index * anglePerCell;
+                   const endAngle = (cell.index + 1) * anglePerCell;
+
+
+                   if (cell.walls.outward) {
+                       ctx.beginPath();
+                       ctx.arc(centerX, centerY, ringRadius, startAngle, endAngle);
+                       ctx.stroke();
+                   }
+
+
+                   if (cell.walls.cw) {
+                       const innerX = centerX + (cell.ring * cellSize) * Math.cos(endAngle);
+                       const innerY = centerY + (cell.ring * cellSize) * Math.sin(endAngle);
+                       const outerX = centerX + ringRadius * Math.cos(endAngle);
+                       const outerY = centerY + ringRadius * Math.sin(endAngle);
+                       ctx.beginPath();
+                       ctx.moveTo(innerX, innerY);
+                       ctx.lineTo(outerX, outerY);
+                       ctx.stroke();
+                   }
+               });
+           });
+          
+           ctx.beginPath();
+           ctx.arc(centerX, centerY, rings * cellSize, 0, 2 * Math.PI);
+           ctx.stroke();
+
+
+           if (showSolution) {
+               drawSolution();
+           }
+       }
+
+
+       // 繪製解答路徑
+       function drawSolution() {
+           if (solutionPath.length === 0) return;
+
+
+           ctx.strokeStyle = '#10B981'; // 答案顏色 (綠色)
+           ctx.lineWidth = Math.max(2, cellSize * 0.25);
+           ctx.lineCap = 'round';
+           ctx.lineJoin = 'round';
+          
+           const centerX = canvas.width / 2;
+           const centerY = canvas.height / 2;
+
+
+           ctx.beginPath();
+          
+           const startCell = solutionPath[0];
+           let numCellsInRing = grid[startCell.ring].length;
+           let anglePerCell = (2 * Math.PI) / numCellsInRing;
+           let angle = (startCell.index + 0.5) * anglePerCell;
+           let radius = (startCell.ring + 0.5) * cellSize;
+           ctx.moveTo(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle));
+
+
+           solutionPath.forEach(cell => {
+               numCellsInRing = grid[cell.ring].length;
+               anglePerCell = (2 * Math.PI) / numCellsInRing;
+               angle = (cell.index + 0.5) * anglePerCell;
+               radius = (cell.ring + 0.5) * cellSize;
+               ctx.lineTo(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle));
+           });
+          
+           const lastCell = solutionPath[solutionPath.length - 1];
+           numCellsInRing = grid[lastCell.ring].length;
+           anglePerCell = (2 * Math.PI) / numCellsInRing;
+           angle = (lastCell.index + 0.5) * anglePerCell;
+           radius = (lastCell.ring + 1.2) * cellSize;
+           ctx.lineTo(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle));
+
+
+           ctx.stroke();
+       }
+
+
+       // --- 主流程 ---
+       function initializeAndRun() {
+           setupGrid();
+           generateMaze();
+           solveMaze();
+           resizeCanvas();
+       }
+
+
+       // --- 事件監聽 ---
+       generateBtn.addEventListener('click', initializeAndRun);
+      
+       showSolutionToggle.addEventListener('change', (e) => {
+           showSolution = e.target.checked;
+           draw();
+       });
+
+
+       printBtn.addEventListener('click', () => {
+           window.print();
+       });
+
+
+       ringsSlider.addEventListener('input', (e) => {
+           rings = parseInt(e.target.value);
+           ringsValue.textContent = rings;
+       });
+      
+       ringsSlider.addEventListener('change', initializeAndRun);
+
+
+       window.addEventListener('resize', resizeCanvas);
+
+
+       // --- 初始啟動 ---
+       initializeAndRun();
+   </script>
+</body>
+</html>
