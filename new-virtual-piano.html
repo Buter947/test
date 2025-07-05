@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>線上鋼琴 (61鍵專業版)</title>
+    <title>線上鋼琴 (全景自適應版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,6 +49,10 @@
             left: 100%;
             transform: translateX(-50%);
         }
+        .key .key-char {
+            /* [NEW] 流暢的字體大小調整 */
+            font-size: clamp(0.4rem, 1.2vw, 0.75rem);
+        }
         .key .key-char.keyboard-active {
             color: #facc15;
             font-weight: 700;
@@ -62,17 +66,6 @@
             box-shadow: inset 0 0 10px #000;
             text-shadow: 0 0 5px #fbbf24, 0 0 10px #fbbf24;
         }
-        #piano-scroller::-webkit-scrollbar {
-            height: 12px;
-        }
-        #piano-scroller::-webkit-scrollbar-track {
-            background: #1f2937;
-        }
-        #piano-scroller::-webkit-scrollbar-thumb {
-            background-color: #4b5563;
-            border-radius: 6px;
-            border: 3px solid #1f2937;
-        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-2 sm:p-4">
@@ -80,19 +73,13 @@
     <div id="piano-body" class="w-full max-w-7xl bg-black rounded-xl shadow-2xl border-t-2 border-gray-700">
         
         <div id="control-panel" class="h-28 sm:h-32 bg-gradient-to-b from-gray-800 to-gray-900 p-4 flex items-center justify-between rounded-t-lg border-b-4 border-black">
-            <div class="flex items-center space-x-4">
-                <button id="octave-down" class="text-gray-400 hover:text-white transition-colors p-2 rounded-md bg-gray-700">&lt; OCTAVE</button>
-                <div id="octave-display" class="text-white font-bold text-2xl w-24 text-center">C3 - B4</div>
-                <button id="octave-up" class="text-gray-400 hover:text-white transition-colors p-2 rounded-md bg-gray-700">OCTAVE &gt;</button>
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <button id="octave-down" class="text-gray-400 hover:text-white transition-colors p-2 rounded-md bg-gray-700 text-sm sm:text-base">&lt; OCT</button>
+                <div id="octave-display" class="text-white font-bold text-lg sm:text-2xl w-20 sm:w-24 text-center">C3-B4</div>
+                <button id="octave-up" class="text-gray-400 hover:text-white transition-colors p-2 rounded-md bg-gray-700 text-sm sm:text-base">OCT &gt;</button>
             </div>
-            
-            <div id="note-display" class="w-48 h-16 bg-black rounded-md flex items-center justify-center text-amber-400 text-4xl font-bold tracking-widest">
-                - - -
-            </div>
-            
-            <div class="text-gray-600 text-2xl font-bold hidden sm:block">
-                PRO SERIES
-            </div>
+            <div id="note-display" class="w-32 sm:w-48 h-16 bg-black rounded-md flex items-center justify-center text-amber-400 text-3xl sm:text-4xl font-bold tracking-widest">- - -</div>
+            <div class="text-gray-600 text-2xl font-bold hidden sm:block">PRO</div>
         </div>
 
         <main class="relative p-2 sm:p-4 md:p-6 bg-gray-900 rounded-b-xl">
@@ -103,11 +90,8 @@
                 </div>
             </div>
 
-            <div id="piano-scroller" class="overflow-x-auto">
-                <div id="piano" class="flex justify-start select-none h-48 sm:h-56 w-max">
-                    <!-- 琴鍵將由 JavaScript 動態生成 -->
+            <div id="piano" class="flex justify-start select-none h-48 sm:h-56 w-full">
                 </div>
-            </div>
         </main>
     </div>
 
@@ -119,26 +103,20 @@
         const octaveDownBtn = document.getElementById('octave-down');
         const octaveUpBtn = document.getElementById('octave-up');
         const octaveDisplay = document.getElementById('octave-display');
-        const pianoScroller = document.getElementById('piano-scroller');
         let sampler;
 
-        // [MODIFIED] 八度音位移設定
-        let currentKeyboardOctave = 1; // 預設鍵盤控制 C3-B4
-        const MIN_OCTAVE = 0; // 對應 C2-B3
-        const MAX_OCTAVE = 3; // 對應 C5-B6
+        let currentKeyboardOctave = 1;
+        const MIN_OCTAVE = 0;
+        const MAX_OCTAVE = 3;
 
-        // [MODIFIED] 生成5個八度 + 1個鍵 (C2-C7, 共61鍵)
         const NOTE_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
         const keysData = [];
         for (let octave = 2; octave <= 6; octave++) {
             for (const note of NOTE_NAMES) {
-                keysData.push({
-                    note: `${note}${octave}`,
-                    type: note.includes('b') ? 'black' : 'white'
-                });
+                keysData.push({ note: `${note}${octave}`, type: note.includes('b') ? 'black' : 'white' });
             }
         }
-        keysData.push({ note: 'C7', type: 'white' }); // 加上最後的 C7
+        keysData.push({ note: 'C7', type: 'white' });
 
         const keyboardMap = [
             { key: 'z', noteIndex: 0 }, { key: 's', noteIndex: 1 }, { key: 'x', noteIndex: 2 },
@@ -164,14 +142,10 @@
             keysData.forEach((keyInfo, i) => {
                 if (keyInfo.type === 'white') {
                     const nextKey = keysData[i + 1];
-                    if (nextKey && nextKey.type === 'white') {
-                        whiteKeyIndex++;
-                    }
+                    if (nextKey && nextKey.type === 'white') { whiteKeyIndex++; }
                 } else if (keyInfo.type === 'black') {
                     const keyElement = createKeyElement(keyInfo);
-                    if (whiteKeys[whiteKeyIndex]) {
-                        whiteKeys[whiteKeyIndex].appendChild(keyElement);
-                    }
+                    if (whiteKeys[whiteKeyIndex]) { whiteKeys[whiteKeyIndex].appendChild(keyElement); }
                     whiteKeyIndex++;
                 }
             });
@@ -181,35 +155,52 @@
             const keyElement = document.createElement('div');
             keyElement.dataset.note = keyInfo.note;
             keyElement.classList.add('key', keyInfo.type);
+            // [MODIFIED] 移除固定的寬度 class
             if (keyInfo.type === 'white') {
-                keyElement.classList.add('h-full', 'w-10', 'sm:w-12', 'rounded-b-md');
+                keyElement.classList.add('h-full', 'rounded-b-md');
             } else {
-                keyElement.classList.add('h-2/3', 'w-7', 'sm:w-8', 'rounded-b-md');
+                keyElement.classList.add('h-2/3', 'rounded-b-md');
             }
             const keyText = document.createElement('span');
             keyText.classList.add('key-char', 'absolute', 'bottom-2', 'left-1/2', '-translate-x-1/2', 'font-semibold', 'pointer-events-none', 'text-gray-400');
             keyElement.appendChild(keyText);
             return keyElement;
         }
+        
+        // [NEW] 動態調整琴鍵大小的函式
+        function resizePiano() {
+            const pianoWidth = pianoContainer.offsetWidth;
+            const whiteKeys = pianoContainer.querySelectorAll('.key.white');
+            const blackKeys = pianoContainer.querySelectorAll('.key.black');
+            const numWhiteKeys = whiteKeys.length;
+
+            if (numWhiteKeys > 0) {
+                const whiteKeyWidth = pianoWidth / numWhiteKeys;
+                const blackKeyWidth = whiteKeyWidth * 0.6;
+
+                whiteKeys.forEach(key => {
+                    key.style.width = `${whiteKeyWidth}px`;
+                });
+                blackKeys.forEach(key => {
+                    key.style.width = `${blackKeyWidth}px`;
+                });
+            }
+        }
 
         function setupAudio() {
             sampler = new Tone.Sampler({
                 urls: {
-                    'C2': 'C2.mp3', 'C3': 'C3.mp3', 'C4': 'C4.mp3',
-                    'C5': 'C5.mp3', 'C6': 'C6.mp3', 'C7': 'C7.mp3',
-                    'D#2': 'Ds2.mp3', 'D#3': 'Ds3.mp3', 'D#4': 'Ds4.mp3',
-                    'D#5': 'Ds5.mp3', 'D#6': 'Ds6.mp3',
-                    'F#2': 'Fs2.mp3', 'F#3': 'Fs3.mp3', 'F#4': 'Fs4.mp3',
-                    'F#5': 'Fs5.mp3', 'F#6': 'Fs6.mp3',
-                    'A2': 'A2.mp3', 'A3': 'A3.mp3', 'A4': 'A4.mp3',
-                    'A5': 'A5.mp3', 'A6': 'A6.mp3',
+                    'C2': 'C2.mp3', 'C3': 'C3.mp3', 'C4': 'C4.mp3', 'C5': 'C5.mp3', 'C6': 'C6.mp3', 'C7': 'C7.mp3',
+                    'D#2': 'Ds2.mp3', 'D#3': 'Ds3.mp3', 'D#4': 'Ds4.mp3', 'D#5': 'Ds5.mp3', 'D#6': 'Ds6.mp3',
+                    'F#2': 'Fs2.mp3', 'F#3': 'Fs3.mp3', 'F#4': 'Fs4.mp3', 'F#5': 'Fs5.mp3', 'F#6': 'Fs6.mp3',
+                    'A2': 'A2.mp3', 'A3': 'A3.mp3', 'A4': 'A4.mp3', 'A5': 'A5.mp3', 'A6': 'A6.mp3',
                 },
                 baseUrl: 'https://tonejs.github.io/audio/salamander/',
                 onload: () => {
                     loadingOverlay.style.opacity = '0';
                     setTimeout(() => { loadingOverlay.style.display = 'none'; }, 300);
                     updateKeyboardActiveHighlight();
-                    centerOnMiddleC();
+                    resizePiano(); // 初始調整一次大小
                 }
             }).toDestination();
         }
@@ -250,16 +241,7 @@
             });
             const startOctave = currentKeyboardOctave + 2;
             const endOctave = startOctave + 1;
-            octaveDisplay.textContent = `C${startOctave} - B${endOctave}`;
-        }
-        
-        function centerOnMiddleC() {
-            const middleC = pianoContainer.querySelector('[data-note="C4"]');
-            if (middleC) {
-                const scrollerWidth = pianoScroller.offsetWidth;
-                const middleCOffset = middleC.offsetLeft + (middleC.offsetWidth / 2);
-                pianoScroller.scrollLeft = middleCOffset - (scrollerWidth / 2);
-            }
+            octaveDisplay.textContent = `C${startOctave}-B${endOctave}`;
         }
 
         function addPointerListeners() {
@@ -307,6 +289,9 @@
                 updateKeyboardActiveHighlight();
             }
         });
+
+        // [NEW] 監聽視窗大小變化
+        window.addEventListener('resize', resizePiano);
 
         function initialize() {
             createPianoKeys();
