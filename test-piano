@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>線上電子琴</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', 'Inter', sans-serif;
+            touch-action: manipulation; /* 禁用雙擊縮放，提升行動裝置體驗 */
+        }
+        /* 琴鍵被按下時的視覺效果 */
+        .key.active, .key:active {
+            background-color: #fde047; /* 亮黃色 */
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+        .key.black.active, .key.black:active {
+            background-color: #facc15; /* 深一點的黃色 */
+            transform: translateY(2px);
+        }
+        /* 讓黑鍵定位在白鍵之上 */
+        .key.black {
+            position: absolute;
+            left: -1.25rem; /* 寬度的一半 */
+        }
+        /* 為了讓黑鍵不影響白鍵的排版，我們需要一個容器 */
+        .white-key-container {
+            position: relative;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+
+    <header class="text-center mb-8">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-800">線上電子琴</h1>
+        <p class="text-gray-500 mt-2 max-w-2xl">
+            使用滑鼠點擊或鍵盤來彈奏。鍵盤對應：下方字母排對應白鍵，上方字母排對應黑鍵。
+        </p>
+    </header>
+
+    <!-- 電子琴主體 -->
+    <main class="p-4 md:p-6 bg-gray-800 rounded-2xl shadow-2xl">
+        <div id="piano" class="flex justify-center select-none">
+            <!-- 琴鍵將由 JavaScript 動態生成 -->
+        </div>
+    </main>
+
+    <footer class="text-center mt-8 text-gray-400 text-sm no-print">
+        <p>聲音由 Tone.js 驅動</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 全域變數和設定 ---
+            const pianoContainer = document.getElementById('piano');
+            let synth;
+
+            // 定義琴鍵和對應的音符及鍵盤按鍵
+            const keysData = [
+                { note: 'C4', key: 'a', type: 'white' },
+                { note: 'Db4', key: 'w', type: 'black' },
+                { note: 'D4', key: 's', type: 'white' },
+                { note: 'Eb4', key: 'e', type: 'black' },
+                { note: 'E4', key: 'd', type: 'white' },
+                { note: 'F4', key: 'f', type: 'white' },
+                { note: 'Gb4', key: 't', type: 'black' },
+                { note: 'G4', key: 'g', type: 'white' },
+                { note: 'Ab4', key: 'y', type: 'black' },
+                { note: 'A4', key: 'h', type: 'white' },
+                { note: 'Bb4', key: 'u', type: 'black' },
+                { note: 'B4', key: 'j', type: 'white' },
+                { note: 'C5', key: 'k', type: 'white' },
+                { note: 'Db5', key: 'o', type: 'black' },
+                { note: 'D5', key: 'l', type: 'white' },
+                { note: 'Eb5', key: 'p', type: 'black' },
+                { note: 'E5', key: ';', type: 'white' },
+            ];
+
+            // --- 初始化函式 ---
+
+            // 建立琴鍵的 HTML 元素
+            function createPianoKeys() {
+                keysData.forEach(keyInfo => {
+                    if (keyInfo.type === 'white') {
+                        const whiteKeyContainer = document.createElement('div');
+                        whiteKeyContainer.classList.add('white-key-container');
+                        
+                        const keyElement = createKeyElement(keyInfo);
+                        whiteKeyContainer.appendChild(keyElement);
+                        pianoContainer.appendChild(whiteKeyContainer);
+                    }
+                });
+
+                // 黑鍵需要疊在白鍵上，所以後生成
+                keysData.forEach((keyInfo, index) => {
+                    if (keyInfo.type === 'black') {
+                        const keyElement = createKeyElement(keyInfo);
+                        // 找到它應該依附的白鍵容器
+                        const parentWhiteKey = pianoContainer.querySelector(`[data-note="${keysData[index+1].note}"]`).parentElement;
+                        if(parentWhiteKey) {
+                            parentWhiteKey.appendChild(keyElement);
+                        }
+                    }
+                });
+            }
+
+            // 建立單一琴鍵元素
+            function createKeyElement(keyInfo) {
+                const keyElement = document.createElement('div');
+                keyElement.dataset.note = keyInfo.note;
+                keyElement.dataset.key = keyInfo.key;
+                keyElement.classList.add('key', keyInfo.type);
+
+                // 設定樣式
+                if (keyInfo.type === 'white') {
+                    keyElement.classList.add('h-48', 'w-16', 'md:h-64', 'md:w-20', 'bg-white', 'border-2', 'border-gray-300', 'rounded-b-lg', 'shadow-md');
+                } else {
+                    keyElement.classList.add('h-28', 'w-10', 'md:h-40', 'md:w-12', 'bg-gray-900', 'border-2', 'border-gray-700', 'rounded-b-md', 'z-10', 'shadow-lg');
+                }
+                
+                // 加上鍵盤提示文字
+                const keyText = document.createElement('span');
+                keyText.textContent = keyInfo.key.toUpperCase();
+                keyText.classList.add('absolute', 'bottom-2', 'left-1/2', '-translate-x-1/2', 'text-gray-400', 'font-mono');
+                if(keyInfo.type === 'black') {
+                    keyText.classList.add('text-gray-200');
+                }
+                keyElement.appendChild(keyText);
+
+                return keyElement;
+            }
+
+            // 初始化音訊合成器 (Synth)
+            function setupAudio() {
+                // 使用 PolySynth 允許多個音符同時發聲
+                synth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: {
+                        type: 'fmtriangle',
+                        harmonicity: 0.5,
+                        modulationType: 'sine'
+                    },
+                    envelope: {
+                        attack: 0.02,
+                        decay: 0.1,
+                        sustain: 0.3,
+                        release: 1
+                    },
+                    volume: -6
+                }).toDestination();
+            }
+
+            // --- 核心功能 ---
+
+            // 彈奏音符
+            function playNote(note) {
+                if (!synth || !note) return;
+                // 觸發音符，"8n" 代表音符的持續時間 (八分音符)
+                synth.triggerAttackRelease(note, '8n');
+                
+                // 觸發視覺效果
+                const keyElement = pianoContainer.querySelector(`[data-note="${note}"]`);
+                if (keyElement) {
+                    keyElement.classList.add('active');
+                    // 短暫延遲後移除 active class
+                    setTimeout(() => {
+                        keyElement.classList.remove('active');
+                    }, 200);
+                }
+            }
+
+            // --- 事件監聽 ---
+
+            // 監聽滑鼠或觸控點擊
+            function addPointerListeners() {
+                pianoContainer.addEventListener('pointerdown', (e) => {
+                    // 確保點擊的是琴鍵本身
+                    if (e.target.classList.contains('key')) {
+                        // 首次互動時，如果音訊尚未啟動，則啟動它
+                        // 這是為了符合瀏覽器的自動播放政策
+                        if (Tone.context.state !== 'running') {
+                            Tone.start();
+                        }
+                        const note = e.target.dataset.note;
+                        playNote(note);
+                    }
+                });
+            }
+
+            // 監聽鍵盤按下
+            function addKeyboardListeners() {
+                const pressedKeys = new Set(); // 用來防止按住按鍵時重複觸發
+
+                window.addEventListener('keydown', (e) => {
+                    // 如果音訊尚未啟動，則啟動它
+                    if (Tone.context.state !== 'running') {
+                        Tone.start();
+                    }
+                    
+                    const key = e.key.toLowerCase();
+                    if (pressedKeys.has(key)) return; // 如果已經在按下狀態，則不重複觸發
+
+                    const keyData = keysData.find(k => k.key === key);
+                    if (keyData) {
+                        e.preventDefault(); // 防止觸發瀏覽器預設行為 (如滾動頁面)
+                        pressedKeys.add(key);
+                        playNote(keyData.note);
+                    }
+                });
+
+                window.addEventListener('keyup', (e) => {
+                    const key = e.key.toLowerCase();
+                    pressedKeys.delete(key); // 從按下集合中移除
+                });
+            }
+
+            // --- 啟動 ---
+            function initialize() {
+                createPianoKeys();
+                setupAudio();
+                addPointerListeners();
+                addKeyboardListeners();
+            }
+
+            initialize();
+        });
+    </script>
+</body>
+</html>
