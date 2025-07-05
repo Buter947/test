@@ -19,6 +19,7 @@
         .key {
             transition: all 0.05s ease-in-out;
             cursor: pointer;
+            position: relative; /* 為了讓鍵盤文字定位 */
         }
         .key.white {
             background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
@@ -40,16 +41,17 @@
         .key.black.active {
             background: linear-gradient(to bottom, #18181b, #111);
             box-shadow: inset 0 -1px 1px rgba(255,255,255,0.2), 0 1px 1px rgba(0,0,0,0.5);
-            transform: translateY(2px);
+            transform: translate(-50%, 2px); /* 按下時也要保持置中 */
         }
-        /* 讓黑鍵定位在白鍵之上 */
+        
+        /* 黑鍵定位的關鍵CSS */
         .key.black {
             position: absolute;
-            left: -0.8rem;
+            top: 0;
+            left: 100%; /* 定位到其父元素(白鍵)的右邊緣 */
+            transform: translateX(-50%); /* 向左移動自身寬度的一半，實現置中 */
         }
-        .white-key-container {
-            position: relative;
-        }
+
         /* 控制面板樣式 */
         #control-panel {
             font-family: 'Orbitron', sans-serif; /* 使用科技感的字體 */
@@ -108,7 +110,7 @@
             const noteDisplay = document.getElementById('note-display');
             let sampler;
 
-            // [UPDATED] 36個琴鍵的資料，包含新的鍵盤佈局
+            // 36個琴鍵的資料
             const keysData = [
                 { note: 'C3', key: '1', type: 'white' }, { note: 'Db3', key: '!', type: 'black' },
                 { note: 'D3', key: '2', type: 'white' }, { note: 'Eb3', key: '@', type: 'black' },
@@ -132,25 +134,27 @@
 
             // --- 初始化函式 ---
             function createPianoKeys() {
+                const whiteKeys = [];
                 keysData.forEach(keyInfo => {
                     if (keyInfo.type === 'white') {
-                        const whiteKeyContainer = document.createElement('div');
-                        whiteKeyContainer.classList.add('white-key-container', 'h-full');
                         const keyElement = createKeyElement(keyInfo);
-                        whiteKeyContainer.appendChild(keyElement);
-                        pianoContainer.appendChild(whiteKeyContainer);
+                        pianoContainer.appendChild(keyElement);
+                        whiteKeys.push(keyElement);
                     }
                 });
-                keysData.forEach((keyInfo, index) => {
-                    if (keyInfo.type === 'black') {
+                let whiteKeyIndex = 0;
+                keysData.forEach(keyInfo => {
+                    if (keyInfo.type === 'white') {
+                         const nextKey = keysData[keysData.indexOf(keyInfo) + 1];
+                         if (nextKey && nextKey.type === 'white') {
+                             whiteKeyIndex++;
+                         }
+                    } else if (keyInfo.type === 'black') {
                         const keyElement = createKeyElement(keyInfo);
-                        const nextWhiteKeyInfo = keysData.find((k, i) => i > index && k.type === 'white');
-                        if (nextWhiteKeyInfo) {
-                            const parentWhiteKeyContainer = pianoContainer.querySelector(`[data-note="${nextWhiteKeyInfo.note}"]`).parentElement;
-                            if (parentWhiteKeyContainer) {
-                                parentWhiteKeyContainer.appendChild(keyElement);
-                            }
+                        if (whiteKeys[whiteKeyIndex]) {
+                            whiteKeys[whiteKeyIndex].appendChild(keyElement);
                         }
+                        whiteKeyIndex++;
                     }
                 });
             }
@@ -159,7 +163,7 @@
                 const keyElement = document.createElement('div');
                 keyElement.dataset.note = keyInfo.note;
                 keyElement.dataset.key = keyInfo.key;
-                keyElement.classList.add('key', keyInfo.type, 'relative');
+                keyElement.classList.add('key', keyInfo.type);
                 if (keyInfo.type === 'white') {
                     keyElement.classList.add('h-full', 'w-8', 'sm:w-10', 'rounded-b-md');
                 } else {
@@ -177,7 +181,6 @@
                 return keyElement;
             }
 
-            // [UPDATED] 擴展音源取樣以包含更低的音域
             function setupAudio() {
                 sampler = new Tone.Sampler({
                     urls: {
@@ -205,9 +208,7 @@
                 }
             }
 
-            // [NEW] 更新音符顯示幕
             function updateNoteDisplay(note) {
-                // 將 'Db4' 格式化為 'D♭4'
                 const formattedNote = note.replace('b', '♭').replace('#', '♯');
                 noteDisplay.textContent = formattedNote;
             }
@@ -225,42 +226,31 @@
                 });
             }
 
+            // [MODIFIED] 全新、更穩定的鍵盤監聽邏輯
             function addKeyboardListeners() {
-                const pressedKeys = new Set();
+                const noteMap = new Map(keysData.map(k => [k.key, k.note]));
+                const pressedKeys = new Set(); // 使用 e.code 來追蹤物理按鍵
+
                 window.addEventListener('keydown', (e) => {
                     if (!sampler || !sampler.loaded) return;
                     if (Tone.context.state !== 'running') { Tone.start(); }
                     
-                    // 處理特殊鍵，例如 '!' 對應 '1'，'@' 對應 '2'
-                    let key = e.key;
-                    if (e.shiftKey) {
-                        const shiftMap = { '1':'!', '2':'@', '4':'$', '5':'%', '6':'^', '8':'*', '9':'(' };
-                        if (shiftMap[key]) {
-                            key = shiftMap[key];
-                        }
-                    }
+                    // 使用 e.code 來防止按住按鍵時重複觸發
+                    if (pressedKeys.has(e.code)) return;
 
-                    if (pressedKeys.has(key)) return;
-                    const keyData = keysData.find(k => k.key === key);
-                    if (keyData) {
+                    // 使用 e.key 來查找對應的音符 (e.key 會處理 Shift 和大小寫)
+                    const note = noteMap.get(e.key);
+                    
+                    if (note) {
                         e.preventDefault();
-                        pressedKeys.add(key);
-                        playNote(keyData.note);
+                        pressedKeys.add(e.code); // 記錄被按下的物理按鍵
+                        playNote(note);
                     }
                 });
+
                 window.addEventListener('keyup', (e) => {
-                    let key = e.key;
-                    const shiftMap = { '1':'!', '2':'@', '4':'$', '5':'%', '6':'^', '8':'*', '9':'(' };
-                    // 檢查keyup時是否也需要對應shift鍵
-                    // 簡單起見，我們直接移除小寫和大寫版本
-                    pressedKeys.delete(key.toLowerCase());
-                    pressedKeys.delete(key.toUpperCase());
-                     for (const k in shiftMap) {
-                        if (shiftMap[k] === key) {
-                            pressedKeys.delete(k);
-                        }
-                        pressedKeys.delete(shiftMap[k]);
-                    }
+                    // 釋放被按下的物理按鍵
+                    pressedKeys.delete(e.code);
                 });
             }
 
