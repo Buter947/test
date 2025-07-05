@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>線上鋼琴 (專業版)</title>
+    <title>線上鋼琴 (84鍵專業演奏版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,13 +13,13 @@
         body {
             font-family: 'Noto Sans TC', 'Inter', sans-serif;
             touch-action: manipulation;
-            background-color: #111827; /* 深灰藍背景 */
+            background-color: #111827;
         }
-        /* 琴鍵的3D效果和按下動畫 */
         .key {
             transition: all 0.05s ease-in-out;
             cursor: pointer;
-            position: relative; /* 為了讓鍵盤文字定位 */
+            position: relative;
+            flex-shrink: 0; /* 防止琴鍵被壓縮 */
         }
         .key.white {
             background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
@@ -41,20 +41,21 @@
         .key.black.active {
             background: linear-gradient(to bottom, #18181b, #111);
             box-shadow: inset 0 -1px 1px rgba(255,255,255,0.2), 0 1px 1px rgba(0,0,0,0.5);
-            transform: translate(-50%, 2px); /* 按下時也要保持置中 */
+            transform: translate(-50%, 2px);
         }
-        
-        /* 黑鍵定位的關鍵CSS */
         .key.black {
             position: absolute;
             top: 0;
-            left: 100%; /* 定位到其父元素(白鍵)的右邊緣 */
-            transform: translateX(-50%); /* 向左移動自身寬度的一半，實現置中 */
+            left: 100%;
+            transform: translateX(-50%);
         }
-
-        /* 控制面板樣式 */
+        /* [NEW] 鍵盤控制的琴鍵高亮 */
+        .key .key-char.keyboard-active {
+            color: #facc15; /* 黃色高亮 */
+            font-weight: 700;
+        }
         #control-panel {
-            font-family: 'Orbitron', sans-serif; /* 使用科技感的字體 */
+            font-family: 'Orbitron', sans-serif;
         }
         #note-display {
             background-color: #000;
@@ -62,208 +63,279 @@
             box-shadow: inset 0 0 10px #000;
             text-shadow: 0 0 5px #fbbf24, 0 0 10px #fbbf24;
         }
+        /* [NEW] 捲動條樣式 */
+        #piano-scroller::-webkit-scrollbar {
+            height: 12px;
+        }
+        #piano-scroller::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        #piano-scroller::-webkit-scrollbar-thumb {
+            background-color: #4b5563;
+            border-radius: 6px;
+            border: 3px solid #1f2937;
+        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-2 sm:p-4">
 
-    <!-- 鋼琴主體容器 -->
     <div id="piano-body" class="w-full max-w-7xl bg-black rounded-xl shadow-2xl border-t-2 border-gray-700">
         
-        <!-- 控制面板 -->
         <div id="control-panel" class="h-28 sm:h-32 bg-gradient-to-b from-gray-800 to-gray-900 p-4 flex items-center justify-between rounded-t-lg border-b-4 border-black">
-            <div class="text-white text-2xl font-bold">
-                <span class="text-yellow-400">VIRTUAL</span><span class="text-gray-400">PIANO</span>
+            <!-- 八度音位移控制 -->
+            <div class="flex items-center space-x-4">
+                <button id="octave-down" class="text-gray-400 hover:text-white transition-colors p-2 rounded-md bg-gray-700">&lt; OCTAVE</button>
+                <div id="octave-display" class="text-white font-bold text-2xl w-24 text-center">C3 - B4</div>
+                <button id="octave-up" class="text-gray-400 hover:text-white transition-colors p-2 rounded-md bg-gray-700">OCTAVE &gt;</button>
             </div>
-            <!-- 音符顯示幕 -->
+            
             <div id="note-display" class="w-48 h-16 bg-black rounded-md flex items-center justify-center text-amber-400 text-4xl font-bold tracking-widest">
                 - - -
             </div>
-            <div class="text-gray-600 text-2xl font-bold">
-                PRO
+            
+            <div class="text-gray-600 text-2xl font-bold hidden sm:block">
+                PRO SERIES
             </div>
         </div>
 
-        <!-- 琴鍵容器 -->
         <main class="relative p-2 sm:p-4 md:p-6 bg-gray-900 rounded-b-xl">
-            <!-- 音色載入提示 -->
             <div id="loading-overlay" class="absolute inset-0 bg-gray-900 bg-opacity-95 flex items-center justify-center z-20 rounded-b-xl transition-opacity duration-300">
                 <div class="text-center">
-                    <svg class="animate-spin h-8 w-8 text-white mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                    <svg class="animate-spin h-8 w-8 text-white mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     <p class="text-white text-lg font-semibold">正在加載鋼琴音色...</p>
                 </div>
             </div>
 
-            <div id="piano" class="flex justify-center select-none h-48 sm:h-56">
-                <!-- 琴鍵將由 JavaScript 動態生成 -->
+            <!-- [NEW] 水平捲動容器 -->
+            <div id="piano-scroller" class="overflow-x-auto">
+                <div id="piano" class="flex justify-start select-none h-48 sm:h-56 w-max">
+                    <!-- 琴鍵將由 JavaScript 動態生成 -->
+                </div>
             </div>
         </main>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- DOM 元素 ---
-            const pianoContainer = document.getElementById('piano');
-            const loadingOverlay = document.getElementById('loading-overlay');
-            const noteDisplay = document.getElementById('note-display');
-            let sampler;
+    document.addEventListener('DOMContentLoaded', () => {
+        const pianoContainer = document.getElementById('piano');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const noteDisplay = document.getElementById('note-display');
+        const octaveDownBtn = document.getElementById('octave-down');
+        const octaveUpBtn = document.getElementById('octave-up');
+        const octaveDisplay = document.getElementById('octave-display');
+        const pianoScroller = document.getElementById('piano-scroller');
+        let sampler;
 
-            // 36個琴鍵的資料
-            const keysData = [
-                { note: 'C3', key: '1', type: 'white' }, { note: 'Db3', key: '!', type: 'black' },
-                { note: 'D3', key: '2', type: 'white' }, { note: 'Eb3', key: '@', type: 'black' },
-                { note: 'E3', key: '3', type: 'white' }, { note: 'F3', key: '4', type: 'white' },
-                { note: 'Gb3', key: '$', type: 'black' }, { note: 'G3', key: '5', type: 'white' },
-                { note: 'Ab3', key: '%', type: 'black' }, { note: 'A3', key: '6', type: 'white' },
-                { note: 'Bb3', key: '^', type: 'black' }, { note: 'B3', key: '7', type: 'white' },
-                { note: 'C4', key: '8', type: 'white' }, { note: 'Db4', key: '*', type: 'black' },
-                { note: 'D4', key: '9', type: 'white' }, { note: 'Eb4', key: '(', type: 'black' },
-                { note: 'E4', key: '0', type: 'white' }, { note: 'F4', key: 'q', type: 'white' },
-                { note: 'Gb4', key: 'w', type: 'black' }, { note: 'G4', key: 'e', type: 'white' },
-                { note: 'Ab4', key: 'r', type: 'black' }, { note: 'A4', key: 't', type: 'white' },
-                { note: 'Bb4', key: 'y', type: 'black' }, { note: 'B4', key: 'u', type: 'white' },
-                { note: 'C5', key: 'i', type: 'white' }, { note: 'Db5', key: 'o', type: 'black' },
-                { note: 'D5', key: 'p', type: 'white' }, { note: 'Eb5', key: 'g', type: 'black' },
-                { note: 'E5', key: 'h', type: 'white' }, { note: 'F5', key: 'j', type: 'white' },
-                { note: 'Gb5', key: 'l', type: 'black' }, { note: 'G5', key: 'z', type: 'white' },
-                { note: 'Ab5', key: 'x', type: 'black' }, { note: 'A5', key: 'c', type: 'white' },
-                { note: 'Bb5', key: 'v', type: 'black' }, { note: 'B5', key: 'b', type: 'white' },
-            ];
+        let currentKeyboardOctave = 2; // C1=0, C2=1, C3=2...
+        const MIN_OCTAVE = 0; // Octave 1
+        const MAX_OCTAVE = 5; // Octave 6 (for a 2-octave keyboard layout)
 
-            // --- 初始化函式 ---
-            function createPianoKeys() {
-                const whiteKeys = [];
-                keysData.forEach(keyInfo => {
-                    if (keyInfo.type === 'white') {
-                        const keyElement = createKeyElement(keyInfo);
-                        pianoContainer.appendChild(keyElement);
-                        whiteKeys.push(keyElement);
-                    }
+        // [NEW] 自動生成所有琴鍵資料
+        const NOTE_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+        const keysData = [];
+        for (let octave = 1; octave <= 7; octave++) {
+            for (const note of NOTE_NAMES) {
+                // B7 之後就停止
+                if (octave === 7 && note !== 'C' && note !== 'Db' && note !== 'D' && note !== 'Eb' && note !== 'E' && note !== 'F' && note !== 'Gb' && note !== 'G' && note !== 'Ab' && note !== 'A' && note !== 'Bb') {
+                     if(note === 'B') keysData.push({ note: `B7`, type: 'white' });
+                     continue;
+                }
+                 if (octave === 7 && note === 'C') { // 85th key C8 is not needed
+                    continue;
+                 }
+                keysData.push({
+                    note: `${note}${octave}`,
+                    type: note.includes('b') ? 'black' : 'white'
                 });
-                let whiteKeyIndex = 0;
-                keysData.forEach(keyInfo => {
-                    if (keyInfo.type === 'white') {
-                         const nextKey = keysData[keysData.indexOf(keyInfo) + 1];
-                         if (nextKey && nextKey.type === 'white') {
-                             whiteKeyIndex++;
-                         }
-                    } else if (keyInfo.type === 'black') {
-                        const keyElement = createKeyElement(keyInfo);
-                        if (whiteKeys[whiteKeyIndex]) {
-                            whiteKeys[whiteKeyIndex].appendChild(keyElement);
-                        }
+            }
+        }
+        
+        // [NEW] 鍵盤映射 (2個八度)
+        const keyboardMap = [
+            { key: 'z', noteIndex: 0 }, { key: 's', noteIndex: 1 }, { key: 'x', noteIndex: 2 },
+            { key: 'd', noteIndex: 3 }, { key: 'c', noteIndex: 4 }, { key: 'v', noteIndex: 5 },
+            { key: 'g', noteIndex: 6 }, { key: 'b', noteIndex: 7 }, { key: 'h', noteIndex: 8 },
+            { key: 'n', noteIndex: 9 }, { key: 'j', noteIndex: 10 }, { key: 'm', noteIndex: 11 },
+            { key: 'q', noteIndex: 12 }, { key: '2', noteIndex: 13 }, { key: 'w', noteIndex: 14 },
+            { key: '3', noteIndex: 15 }, { key: 'e', noteIndex: 16 }, { key: 'r', noteIndex: 17 },
+            { key: '5', noteIndex: 18 }, { key: 't', noteIndex: 19 }, { key: '6', noteIndex: 20 },
+            { key: 'y', noteIndex: 21 }, { key: '7', noteIndex: 22 }, { key: 'u', noteIndex: 23 },
+        ];
+
+
+        function createPianoKeys() {
+            const whiteKeys = [];
+            keysData.forEach(keyInfo => {
+                if (keyInfo.type === 'white') {
+                    const keyElement = createKeyElement(keyInfo);
+                    pianoContainer.appendChild(keyElement);
+                    whiteKeys.push(keyElement);
+                }
+            });
+            let whiteKeyIndex = 0;
+            keysData.forEach((keyInfo, i) => {
+                if (keyInfo.type === 'white') {
+                    const nextKey = keysData[i + 1];
+                    if (nextKey && nextKey.type === 'white') {
                         whiteKeyIndex++;
                     }
-                });
-            }
-
-            function createKeyElement(keyInfo) {
-                const keyElement = document.createElement('div');
-                keyElement.dataset.note = keyInfo.note;
-                keyElement.dataset.key = keyInfo.key;
-                keyElement.classList.add('key', keyInfo.type);
-                if (keyInfo.type === 'white') {
-                    keyElement.classList.add('h-full', 'w-8', 'sm:w-10', 'rounded-b-md');
-                } else {
-                    keyElement.classList.add('h-2/3', 'w-6', 'sm:w-7', 'rounded-b-md');
-                }
-                const keyText = document.createElement('span');
-                keyText.textContent = keyInfo.key;
-                keyText.classList.add('absolute', 'bottom-2', 'left-1/2', '-translate-x-1/2', 'font-semibold', 'pointer-events-none');
-                if (keyInfo.type === 'white') {
-                    keyText.classList.add('text-gray-500');
-                } else {
-                    keyText.classList.add('text-gray-300');
-                }
-                keyElement.appendChild(keyText);
-                return keyElement;
-            }
-
-            function setupAudio() {
-                sampler = new Tone.Sampler({
-                    urls: {
-                        'C3': 'C3.mp3', 'D#3': 'Ds3.mp3', 'F#3': 'Fs3.mp3', 'A3': 'A3.mp3',
-                        'C4': 'C4.mp3', 'D#4': 'Ds4.mp3', 'F#4': 'Fs4.mp3', 'A4': 'A4.mp3',
-                        'C5': 'C5.mp3', 'D#5': 'Ds5.mp3', 'F#5': 'Fs5.mp3', 'A5': 'A5.mp3',
-                    },
-                    baseUrl: 'https://tonejs.github.io/audio/salamander/',
-                    onload: () => {
-                        loadingOverlay.style.opacity = '0';
-                        setTimeout(() => { loadingOverlay.style.display = 'none'; }, 300);
+                } else if (keyInfo.type === 'black') {
+                    const keyElement = createKeyElement(keyInfo);
+                    if (whiteKeys[whiteKeyIndex]) {
+                        whiteKeys[whiteKeyIndex].appendChild(keyElement);
                     }
-                }).toDestination();
-            }
-
-            // --- 核心功能 ---
-            function playNote(note) {
-                if (!sampler || !sampler.loaded) return;
-                sampler.triggerAttack(note);
-                updateNoteDisplay(note);
-                const keyElement = pianoContainer.querySelector(`[data-note="${note}"]`);
-                if (keyElement) {
-                    keyElement.classList.add('active');
-                    setTimeout(() => { keyElement.classList.remove('active'); }, 150);
+                    whiteKeyIndex++;
                 }
-            }
+            });
+        }
 
-            function updateNoteDisplay(note) {
-                const formattedNote = note.replace('b', '♭').replace('#', '♯');
-                noteDisplay.textContent = formattedNote;
+        function createKeyElement(keyInfo) {
+            const keyElement = document.createElement('div');
+            keyElement.dataset.note = keyInfo.note;
+            keyElement.classList.add('key', keyInfo.type);
+            if (keyInfo.type === 'white') {
+                keyElement.classList.add('h-full', 'w-8', 'sm:w-10', 'rounded-b-md');
+            } else {
+                keyElement.classList.add('h-2/3', 'w-6', 'sm:w-7', 'rounded-b-md');
             }
+            // 鍵盤字母提示
+            const keyText = document.createElement('span');
+            keyText.classList.add('key-char', 'absolute', 'bottom-2', 'left-1/2', '-translate-x-1/2', 'font-semibold', 'pointer-events-none', 'text-gray-400');
+            keyElement.appendChild(keyText);
+            return keyElement;
+        }
 
-            // --- 事件監聽 ---
-            function addPointerListeners() {
-                pianoContainer.addEventListener('pointerdown', (e) => {
-                    if (!sampler || !sampler.loaded) return;
-                    const keyElement = e.target.closest('.key');
+        function setupAudio() {
+            sampler = new Tone.Sampler({
+                urls: {
+                    'C1': 'C1.mp3', 'C2': 'C2.mp3', 'C3': 'C3.mp3', 'C4': 'C4.mp3',
+                    'C5': 'C5.mp3', 'C6': 'C6.mp3', 'C7': 'C7.mp3',
+                    'D#1': 'Ds1.mp3', 'D#2': 'Ds2.mp3', 'D#3': 'Ds3.mp3', 'D#4': 'Ds4.mp3',
+                    'D#5': 'Ds5.mp3', 'D#6': 'Ds6.mp3',
+                    'F#1': 'Fs1.mp3', 'F#2': 'Fs2.mp3', 'F#3': 'Fs3.mp3', 'F#4': 'Fs4.mp3',
+                    'F#5': 'Fs5.mp3', 'F#6': 'Fs6.mp3',
+                    'A1': 'A1.mp3', 'A2': 'A2.mp3', 'A3': 'A3.mp3', 'A4': 'A4.mp3',
+                    'A5': 'A5.mp3', 'A6': 'A6.mp3',
+                },
+                baseUrl: 'https://tonejs.github.io/audio/salamander/',
+                onload: () => {
+                    loadingOverlay.style.opacity = '0';
+                    setTimeout(() => { loadingOverlay.style.display = 'none'; }, 300);
+                    updateKeyboardActiveHighlight();
+                    centerOnMiddleC();
+                }
+            }).toDestination();
+        }
+
+        function playNote(note) {
+            if (!sampler || !sampler.loaded || !note) return;
+            sampler.triggerAttack(note);
+            updateNoteDisplay(note);
+            const keyElement = pianoContainer.querySelector(`[data-note="${note}"]`);
+            if (keyElement) {
+                keyElement.classList.add('active');
+                setTimeout(() => { keyElement.classList.remove('active'); }, 150);
+            }
+        }
+
+        function updateNoteDisplay(note) {
+            const formattedNote = note.replace('b', '♭');
+            noteDisplay.textContent = formattedNote;
+        }
+        
+        // [NEW] 更新鍵盤高亮和顯示
+        function updateKeyboardActiveHighlight() {
+            // 清除所有高亮和文字
+            document.querySelectorAll('.key-char').forEach(el => {
+                el.textContent = '';
+                el.classList.remove('keyboard-active');
+            });
+            // 設定新的高亮
+            const octaveStartIndex = currentKeyboardOctave * 12;
+            keyboardMap.forEach(mapping => {
+                const noteIndex = octaveStartIndex + mapping.noteIndex;
+                if (noteIndex < keysData.length) {
+                    const note = keysData[noteIndex].note;
+                    const keyElement = pianoContainer.querySelector(`[data-note="${note}"]`);
                     if (keyElement) {
-                        if (Tone.context.state !== 'running') { Tone.start(); }
-                        const note = keyElement.dataset.note;
-                        playNote(note);
+                        const charEl = keyElement.querySelector('.key-char');
+                        charEl.textContent = mapping.key;
+                        charEl.classList.add('keyboard-active');
                     }
-                });
+                }
+            });
+            // 更新八度顯示
+            const startOctave = currentKeyboardOctave + 1;
+            const endOctave = startOctave + 1;
+            octaveDisplay.textContent = `C${startOctave} - B${endOctave}`;
+        }
+        
+        // [NEW] 置中 Middle C
+        function centerOnMiddleC() {
+            const middleC = pianoContainer.querySelector('[data-note="C4"]');
+            if (middleC) {
+                const scrollerWidth = pianoScroller.offsetWidth;
+                const middleCOffset = middleC.offsetLeft + (middleC.offsetWidth / 2);
+                pianoScroller.scrollLeft = middleCOffset - (scrollerWidth / 2);
             }
+        }
 
-            // [MODIFIED] 全新、更穩定的鍵盤監聽邏輯
-            function addKeyboardListeners() {
-                const noteMap = new Map(keysData.map(k => [k.key, k.note]));
-                const pressedKeys = new Set(); // 使用 e.code 來追蹤物理按鍵
-
-                window.addEventListener('keydown', (e) => {
-                    if (!sampler || !sampler.loaded) return;
+        function addPointerListeners() {
+            pianoContainer.addEventListener('pointerdown', (e) => {
+                if (!sampler || !sampler.loaded) return;
+                const keyElement = e.target.closest('.key');
+                if (keyElement) {
                     if (Tone.context.state !== 'running') { Tone.start(); }
-                    
-                    // 使用 e.code 來防止按住按鍵時重複觸發
-                    if (pressedKeys.has(e.code)) return;
+                    playNote(keyElement.dataset.note);
+                }
+            });
+        }
 
-                    // 使用 e.key 來查找對應的音符 (e.key 會處理 Shift 和大小寫)
-                    const note = noteMap.get(e.key);
-                    
-                    if (note) {
-                        e.preventDefault();
-                        pressedKeys.add(e.code); // 記錄被按下的物理按鍵
-                        playNote(note);
+        function addKeyboardListeners() {
+            const noteMap = new Map(keyboardMap.map(k => [k.key, k.noteIndex]));
+            const pressedKeys = new Set();
+            window.addEventListener('keydown', (e) => {
+                if (!sampler || !sampler.loaded) return;
+                if (Tone.context.state !== 'running') { Tone.start(); }
+                if (pressedKeys.has(e.code)) return;
+                const noteIndexOffset = noteMap.get(e.key.toLowerCase());
+                if (noteIndexOffset !== undefined) {
+                    e.preventDefault();
+                    pressedKeys.add(e.code);
+                    const finalNoteIndex = currentKeyboardOctave * 12 + noteIndexOffset;
+                    if (finalNoteIndex < keysData.length) {
+                        playNote(keysData[finalNoteIndex].note);
                     }
-                });
-
-                window.addEventListener('keyup', (e) => {
-                    // 釋放被按下的物理按鍵
-                    pressedKeys.delete(e.code);
-                });
+                }
+            });
+            window.addEventListener('keyup', (e) => {
+                pressedKeys.delete(e.code);
+            });
+        }
+        
+        // [NEW] 八度按鈕監聽
+        octaveDownBtn.addEventListener('click', () => {
+            if (currentKeyboardOctave > MIN_OCTAVE) {
+                currentKeyboardOctave--;
+                updateKeyboardActiveHighlight();
             }
-
-            // --- 啟動 ---
-            function initialize() {
-                createPianoKeys();
-                setupAudio();
-                addPointerListeners();
-                addKeyboardListeners();
-            }
-
-            initialize();
         });
+        octaveUpBtn.addEventListener('click', () => {
+            if (currentKeyboardOctave < MAX_OCTAVE) {
+                currentKeyboardOctave++;
+                updateKeyboardActiveHighlight();
+            }
+        });
+
+        function initialize() {
+            createPianoKeys();
+            setupAudio();
+            addPointerListeners();
+            addKeyboardListeners();
+        }
+
+        initialize();
+    });
     </script>
 </body>
 </html>
