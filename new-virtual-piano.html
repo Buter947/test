@@ -1,1 +1,322 @@
-123
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>線上鋼琴 (61鍵專業版)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', 'Inter', sans-serif;
+            touch-action: manipulation;
+            background-color: #111827;
+        }
+        .key {
+            transition: all 0.05s ease-in-out;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .key.white {
+            background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
+            border: 1px solid #9ca3af;
+            border-top: none;
+            box-shadow: inset 0 1px 0 white, 0 5px 3px -3px rgba(0,0,0,0.5), inset 0 -4px 5px rgba(0,0,0,0.1);
+        }
+        .key.black {
+            background: linear-gradient(to bottom, #27272a, #18181b);
+            border: 1px solid #000;
+            box-shadow: inset 0 -1px 2px rgba(255,255,255,0.2), 0 3px 5px -2px rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        .key.white.active {
+            background: linear-gradient(to bottom, #e5e7eb, #d1d5db);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+            transform: translateY(2px);
+        }
+        .key.black.active {
+            background: linear-gradient(to bottom, #18181b, #111);
+            box-shadow: inset 0 -1px 1px rgba(255,255,255,0.2), 0 1px 1px rgba(0,0,0,0.5);
+            transform: translate(-50%, 2px);
+        }
+        .key.black {
+            position: absolute;
+            top: 0;
+            left: 100%;
+            transform: translateX(-50%);
+        }
+        .key .key-char.keyboard-active {
+            color: #facc15;
+            font-weight: 700;
+        }
+        #control-panel {
+            font-family: 'Orbitron', sans-serif;
+        }
+        #note-display {
+            background-color: #000;
+            border: 2px solid #4b5563;
+            box-shadow: inset 0 0 10px #000;
+            text-shadow: 0 0 5px #fbbf24, 0 0 10px #fbbf24;
+        }
+        #piano-scroller::-webkit-scrollbar {
+            height: 12px;
+        }
+        #piano-scroller::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        #piano-scroller::-webkit-scrollbar-thumb {
+            background-color: #4b5563;
+            border-radius: 6px;
+            border: 3px solid #1f2937;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-2 sm:p-4">
+
+    <div id="piano-body" class="w-full max-w-7xl bg-black rounded-xl shadow-2xl border-t-2 border-gray-700">
+        
+        <div id="control-panel" class="h-28 sm:h-32 bg-gradient-to-b from-gray-800 to-gray-900 p-4 flex items-center justify-between rounded-t-lg border-b-4 border-black">
+            <div class="flex items-center space-x-4">
+                <button id="octave-down" class="text-gray-400 hover:text-white transition-colors p-2 rounded-md bg-gray-700">&lt; OCTAVE</button>
+                <div id="octave-display" class="text-white font-bold text-2xl w-24 text-center">C3 - B4</div>
+                <button id="octave-up" class="text-gray-400 hover:text-white transition-colors p-2 rounded-md bg-gray-700">OCTAVE &gt;</button>
+            </div>
+            
+            <div id="note-display" class="w-48 h-16 bg-black rounded-md flex items-center justify-center text-amber-400 text-4xl font-bold tracking-widest">
+                - - -
+            </div>
+            
+            <div class="text-gray-600 text-2xl font-bold hidden sm:block">
+                PRO SERIES
+            </div>
+        </div>
+
+        <main class="relative p-2 sm:p-4 md:p-6 bg-gray-900 rounded-b-xl">
+            <div id="loading-overlay" class="absolute inset-0 bg-gray-900 bg-opacity-95 flex items-center justify-center z-20 rounded-b-xl transition-opacity duration-300">
+                <div class="text-center">
+                    <svg class="animate-spin h-8 w-8 text-white mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <p class="text-white text-lg font-semibold">正在加載鋼琴音色...</p>
+                </div>
+            </div>
+
+            <div id="piano-scroller" class="overflow-x-auto">
+                <div id="piano" class="flex justify-start select-none h-48 sm:h-56 w-max">
+                    <!-- 琴鍵將由 JavaScript 動態生成 -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const pianoContainer = document.getElementById('piano');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const noteDisplay = document.getElementById('note-display');
+        const octaveDownBtn = document.getElementById('octave-down');
+        const octaveUpBtn = document.getElementById('octave-up');
+        const octaveDisplay = document.getElementById('octave-display');
+        const pianoScroller = document.getElementById('piano-scroller');
+        let sampler;
+
+        // [MODIFIED] 八度音位移設定
+        let currentKeyboardOctave = 1; // 預設鍵盤控制 C3-B4
+        const MIN_OCTAVE = 0; // 對應 C2-B3
+        const MAX_OCTAVE = 3; // 對應 C5-B6
+
+        // [MODIFIED] 生成5個八度 + 1個鍵 (C2-C7, 共61鍵)
+        const NOTE_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+        const keysData = [];
+        for (let octave = 2; octave <= 6; octave++) {
+            for (const note of NOTE_NAMES) {
+                keysData.push({
+                    note: `${note}${octave}`,
+                    type: note.includes('b') ? 'black' : 'white'
+                });
+            }
+        }
+        keysData.push({ note: 'C7', type: 'white' }); // 加上最後的 C7
+
+        const keyboardMap = [
+            { key: 'z', noteIndex: 0 }, { key: 's', noteIndex: 1 }, { key: 'x', noteIndex: 2 },
+            { key: 'd', noteIndex: 3 }, { key: 'c', noteIndex: 4 }, { key: 'v', noteIndex: 5 },
+            { key: 'g', noteIndex: 6 }, { key: 'b', noteIndex: 7 }, { key: 'h', noteIndex: 8 },
+            { key: 'n', noteIndex: 9 }, { key: 'j', noteIndex: 10 }, { key: 'm', noteIndex: 11 },
+            { key: 'q', noteIndex: 12 }, { key: '2', noteIndex: 13 }, { key: 'w', noteIndex: 14 },
+            { key: '3', noteIndex: 15 }, { key: 'e', noteIndex: 16 }, { key: 'r', noteIndex: 17 },
+            { key: '5', noteIndex: 18 }, { key: 't', noteIndex: 19 }, { key: '6', noteIndex: 20 },
+            { key: 'y', noteIndex: 21 }, { key: '7', noteIndex: 22 }, { key: 'u', noteIndex: 23 },
+        ];
+
+        function createPianoKeys() {
+            const whiteKeys = [];
+            keysData.forEach(keyInfo => {
+                if (keyInfo.type === 'white') {
+                    const keyElement = createKeyElement(keyInfo);
+                    pianoContainer.appendChild(keyElement);
+                    whiteKeys.push(keyElement);
+                }
+            });
+            let whiteKeyIndex = 0;
+            keysData.forEach((keyInfo, i) => {
+                if (keyInfo.type === 'white') {
+                    const nextKey = keysData[i + 1];
+                    if (nextKey && nextKey.type === 'white') {
+                        whiteKeyIndex++;
+                    }
+                } else if (keyInfo.type === 'black') {
+                    const keyElement = createKeyElement(keyInfo);
+                    if (whiteKeys[whiteKeyIndex]) {
+                        whiteKeys[whiteKeyIndex].appendChild(keyElement);
+                    }
+                    whiteKeyIndex++;
+                }
+            });
+        }
+
+        function createKeyElement(keyInfo) {
+            const keyElement = document.createElement('div');
+            keyElement.dataset.note = keyInfo.note;
+            keyElement.classList.add('key', keyInfo.type);
+            if (keyInfo.type === 'white') {
+                keyElement.classList.add('h-full', 'w-10', 'sm:w-12', 'rounded-b-md');
+            } else {
+                keyElement.classList.add('h-2/3', 'w-7', 'sm:w-8', 'rounded-b-md');
+            }
+            const keyText = document.createElement('span');
+            keyText.classList.add('key-char', 'absolute', 'bottom-2', 'left-1/2', '-translate-x-1/2', 'font-semibold', 'pointer-events-none', 'text-gray-400');
+            keyElement.appendChild(keyText);
+            return keyElement;
+        }
+
+        function setupAudio() {
+            sampler = new Tone.Sampler({
+                urls: {
+                    'C2': 'C2.mp3', 'C3': 'C3.mp3', 'C4': 'C4.mp3',
+                    'C5': 'C5.mp3', 'C6': 'C6.mp3', 'C7': 'C7.mp3',
+                    'D#2': 'Ds2.mp3', 'D#3': 'Ds3.mp3', 'D#4': 'Ds4.mp3',
+                    'D#5': 'Ds5.mp3', 'D#6': 'Ds6.mp3',
+                    'F#2': 'Fs2.mp3', 'F#3': 'Fs3.mp3', 'F#4': 'Fs4.mp3',
+                    'F#5': 'Fs5.mp3', 'F#6': 'Fs6.mp3',
+                    'A2': 'A2.mp3', 'A3': 'A3.mp3', 'A4': 'A4.mp3',
+                    'A5': 'A5.mp3', 'A6': 'A6.mp3',
+                },
+                baseUrl: 'https://tonejs.github.io/audio/salamander/',
+                onload: () => {
+                    loadingOverlay.style.opacity = '0';
+                    setTimeout(() => { loadingOverlay.style.display = 'none'; }, 300);
+                    updateKeyboardActiveHighlight();
+                    centerOnMiddleC();
+                }
+            }).toDestination();
+        }
+
+        function playNote(note) {
+            if (!sampler || !sampler.loaded || !note) return;
+            sampler.triggerAttack(note);
+            updateNoteDisplay(note);
+            const keyElement = pianoContainer.querySelector(`[data-note="${note}"]`);
+            if (keyElement) {
+                keyElement.classList.add('active');
+                setTimeout(() => { keyElement.classList.remove('active'); }, 150);
+            }
+        }
+
+        function updateNoteDisplay(note) {
+            const formattedNote = note.replace('b', '♭');
+            noteDisplay.textContent = formattedNote;
+        }
+        
+        function updateKeyboardActiveHighlight() {
+            document.querySelectorAll('.key-char').forEach(el => {
+                el.textContent = '';
+                el.classList.remove('keyboard-active');
+            });
+            const octaveStartIndex = currentKeyboardOctave * 12;
+            keyboardMap.forEach(mapping => {
+                const noteIndex = octaveStartIndex + mapping.noteIndex;
+                if (noteIndex < keysData.length) {
+                    const note = keysData[noteIndex].note;
+                    const keyElement = pianoContainer.querySelector(`[data-note="${note}"]`);
+                    if (keyElement) {
+                        const charEl = keyElement.querySelector('.key-char');
+                        charEl.textContent = mapping.key;
+                        charEl.classList.add('keyboard-active');
+                    }
+                }
+            });
+            const startOctave = currentKeyboardOctave + 2;
+            const endOctave = startOctave + 1;
+            octaveDisplay.textContent = `C${startOctave} - B${endOctave}`;
+        }
+        
+        function centerOnMiddleC() {
+            const middleC = pianoContainer.querySelector('[data-note="C4"]');
+            if (middleC) {
+                const scrollerWidth = pianoScroller.offsetWidth;
+                const middleCOffset = middleC.offsetLeft + (middleC.offsetWidth / 2);
+                pianoScroller.scrollLeft = middleCOffset - (scrollerWidth / 2);
+            }
+        }
+
+        function addPointerListeners() {
+            pianoContainer.addEventListener('pointerdown', (e) => {
+                if (!sampler || !sampler.loaded) return;
+                const keyElement = e.target.closest('.key');
+                if (keyElement) {
+                    if (Tone.context.state !== 'running') { Tone.start(); }
+                    playNote(keyElement.dataset.note);
+                }
+            });
+        }
+
+        function addKeyboardListeners() {
+            const noteMap = new Map(keyboardMap.map(k => [k.key, k.noteIndex]));
+            const pressedKeys = new Set();
+            window.addEventListener('keydown', (e) => {
+                if (!sampler || !sampler.loaded) return;
+                if (Tone.context.state !== 'running') { Tone.start(); }
+                if (pressedKeys.has(e.code)) return;
+                const noteIndexOffset = noteMap.get(e.key.toLowerCase());
+                if (noteIndexOffset !== undefined) {
+                    e.preventDefault();
+                    pressedKeys.add(e.code);
+                    const finalNoteIndex = currentKeyboardOctave * 12 + noteIndexOffset;
+                    if (finalNoteIndex < keysData.length) {
+                        playNote(keysData[finalNoteIndex].note);
+                    }
+                }
+            });
+            window.addEventListener('keyup', (e) => {
+                pressedKeys.delete(e.code);
+            });
+        }
+        
+        octaveDownBtn.addEventListener('click', () => {
+            if (currentKeyboardOctave > MIN_OCTAVE) {
+                currentKeyboardOctave--;
+                updateKeyboardActiveHighlight();
+            }
+        });
+        octaveUpBtn.addEventListener('click', () => {
+            if (currentKeyboardOctave < MAX_OCTAVE) {
+                currentKeyboardOctave++;
+                updateKeyboardActiveHighlight();
+            }
+        });
+
+        function initialize() {
+            createPianoKeys();
+            setupAudio();
+            addPointerListeners();
+            addKeyboardListeners();
+        }
+
+        initialize();
+    });
+    </script>
+</body>
+</html>
