@@ -50,12 +50,24 @@
             transform: translateX(-50%);
         }
         .key .key-char {
-            /* [NEW] 流暢的字體大小調整 */
             font-size: clamp(0.4rem, 1.2vw, 0.75rem);
         }
         .key .key-char.keyboard-active {
             color: #facc15;
             font-weight: 700;
+        }
+        /* [NEW] Middle C 標記樣式 */
+        .middle-c-marker {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background-color: #ef4444; /* 紅色 */
+            border-radius: 50%;
+            border: 1px solid rgba(0,0,0,0.3);
+            box-shadow: 0 0 4px #ef4444;
         }
         #control-panel {
             font-family: 'Orbitron', sans-serif;
@@ -91,7 +103,8 @@
             </div>
 
             <div id="piano" class="flex justify-start select-none h-48 sm:h-56 w-full">
-                </div>
+                <!-- 琴鍵將由 JavaScript 動態生成 -->
+            </div>
         </main>
     </div>
 
@@ -155,7 +168,6 @@
             const keyElement = document.createElement('div');
             keyElement.dataset.note = keyInfo.note;
             keyElement.classList.add('key', keyInfo.type);
-            // [MODIFIED] 移除固定的寬度 class
             if (keyInfo.type === 'white') {
                 keyElement.classList.add('h-full', 'rounded-b-md');
             } else {
@@ -164,10 +176,17 @@
             const keyText = document.createElement('span');
             keyText.classList.add('key-char', 'absolute', 'bottom-2', 'left-1/2', '-translate-x-1/2', 'font-semibold', 'pointer-events-none', 'text-gray-400');
             keyElement.appendChild(keyText);
+
+            // [MODIFIED] 如果是 Middle C，就加入標記
+            if (keyInfo.note === 'C4') {
+                const middleCMarker = document.createElement('div');
+                middleCMarker.classList.add('middle-c-marker');
+                keyElement.appendChild(middleCMarker);
+            }
+
             return keyElement;
         }
         
-        // [NEW] 動態調整琴鍵大小的函式
         function resizePiano() {
             const pianoWidth = pianoContainer.offsetWidth;
             const whiteKeys = pianoContainer.querySelectorAll('.key.white');
@@ -200,7 +219,7 @@
                     loadingOverlay.style.opacity = '0';
                     setTimeout(() => { loadingOverlay.style.display = 'none'; }, 300);
                     updateKeyboardActiveHighlight();
-                    resizePiano(); // 初始調整一次大小
+                    resizePiano();
                 }
             }).toDestination();
         }
@@ -256,7 +275,7 @@
         }
 
         function addKeyboardListeners() {
-            const noteMap = new Map(keyboardMap.map(k => [k.key, k.noteIndex]));
+            const noteMap = new Map(keyboardMap.map(k => [k.key.toLowerCase(), k.noteIndex]));
             const pressedKeys = new Set();
             window.addEventListener('keydown', (e) => {
                 if (!sampler || !sampler.loaded) return;
@@ -290,7 +309,6 @@
             }
         });
 
-        // [NEW] 監聽視窗大小變化
         window.addEventListener('resize', resizePiano);
 
         function initialize() {
