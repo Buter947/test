@@ -3,156 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>太陽、地球、月球運行模擬器</title>
+    <title>3D 互動星空圖 (附星座名稱)</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #000000; }
+        body { margin: 0; overflow: hidden; background-color: #00000a; }
         canvas { display: block; }
-        #info-panel {
+        #controls-panel {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 10px;
-            color: #ffffff;
+            top: 15px;
+            left: 15px;
+            padding: 15px 20px;
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid #374151;
+            color: #e5e7eb;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            font-size: 14px;
-            max-width: 300px;
+            width: 320px;
         }
-        #info-panel h2 {
+        #controls-panel h2, #controls-panel h3 {
             margin-top: 0;
-            font-size: 1.2rem;
+            border-bottom: 1px solid #4b5563;
+            padding-bottom: 10px;
             color: #f39c12;
         }
-        #info-panel p {
-            margin: 5px 0;
+        #controls-panel h2 { font-size: 1.5rem; }
+        #controls-panel h3 { font-size: 1.1rem; margin-top: 20px; }
+        
+        #season-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .season-btn, .toggle-btn, .const-btn {
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: 1px solid #4b5563;
+            background-color: #374151;
+            color: #e5e7eb;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .season-btn:hover, .toggle-btn:hover, .const-btn:hover { background-color: #4b5563; }
+        .season-btn.active {
+            background-color: #f39c12;
+            color: #111827;
+            border-color: #f39c12;
+            font-weight: bold;
+        }
+        .const-btn.active {
+            background-color: #60a5fa;
+            color: #ffffff;
+            border-color: #60a5fa;
+        }
+
+        #constellation-list {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 220px;
+            overflow-y: auto;
+            padding-right: 5px;
         }
     </style>
 </head>
 <body>
 
-    <div id="info-panel">
-        <h2>太陽系模擬器</h2>
-        <p>這是一個簡化的太陽、地球、月球系統模型。</p>
-        <p><b>操作:</b></p>
-        <ul>
-            <li><b>拖曳左鍵:</b> 旋轉視角</li>
-            <li><b>滾動滑鼠滾輪:</b> 縮放視角</li>
-            <li><b>拖曳右鍵:</b> 平移視角</li>
-        </ul>
+    <div id="controls-panel">
+        <h2>季節星空圖</h2>
+        <div id="season-buttons">
+            <button class="season-btn active" data-season="spring">春季</button>
+            <button class="season-btn" data-season="summer">夏季</button>
+            <button class="season-btn" data-season="autumn">秋季</button>
+            <button class="season-btn" data-season="winter">冬季</button>
+        </div>
+        <h3 id="constellation-list-title">春季星座</h3>
+        <div id="constellation-list"></div>
+        <button class="toggle-btn" id="toggle-labels-btn" style="margin-top: 15px;">隱藏星座名稱</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
 
     <script>
-        // 確保在頁面完全載入後執行
         window.onload = function() {
-            // 1. 場景設定 (Scene Setup)
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 50, 150); // 將攝影機初始位置拉遠一點
+            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+            camera.position.set(0, 0, 350);
 
             const renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
             document.body.appendChild(renderer.domElement);
 
-            // 軌道控制器 (Orbit Controls)
             const controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
+            controls.maxDistance = 800;
+            controls.minDistance = 50;
 
-            // 2. 建立天體 (Create Celestial Bodies)
+            const starfield = createStarfield();
+            scene.add(starfield);
 
-            // 太陽 (Sun)
-            const sunGeometry = new THREE.SphereGeometry(20, 32, 32);
-            const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xf39c12, wireframe: false });
-            const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-            scene.add(sun);
+            const constellationsData = {
+                spring: { 'Ursa Major': { name_ch: '大熊座', stars: [[-30,80,0], [-10,75,5], [10,85,10], [25,78,8], [45,88,3], [60,80,-5], [80,70,-10]], lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]] }, 'Leo': { name_ch: '獅子座', stars: [[-50,-10,20], [-40,-25,15], [-20,-30,10], [0,-20,5], [15,-25,8], [20,-40,12]], lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[3,0]] }, 'Boötes': { name_ch: '牧夫座', stars: [[100,50,30], [80,30,25], [90,10,20], [110,10,22], [120,30,28]], lines: [[0,1],[1,2],[2,3],[3,4],[4,1]] }, 'Virgo': { name_ch: '室女座', stars: [[-10,-80,-20], [10,-90,-25], [30,-85,-22], [20,-65,-15], [0,-50,-10]], lines: [[0,1],[1,2],[2,3],[3,4],[4,0]] } },
+                summer: { 'Scorpius': { name_ch: '天蠍座', stars: [[-70,-60,0], [-50,-55,5], [-40,-65,10], [-30,-50,8], [0,-45,-5], [20,-55,-10], [30,-70,-15]], lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]] }, 'Cygnus': { name_ch: '天鵝座', stars: [[0,80,30], [10,60,25], [-10,60,25], [0,50,20], [40,70,35], [-40,70,35]], lines: [[0,3],[1,3],[2,3],[0,4],[0,5]] }, 'Lyra': { name_ch: '天琴座', stars: [[-50,85,10], [-45,75,8], [-55,75,12], [-50,65,5]], lines: [[0,1],[0,2],[1,3],[2,3]] }, 'Sagittarius': { name_ch: '人馬座', stars: [[-120,-80,10], [-100,-70,5], [-90,-90,15], [-70,-85,8], [-80,-60,0]], lines: [[0,1],[1,2],[2,3],[3,4],[4,1]] } },
+                autumn: { 'Pegasus': { name_ch: '飛馬座', stars: [[-40,30,0], [40,30,0], [40,-30,0], [-40,-30,0], [-60,10,-10]], lines: [[0,1],[1,2],[2,3],[3,0],[0,4]] }, 'Cassiopeia': { name_ch: '仙后座', stars: [[-30,80,40], [-10,70,35], [0,85,30], [20,70,35], [40,80,40]], lines: [[0,1],[1,2],[2,3],[3,4]] }, 'Andromeda': { name_ch: '仙女座', stars: [[-40,30,0], [-70,45,-10], [-90,60,-20]], lines: [[0,1],[1,2]] }, 'Pisces': { name_ch: '雙魚座', stars: [[100,-10,-30],[80,-20,-35],[110,-30,-40]], lines: [[0,1],[1,2]] } },
+                winter: { 'Orion': { name_ch: '獵戶座', stars: [[-25,30,0], [25,-30,0], [-30,25,5], [30,-25,-5], [5,0,-2], [0,0,0], [-5,0,2]], lines: [ [0,2],[0,5],[2,6],[1,3],[1,5],[3,4],[4,5],[5,6] ] }, 'Taurus': { name_ch: '金牛座', stars: [[-80,10,20], [-60,0,15], [-50,20,10], [-40,5,5], [-90,30,25]], lines: [[0,1],[1,2],[2,3],[2,0],[0,4]] }, 'Canis Major': { name_ch: '大犬座', stars: [[0,-70,-40], [-10,-85,-45], [10,-85,-45]], lines: [[0,1],[0,2]] }, 'Gemini': { name_ch: '雙子座', stars: [[-60,50,30], [-65,65,35], [-55,35,25], [-80,20,20]], lines: [[0,1],[0,2],[2,3]] } }
+            };
 
-            // 太陽光源
-            const pointLight = new THREE.PointLight(0xffffff, 2, 500);
-            scene.add(pointLight);
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
-            scene.add(ambientLight);
+            const constellationGroup = new THREE.Group();
+            scene.add(constellationGroup);
+            const fontLoader = new THREE.FontLoader();
+            let font, labelsVisible = true, currentSeason = 'spring';
 
-            // 地球 (Earth)
-            const earthGeometry = new THREE.SphereGeometry(8, 32, 32);
-            const earthMaterial = new THREE.MeshStandardMaterial({ color: 0x2980b9, roughness: 0.8 });
-            const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-            earth.position.x = 100;
-            scene.add(earth);
+            fontLoader.load('https://storage.googleapis.com/gemini-web-app-assets/NotoSansTC_Regular.json', (loadedFont) => {
+                font = loadedFont;
+                updateConstellationList(currentSeason);
+            });
 
-            // 月球 (Moon)
-            const moonGeometry = new THREE.SphereGeometry(3, 32, 32);
-            const moonMaterial = new THREE.MeshStandardMaterial({ color: 0xbdc3c7, roughness: 0.9 });
-            const moon = new THREE.Mesh(moonGeometry, moonMaterial);
-            moon.position.x = 20;
-            
-            // 為了讓月球圍繞地球公轉，我們將月球添加到地球這個物件中
-            // 這樣月球的位置就是相對於地球的了
-            earth.add(moon);
-
-            // 3. 建立公轉軌道視覺化 (Create Orbit Paths)
-            function createOrbit(radius) {
-                const geometry = new THREE.TorusGeometry(radius, 0.2, 16, 100);
-                const material = new THREE.MeshBasicMaterial({ color: 0x34495e });
-                const orbit = new THREE.Mesh(geometry, material);
-                orbit.rotation.x = Math.PI / 2; // 將圓環旋轉至水平
-                scene.add(orbit);
+            function createStarfield() {
+                const vertices = [];
+                for (let i = 0; i < 20000; i++) {
+                    const x = (Math.random() - 0.5) * 2000;
+                    const y = (Math.random() - 0.5) * 2000;
+                    const z = (Math.random() - 0.5) * 2000;
+                    vertices.push(x, y, z);
+                }
+                const geometry = new THREE.BufferGeometry();
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+                return new THREE.Points(geometry, new THREE.PointsMaterial({ color: 0xffffff, size: 0.7 }));
             }
-            createOrbit(100); // 地球軌道
             
-            // 月球軌道需要跟隨地球，所以也加入地球物件中
-            const moonOrbitGeometry = new THREE.TorusGeometry(20, 0.1, 16, 100);
-            const moonOrbitMaterial = new THREE.MeshBasicMaterial({ color: 0x4a6b82 });
-            const moonOrbit = new THREE.Mesh(moonOrbitGeometry, moonOrbitMaterial);
-            moonOrbit.rotation.x = Math.PI / 2;
-            earth.add(moonOrbit);
+            function createTextLabel(text, position) {
+                if (!font) return null;
+                const textGeometry = new THREE.TextGeometry(text, { font: font, size: 6, height: 0.5 });
+                const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+                textMesh.position.copy(position).add(new THREE.Vector3(8, 8, 0));
+                return textMesh;
+            }
 
+            function highlightConstellation(constName, seasonKey) {
+                while (constellationGroup.children.length) constellationGroup.remove(constellationGroup.children[0]);
+                
+                const constellationsToDraw = (constName === 'all') ? constellationsData[seasonKey] : { [constName]: constellationsData[seasonKey][constName] };
 
-            // 4. 動畫迴圈 (Animation Loop)
-            const clock = new THREE.Clock();
+                const starMaterial = new THREE.MeshBasicMaterial({ color: 0xfff000 });
+                const lineMaterial = new THREE.LineBasicMaterial({ color: 0x60a5fa, linewidth: 2 });
+                
+                for (const name in constellationsToDraw) {
+                    const data = constellationsToDraw[name];
+                    data.stars.forEach(posArray => {
+                        const starMesh = new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 16), starMaterial);
+                        starMesh.position.set(...posArray);
+                        constellationGroup.add(starMesh);
+                    });
+                    data.lines.forEach(linePair => {
+                        const points = [ new THREE.Vector3(...data.stars[linePair[0]]), new THREE.Vector3(...data.stars[linePair[1]]) ];
+                        const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), lineMaterial);
+                        constellationGroup.add(line);
+                    });
+                    const center = data.stars.reduce((acc, s) => acc.add(new THREE.Vector3(...s)), new THREE.Vector3()).divideScalar(data.stars.length);
+                    const label = createTextLabel(`${name} (${data.name_ch})`, center);
+                    if (label) {
+                        label.visible = labelsVisible;
+                        constellationGroup.add(label);
+                    }
+                }
+            }
 
+            function updateConstellationList(seasonKey) {
+                currentSeason = seasonKey;
+                const listContainer = document.getElementById('constellation-list');
+                const title = document.getElementById('constellation-list-title');
+                listContainer.innerHTML = '';
+                const seasonData = constellationsData[seasonKey];
+                title.textContent = `${document.querySelector(`.season-btn[data-season="${seasonKey}"]`).textContent} 星座`;
+                
+                // 新增 "顯示全部" 按鈕
+                const allBtn = document.createElement('button');
+                allBtn.className = 'const-btn active';
+                allBtn.textContent = '顯示全部';
+                allBtn.dataset.key = 'all';
+                listContainer.appendChild(allBtn);
+
+                for (const constName in seasonData) {
+                    const button = document.createElement('button');
+                    button.className = 'const-btn';
+                    button.textContent = `${constName} (${seasonData[constName].name_ch})`;
+                    button.dataset.key = constName;
+                    listContainer.appendChild(button);
+                }
+                highlightConstellation('all', seasonKey); // 預設顯示全部
+            }
+            
+            document.getElementById('season-buttons').addEventListener('click', function(e) {
+                if (e.target.classList.contains('season-btn')) {
+                    document.querySelectorAll('.season-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    updateConstellationList(e.target.dataset.season);
+                }
+            });
+
+            document.getElementById('constellation-list').addEventListener('click', function(e) {
+                if (e.target.classList.contains('const-btn')) {
+                    document.querySelectorAll('#constellation-list .const-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    highlightConstellation(e.target.dataset.key, currentSeason);
+                }
+            });
+
+            document.getElementById('toggle-labels-btn').addEventListener('click', function() {
+                labelsVisible = !labelsVisible;
+                constellationGroup.children.forEach(child => {
+                    if (child.geometry instanceof THREE.TextGeometry) child.visible = labelsVisible;
+                });
+                this.textContent = labelsVisible ? '隱藏星座名稱' : '顯示星座名稱';
+            });
+            
             function animate() {
                 requestAnimationFrame(animate);
-
-                const elapsedTime = clock.getElapsedTime();
-
-                // 自轉 (Rotation)
-                sun.rotation.y += 0.001;
-                earth.rotation.y += 0.01; // 地球自轉速度
-                moon.rotation.y += 0.005;
-
-                // 公轉 (Revolution)
-                // 地球圍繞太陽公轉
-                earth.position.x = Math.cos(elapsedTime * 0.2) * 100;
-                earth.position.z = Math.sin(elapsedTime * 0.2) * 100;
-
-                // 月球的位置是相對於地球的，所以它會自動跟隨地球
-                // 我們只需要讓它圍繞地球旋轉即可
-                // (因為月球已經是地球的子物件，所以這裡的旋轉實際上就是公轉)
-                // 這部分已由 earth.add(moon) 處理，月球會跟隨地球移動
-                // 我們只需要更新月球相對於地球的位置即可，但由於我們已將月球添加到地球上，
-                // 地球的移動會自動帶著月球移動。月球的公轉已由其在地球坐標系中的初始位置和地球的自轉模擬
-                // 為了更真實的公轉，我們需要單獨更新月球的位置
-                 moon.position.x = Math.cos(elapsedTime * 1.5) * 20;
-                 moon.position.z = Math.sin(elapsedTime * 1.5) * 20;
-
-
                 controls.update();
                 renderer.render(scene, camera);
             }
-
-            // 5. 視窗大小調整處理
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            // 初始載入
+            fontLoader.load('https://storage.googleapis.com/gemini-web-app-assets/NotoSansTC_Regular.json', (loadedFont) => {
+                font = loadedFont;
+                updateConstellationList('spring');
             });
-
-            // 啟動動畫
             animate();
         };
     </script>
