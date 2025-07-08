@@ -1,1 +1,275 @@
-1
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日文假名三向轉換器</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #f8fafc !important;
+        }
+        #kana-converter-app {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+            max-width: 800px !important;
+            margin: 2rem auto !important;
+            background-color: #ffffff !important;
+            padding: 2rem !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+            border: 1px solid #e5e7eb !important;
+        }
+
+        #kana-converter-app h2 {
+            color: #B45309 !important;
+            font-size: 1.8rem !important;
+            font-weight: 700 !important;
+            margin-top: 0 !important;
+            margin-bottom: 2rem !important;
+            text-align: center !important;
+        }
+
+        #kana-converter-app .converter-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        #kana-converter-app .kana-group {
+            position: relative;
+        }
+        
+        #kana-converter-app .kana-label {
+            position: absolute;
+            top: -0.75rem;
+            left: 1rem;
+            background-color: #ffffff;
+            padding: 0 0.5rem;
+            color: #6b7280;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        #kana-converter-app .kana-input, #kana-converter-app .kana-output {
+            width: 100% !important;
+            box-sizing: border-box;
+            padding: 1rem 3.5rem 1rem 1rem !important;
+            font-size: 1.2rem !important;
+            border-radius: 0.5rem !important;
+            border: 1px solid #d1d5db !important;
+        }
+
+        #kana-converter-app .kana-input {
+             background-color: #f9fafb;
+             font-size: 1.5rem !important;
+             min-height: 90px;
+        }
+        
+        #kana-converter-app .kana-input:focus {
+            outline: none !important;
+            border-color: #B45309 !important;
+            box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.2) !important;
+        }
+
+        #kana-converter-app .kana-output {
+            background-color: #f3f4f6;
+            color: #374151;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+        }
+
+        #kana-converter-app .copy-btn {
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: 1px solid #d1d5db;
+            background-color: #ffffff;
+            color: #6b7280;
+            cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+        #kana-converter-app .copy-btn:hover {
+             background-color: #e5e7eb;
+        }
+
+        #kana-converter-app #copy-feedback {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #374151;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="kana-converter-app">
+        <h2>日文假名三向轉換器</h2>
+
+        <div class="converter-grid">
+            <div class="kana-group">
+                <label for="main-input" class="kana-label">輸入羅馬拼音、平假名或片假名</label>
+                <textarea id="main-input" class="kana-input" rows="2" placeholder="e.g., lee jun"></textarea>
+            </div>
+            
+            <div class="kana-group">
+                <label for="romaji-output" class="kana-label">羅馬拼音 (Romaji)</label>
+                <div id="romaji-output" class="kana-output"></div>
+                <button class="copy-btn" data-target="romaji-output" title="複製">📋</button>
+            </div>
+
+            <div class="kana-group">
+                <label for="hiragana-output" class="kana-label">平假名 (Hiragana)</label>
+                <div id="hiragana-output" class="kana-output"></div>
+                <button class="copy-btn" data-target="hiragana-output" title="複製">📋</button>
+            </div>
+            
+            <div class="kana-group">
+                <label for="katakana-output" class="kana-label">片假名 (Katakana)</label>
+                <div id="katakana-output" class="kana-output"></div>
+                <button class="copy-btn" data-target="katakana-output" title="複製">📋</button>
+            </div>
+        </div>
+        <div id="copy-feedback">已複製到剪貼簿！</div>
+    </div>
+
+    <script>
+    (function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            const app = document.getElementById('kana-converter-app');
+            if (!app) return;
+
+            const mainInput = app.querySelector('#main-input');
+            const romajiOutput = app.querySelector('#romaji-output');
+            const hiraganaOutput = app.querySelector('#hiragana-output');
+            const katakanaOutput = app.querySelector('#katakana-output');
+
+            const romajiToKana = {
+                'a':'あ','i':'い','u':'う','e':'え','o':'お','ka':'か','ki':'き','ku':'く','ke':'け','ko':'こ','sa':'さ','shi':'し','su':'す','se':'せ','so':'そ','ta':'た','chi':'ち','tsu':'つ','te':'て','to':'と','na':'な','ni':'に','nu':'ぬ','ne':'ね','no':'の','ha':'は','hi':'ひ','fu':'ふ','he':'へ','ho':'ほ','ma':'ま','mi':'み','mu':'む','me':'め','mo':'も','ya':'や','yu':'ゆ','yo':'よ','ra':'ら','ri':'り','ru':'る','re':'れ','ro':'ろ','wa':'わ','wi':'ゐ','we':'ゑ','wo':'を','n':'ん','ga':'が','gi':'ぎ','gu':'ぐ','ge':'げ','go':'ご','za':'ざ','ji':'じ','zu':'ず','ze':'ぜ','zo':'ぞ','da':'だ','di':'ぢ','dzu':'づ','de':'で','do':'ど','ba':'ば','bi':'び','bu':'ぶ','be':'べ','bo':'ぼ','pa':'ぱ','pi':'ぴ','pu':'ぷ','pe':'ぺ','po':'ぽ','kya':'きゃ','kyu':'きゅ','kyo':'きょ','sha':'しゃ','shu':'しゅ','sho':'しょ','cha':'ちゃ','chu':'ちゅ','cho':'ちょ','nya':'にゃ','nyu':'にゅ','nyo':'にょ','hya':'ひゃ','hyu':'ひゅ','hyo':'ひょ','mya':'みゃ','myu':'みゅ','myo':'みょ','rya':'りゃ','ryu':'りゅ','ryo':'りょ','gya':'ぎゃ','gyu':'ぎゅ','gyo':'ぎょ','ja':'じゃ','ju':'じゅ','jo':'じょ','bya':'びゃ','byu':'びゅ','byo':'びょ','pya':'ぴゃ','pyu':'ぴゅ','pyo':'ぴょ','-':'ー',
+            };
+
+            const kanaToRomaji = {};
+            for (const key in romajiToKana) {
+                kanaToRomaji[romajiToKana[key]] = key;
+            }
+
+            function toHiragana(text) { return text.replace(/[\u30a1-\u30f6]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x60)); }
+            function toKatakana(text) { return text.replace(/[\u3041-\u3096]/g, m => String.fromCharCode(m.charCodeAt(0) + 0x60)); }
+            
+            function toRomaji(text) {
+                text = toHiragana(text);
+                let result = '';
+                for (let i = 0; i < text.length; i++) {
+                    if (i + 1 < text.length && kanaToRomaji[text.substring(i, i + 2)]) {
+                        result += kanaToRomaji[text.substring(i, i + 2)];
+                        i++;
+                    } else if (kanaToRomaji[text[i]]) {
+                        result += kanaToRomaji[text[i]];
+                    } else if (text[i] === 'っ') {
+                        let nextChar = text[i + 1];
+                        if (nextChar && kanaToRomaji[nextChar]) {
+                            result += kanaToRomaji[nextChar].charAt(0);
+                        }
+                    } else {
+                        result += text[i];
+                    }
+                }
+                return result;
+            }
+            
+            // --- 新增：智能預處理函式 ---
+            function preprocessRomaji(text) {
+                let processedText = text.toLowerCase();
+                // 規則 1: 將所有 'l' 替換為 'r'
+                processedText = processedText.replace(/l/g, 'r');
+                // 規則 2: 如果單詞以 'm' 結尾，則替換為 'n'
+                if (processedText.endsWith('m')) {
+                    processedText = processedText.slice(0, -1) + 'n';
+                }
+                return processedText;
+            }
+
+            function fromRomaji(text) {
+                // 先對整個輸入字串進行預處理
+                const preprocessedText = preprocessRomaji(text);
+                
+                let result = '';
+                let i = 0;
+                while (i < preprocessedText.length) {
+                    if (i + 1 < preprocessedText.length && preprocessedText[i] !== 'n' && preprocessedText[i] === preprocessedText[i+1]) {
+                        result += 'っ';
+                        i++;
+                        continue;
+                    }
+                    let sub3 = preprocessedText.substring(i, i + 3);
+                    if (romajiToKana[sub3]) { result += romajiToKana[sub3]; i += 3; continue; }
+                    let sub2 = preprocessedText.substring(i, i + 2);
+                    if (romajiToKana[sub2]) { result += romajiToKana[sub2]; i += 2; continue; }
+                    let sub1 = preprocessedText.substring(i, i + 1);
+                    if (romajiToKana[sub1]) { result += romajiToKana[sub1]; i += 1; } 
+                    else { result += sub1; i += 1; }
+                }
+                return result;
+            }
+
+            mainInput.addEventListener('input', () => {
+                const text = mainInput.value.trim();
+                if (!text) {
+                    romajiOutput.textContent = '';
+                    hiraganaOutput.textContent = '';
+                    katakanaOutput.textContent = '';
+                    return;
+                }
+
+                if (/^[a-zA-Z0-9\s-]+$/.test(text)) {
+                    const hiragana = fromRomaji(text);
+                    romajiOutput.textContent = text;
+                    hiraganaOutput.textContent = hiragana;
+                    katakanaOutput.textContent = toKatakana(hiragana);
+                } else {
+                    const romaji = toRomaji(text);
+                    const hiragana = toHiragana(text);
+                    romajiOutput.textContent = romaji;
+                    hiraganaOutput.textContent = hiragana;
+                    katakanaOutput.textContent = toKatakana(hiragana);
+                }
+            });
+
+            app.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = this.dataset.target;
+                    const textToCopy = app.querySelector(`#${targetId}`).textContent;
+                    copyToClipboard(textToCopy);
+                });
+            });
+
+            function copyToClipboard(text) {
+                if (!text) return;
+                const feedback = app.querySelector('#copy-feedback');
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+
+                feedback.style.opacity = 1;
+                setTimeout(() => { feedback.style.opacity = 0; }, 2000);
+            }
+        });
+    })();
+    </script>
+</body>
+</html>
