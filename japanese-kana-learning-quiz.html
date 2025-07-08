@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日文假名學習遊戲</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        #kana-quiz-app {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+            width: 100%;
+            max-width: 500px !important;
+            padding: 2rem;
+            background-color: #f7fafc !important;
+            border-radius: 1rem !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        .kana-quiz-screen { display: none; }
+        .kana-quiz-screen.active { display: block; }
+
+        #menu-screen h2, #end-screen h3 {
+            text-align: center;
+            color: #B45309 !important;
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+        #end-screen h3 { font-size: 1.8rem; color: #2d3748; }
+
+        #menu-screen .mode-selection, #end-screen .end-game-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .mode-btn, .end-btn {
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid #e2e8f0;
+            background-color: #ffffff;
+            color: #2d3748;
+        }
+        .mode-btn:hover:not(:disabled) {
+            background-color: #fdfbf7;
+            border-color: #B45309;
+            color: #B45309;
+        }
+        .mode-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        #game-screen .game-header, #game-screen .game-stats {
+            display: flex;
+            align-items: center;
+            color: #4a5568;
+        }
+        #game-screen .game-header { justify-content: space-between; margin-bottom: 1rem; }
+        #game-screen .game-title { font-size: 1.5rem; font-weight: 600; }
+        #game-screen .game-stats { gap: 1.5rem; font-weight: 600; }
+        #game-screen #back-to-menu { font-size: 0.9rem; color: #718096; cursor: pointer; text-decoration: underline; }
+        
+        #game-screen #question-card {
+            width: 100%; height: 200px; background-color: #ffffff; border-radius: 1rem;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 6rem; font-weight: bold; color: #1a202c;
+            margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0;
+        }
+        
+        #game-screen #options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        #game-screen .option-btn {
+            padding: 1.2rem; font-size: 1.5rem; font-weight: 500; border: 2px solid #e2e8f0;
+            background-color: #ffffff; color: #2d3748; border-radius: 0.75rem;
+            cursor: pointer; transition: all 0.2s;
+        }
+        #game-screen .option-btn:hover:not(:disabled) { background-color: #f7fafc; border-color: #cbd5e0; }
+        #game-screen .option-btn:disabled { cursor: not-allowed; opacity: 0.8; }
+        #game-screen .option-btn.correct { background-color: #c6f6d5 !important; border-color: #38a169 !important; color: #2f855a !important; }
+        #game-screen .option-btn.incorrect { background-color: #fed7d7 !important; border-color: #e53e3e !important; color: #c53030 !important; }
+        
+        #game-screen #feedback-area { text-align: center; margin-top: 1.5rem; font-size: 1.2rem; font-weight: 600; min-height: 2rem; }
+        #game-screen #feedback-area.correct { color: #38a169; }
+        #game-screen #feedback-area.incorrect { color: #e53e3e; }
+        
+        #game-screen #next-question-btn {
+            display: none; width: 100%; margin-top: 1rem; padding: 0.8rem;
+            font-size: 1.1rem; font-weight: 600; background-color: #3182ce; color: white;
+            border: none; border-radius: 0.5rem; cursor: pointer;
+        }
+
+        #end-screen #final-score { font-size: 2.5rem; color: #B45309; margin: 1rem 0; font-weight: bold; }
+        #end-screen #end-message { font-size: 1.1rem; color: #4a5568; min-height: 2rem; margin-bottom: 2rem; }
+        #play-again-btn { background-color: #B45309 !important; color: #ffffff !important; border: none; }
+        #play-again-btn:hover { background-color: #9a4708 !important; }
+        #end-back-to-menu { background-color: #e2e8f0 !important; color: #4a5568 !important; border: none; }
+        #end-back-to-menu:hover { background-color: #cbd5e0 !important; }
+    </style>
+</head>
+<body>
+    <div id="kana-quiz-app">
+        <!-- 畫面 A: 主選單 -->
+        <div id="menu-screen" class="kana-quiz-screen active">
+            <h2>日文假名學習遊戲</h2>
+            <div class="mode-selection">
+                <button class="mode-btn" data-mode="hira-to-romaji">A) 辨認平假名及讀音</button>
+                <button class="mode-btn" data-mode="kata-to-romaji">B) 辨認片假名及讀音</button>
+                <button class="mode-btn" data-mode="kana-match">C) 平假名↔片假名配對</button>
+            </div>
+        </div>
+
+        <!-- 畫面 B: 遊戲介面 -->
+        <div id="game-screen" class="kana-quiz-screen">
+            <div class="game-header">
+                <span id="game-title" class="game-title"></span>
+                <span id="back-to-menu">返回主選單</span>
+            </div>
+            <div class="game-stats">
+                <span id="question-counter"></span>
+                <span id="score-counter"></span>
+            </div>
+            <div id="question-card"></div>
+            <div id="options-grid">
+                <button class="option-btn" id="option1"></button>
+                <button class="option-btn" id="option2"></button>
+                <button class="option-btn" id="option3"></button>
+                <button class="option-btn" id="option4"></button>
+            </div>
+            <div id="feedback-area"></div>
+            <button id="next-question-btn">下一題</button>
+        </div>
+
+        <!-- 畫面 C: 結束畫面 -->
+        <div id="end-screen" class="kana-quiz-screen">
+            <h3>遊戲結束！</h3>
+            <p>您的分數是：</p>
+            <div id="final-score"></div>
+            <p id="end-message"></p>
+            <div class="end-game-btns">
+                <button class="end-btn" id="play-again-btn">再玩一次</button>
+                <button class="end-btn" id="end-back-to-menu">返回主選單</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            const app = document.getElementById('kana-quiz-app');
+            if (!app) return;
+
+            const menuScreen = app.querySelector('#menu-screen');
+            const gameScreen = app.querySelector('#game-screen');
+            const endScreen = app.querySelector('#end-screen');
+            const gameTitle = app.querySelector('#game-title');
+            const questionCard = app.querySelector('#question-card');
+            const optionButtons = app.querySelectorAll('.option-btn');
+            const feedbackArea = app.querySelector('#feedback-area');
+            const backToMenuBtn = app.querySelector('#back-to-menu');
+            const nextQuestionBtn = app.querySelector('#next-question-btn');
+            const questionCounter = app.querySelector('#question-counter');
+            const scoreCounter = app.querySelector('#score-counter');
+            const finalScore = app.querySelector('#final-score');
+            const endMessage = app.querySelector('#end-message');
+            const playAgainBtn = app.querySelector('#play-again-btn');
+            const endBackToMenuBtn = app.querySelector('#end-back-to-menu');
+            
+            const kanaData = [
+                { h: 'あ', k: 'ア', r: 'a' }, { h: 'い', k: 'イ', r: 'i' }, { h: 'う', k: 'ウ', r: 'u' }, { h: 'え', k: 'エ', r: 'e' }, { h: 'お', k: 'オ', r: 'o' },
+                { h: 'か', k: 'カ', r: 'ka' }, { h: 'き', k: 'キ', r: 'ki' }, { h: 'く', k: 'ク', r: 'ku' }, { h: 'け', k: 'ケ', r: 'ke' }, { h: 'こ', k: 'コ', r: 'ko' },
+                { h: 'さ', k: 'サ', r: 'sa' }, { h: 'し', k: 'シ', r: 'shi' }, { h: 'す', k: 'ス', r: 'su' }, { h: 'せ', k: 'セ', r: 'se' }, { h: 'そ', k: 'ソ', r: 'so' },
+                { h: 'た', k: 'タ', r: 'ta' }, { h: 'ち', k: 'チ', r: 'chi' }, { h: 'つ', k: 'ツ', r: 'tsu' }, { h: 'て', k: 'テ', r: 'te' }, { h: 'と', k: 'ト', r: 'to' },
+                { h: 'な', k: 'ナ', r: 'na' }, { h: 'に', k: 'ニ', r: 'ni' }, { h: 'ぬ', k: 'ヌ', r: 'nu' }, { h: 'ね', k: 'ネ', r: 'ne' }, { h: 'の', k: 'ノ', r: 'no' },
+                { h: 'は', k: 'ハ', r: 'ha' }, { h: 'ひ', k: 'ヒ', r: 'hi' }, { h: 'ふ', k: 'フ', r: 'fu' }, { h: 'へ', k: 'ヘ', r: 'he' }, { h: 'ほ', k: 'ホ', r: 'ho' },
+                { h: 'ま', k: 'マ', r: 'ma' }, { h: 'み', k: 'ミ', r: 'mi' }, { h: 'む', k: 'ム', r: 'mu' }, { h: 'め', k: 'メ', r: 'me' }, { h: 'も', k: 'モ', r: 'mo' },
+                { h: 'や', k: 'ヤ', r: 'ya' }, { h: 'ゆ', k: 'ユ', r: 'yu' }, { h: 'よ', k: 'ヨ', r: 'yo' },
+                { h: 'ら', k: 'ラ', r: 'ra' }, { h: 'り', k: 'リ', r: 'ri' }, { h: 'る', k: 'ル', r: 'ru' }, { h: 'れ', k: 'レ', r: 're' }, { h: 'ろ', k: 'ロ', r: 'ro' },
+                { h: 'わ', k: 'ワ', r: 'wa' }, { h: 'を', k: 'ヲ', r: 'wo' },
+                { h: 'ん', k: 'ン', r: 'n' }
+            ];
+
+            let currentQuestion = null;
+            let currentGameMode = '';
+            let questionCount = 0;
+            let score = 0;
+            const TOTAL_QUESTIONS = 10;
+
+            function startGame(mode) {
+                currentGameMode = mode;
+                questionCount = 0;
+                score = 0;
+                
+                menuScreen.classList.remove('active');
+                endScreen.classList.remove('active');
+                gameScreen.classList.add('active');
+                
+                if (mode === 'hira-to-romaji') gameTitle.textContent = '平假名 → 讀音';
+                else if (mode === 'kata-to-romaji') gameTitle.textContent = '片假名 → 讀音';
+                else if (mode === 'kana-match') gameTitle.textContent = '平假名 ↔ 片假名 配對';
+
+                nextQuestion();
+            }
+
+            function nextQuestion() {
+                if (questionCount >= TOTAL_QUESTIONS) {
+                    endGame();
+                    return;
+                }
+                questionCount++;
+                
+                questionCounter.textContent = `問題 ${questionCount} / ${TOTAL_QUESTIONS}`;
+                scoreCounter.textContent = `分數: ${score}`;
+                feedbackArea.textContent = '';
+                feedbackArea.className = 'feedback-area';
+                nextQuestionBtn.style.display = 'none';
+                optionButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.className = 'option-btn';
+                });
+
+                const randomIndex = Math.floor(Math.random() * kanaData.length);
+                currentQuestion = kanaData[randomIndex];
+                const wrongAnswers = [];
+                while (wrongAnswers.length < 3) {
+                    const wrongIndex = Math.floor(Math.random() * kanaData.length);
+                    const wrongOption = kanaData[wrongIndex];
+                    if (wrongOption.r !== currentQuestion.r && !wrongAnswers.some(a => a.r === wrongOption.r)) {
+                        wrongAnswers.push(wrongOption);
+                    }
+                }
+                
+                const options = [currentQuestion, ...wrongAnswers];
+                options.sort(() => Math.random() - 0.5);
+
+                if (currentGameMode === 'hira-to-romaji') {
+                    questionCard.textContent = currentQuestion.h;
+                    optionButtons.forEach((btn, i) => btn.textContent = options[i].r);
+                } else if (currentGameMode === 'kata-to-romaji') {
+                    questionCard.textContent = currentQuestion.k;
+                    optionButtons.forEach((btn, i) => btn.textContent = options[i].r);
+                } else if (currentGameMode === 'kana-match') {
+                    const askHira = Math.random() < 0.5;
+                    if (askHira) {
+                        questionCard.textContent = currentQuestion.h;
+                        optionButtons.forEach((btn, i) => btn.textContent = options[i].k);
+                    } else {
+                        questionCard.textContent = currentQuestion.k;
+                        optionButtons.forEach((btn, i) => btn.textContent = options[i].h);
+                    }
+                }
+            }
+
+            function checkAnswer(selectedAnswer) {
+                optionButtons.forEach(btn => btn.disabled = true);
+
+                let isCorrect = false;
+                let correctAnswerText = '';
+                let correctOptionValue = '';
+
+                if (currentGameMode === 'hira-to-romaji' || currentGameMode === 'kata-to-romaji') {
+                    isCorrect = (selectedAnswer === currentQuestion.r);
+                    correctAnswerText = currentQuestion.r;
+                    correctOptionValue = currentQuestion.r;
+                } else if (currentGameMode === 'kana-match') {
+                    const isAskingHira = kanaData.some(k => k.h === questionCard.textContent);
+                    correctOptionValue = isAskingHira ? currentQuestion.k : currentQuestion.h;
+                    isCorrect = (selectedAnswer === correctOptionValue);
+                    correctAnswerText = `${currentQuestion.h} / ${currentQuestion.k}`;
+                }
+
+                if (isCorrect) {
+                    score++;
+                    feedbackArea.textContent = '正確！';
+                    feedbackArea.classList.add('correct');
+                    const correctBtn = Array.from(optionButtons).find(b => b.textContent === selectedAnswer);
+                    if(correctBtn) correctBtn.classList.add('correct');
+                } else {
+                    feedbackArea.textContent = `錯誤！答案是: ${correctAnswerText}`;
+                    feedbackArea.classList.add('incorrect');
+                    const wrongBtn = Array.from(optionButtons).find(b => b.textContent === selectedAnswer);
+                    if(wrongBtn) wrongBtn.classList.add('incorrect');
+                    
+                    const correctBtn = Array.from(optionButtons).find(b => b.textContent === correctOptionValue);
+                    if(correctBtn) correctBtn.classList.add('correct');
+                }
+                
+                scoreCounter.textContent = `分數: ${score}`;
+                nextQuestionBtn.style.display = 'block';
+            }
+
+            function endGame() {
+                gameScreen.classList.remove('active');
+                endScreen.classList.add('active');
+                finalScore.textContent = `${score} / ${TOTAL_QUESTIONS}`;
+                
+                if (score <= 4) {
+                    endMessage.textContent = '別灰心，萬事起頭難，多練習幾次就會進步！';
+                } else if (score <= 7) {
+                    endMessage.textContent = '不錯喔！您已經掌握了大部分，繼續加油！';
+                } else {
+                    endMessage.textContent = '太厲害了！您是假名大師！';
+                }
+            }
+
+            function showMenu() {
+                gameScreen.classList.remove('active');
+                endScreen.classList.remove('active');
+                menuScreen.classList.add('active');
+            }
+
+            menuScreen.addEventListener('click', (e) => {
+                if (e.target.matches('.mode-btn') && !e.target.disabled) {
+                    startGame(e.target.dataset.mode);
+                }
+            });
+
+            backToMenuBtn.addEventListener('click', showMenu);
+            endBackToMenuBtn.addEventListener('click', showMenu);
+            nextQuestionBtn.addEventListener('click', nextQuestion);
+            playAgainBtn.addEventListener('click', () => startGame(currentGameMode));
+
+            optionButtons.forEach(btn => {
+                btn.addEventListener('click', () => checkAnswer(btn.textContent));
+            });
+        });
+    })();
+    </script>
+</body>
+</html>
