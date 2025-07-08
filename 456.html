@@ -1,1 +1,160 @@
-456
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>太陽、地球、月球運行模擬器</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000000; }
+        canvas { display: block; }
+        #info-panel {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 14px;
+            max-width: 300px;
+        }
+        #info-panel h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #f39c12;
+        }
+        #info-panel p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="info-panel">
+        <h2>太陽系模擬器</h2>
+        <p>這是一個簡化的太陽、地球、月球系統模型。</p>
+        <p><b>操作:</b></p>
+        <ul>
+            <li><b>拖曳左鍵:</b> 旋轉視角</li>
+            <li><b>滾動滑鼠滾輪:</b> 縮放視角</li>
+            <li><b>拖曳右鍵:</b> 平移視角</li>
+        </ul>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // 確保在頁面完全載入後執行
+        window.onload = function() {
+            // 1. 場景設定 (Scene Setup)
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 50, 150); // 將攝影機初始位置拉遠一點
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.body.appendChild(renderer.domElement);
+
+            // 軌道控制器 (Orbit Controls)
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+
+            // 2. 建立天體 (Create Celestial Bodies)
+
+            // 太陽 (Sun)
+            const sunGeometry = new THREE.SphereGeometry(20, 32, 32);
+            const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xf39c12, wireframe: false });
+            const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+            scene.add(sun);
+
+            // 太陽光源
+            const pointLight = new THREE.PointLight(0xffffff, 2, 500);
+            scene.add(pointLight);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+            scene.add(ambientLight);
+
+            // 地球 (Earth)
+            const earthGeometry = new THREE.SphereGeometry(8, 32, 32);
+            const earthMaterial = new THREE.MeshStandardMaterial({ color: 0x2980b9, roughness: 0.8 });
+            const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+            earth.position.x = 100;
+            scene.add(earth);
+
+            // 月球 (Moon)
+            const moonGeometry = new THREE.SphereGeometry(3, 32, 32);
+            const moonMaterial = new THREE.MeshStandardMaterial({ color: 0xbdc3c7, roughness: 0.9 });
+            const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+            moon.position.x = 20;
+            
+            // 為了讓月球圍繞地球公轉，我們將月球添加到地球這個物件中
+            // 這樣月球的位置就是相對於地球的了
+            earth.add(moon);
+
+            // 3. 建立公轉軌道視覺化 (Create Orbit Paths)
+            function createOrbit(radius) {
+                const geometry = new THREE.TorusGeometry(radius, 0.2, 16, 100);
+                const material = new THREE.MeshBasicMaterial({ color: 0x34495e });
+                const orbit = new THREE.Mesh(geometry, material);
+                orbit.rotation.x = Math.PI / 2; // 將圓環旋轉至水平
+                scene.add(orbit);
+            }
+            createOrbit(100); // 地球軌道
+            
+            // 月球軌道需要跟隨地球，所以也加入地球物件中
+            const moonOrbitGeometry = new THREE.TorusGeometry(20, 0.1, 16, 100);
+            const moonOrbitMaterial = new THREE.MeshBasicMaterial({ color: 0x4a6b82 });
+            const moonOrbit = new THREE.Mesh(moonOrbitGeometry, moonOrbitMaterial);
+            moonOrbit.rotation.x = Math.PI / 2;
+            earth.add(moonOrbit);
+
+
+            // 4. 動畫迴圈 (Animation Loop)
+            const clock = new THREE.Clock();
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                const elapsedTime = clock.getElapsedTime();
+
+                // 自轉 (Rotation)
+                sun.rotation.y += 0.001;
+                earth.rotation.y += 0.01; // 地球自轉速度
+                moon.rotation.y += 0.005;
+
+                // 公轉 (Revolution)
+                // 地球圍繞太陽公轉
+                earth.position.x = Math.cos(elapsedTime * 0.2) * 100;
+                earth.position.z = Math.sin(elapsedTime * 0.2) * 100;
+
+                // 月球的位置是相對於地球的，所以它會自動跟隨地球
+                // 我們只需要讓它圍繞地球旋轉即可
+                // (因為月球已經是地球的子物件，所以這裡的旋轉實際上就是公轉)
+                // 這部分已由 earth.add(moon) 處理，月球會跟隨地球移動
+                // 我們只需要更新月球相對於地球的位置即可，但由於我們已將月球添加到地球上，
+                // 地球的移動會自動帶著月球移動。月球的公轉已由其在地球坐標系中的初始位置和地球的自轉模擬
+                // 為了更真實的公轉，我們需要單獨更新月球的位置
+                 moon.position.x = Math.cos(elapsedTime * 1.5) * 20;
+                 moon.position.z = Math.sin(elapsedTime * 1.5) * 20;
+
+
+                controls.update();
+                renderer.render(scene, camera);
+            }
+
+            // 5. 視窗大小調整處理
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // 啟動動畫
+            animate();
+        };
+    </script>
+</body>
+</html>
