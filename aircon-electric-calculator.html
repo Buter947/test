@@ -1,309 +1,304 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>最適冷氣溫度與電費估算器</title>
-    <style>
-        /* --- 頁面基本樣式 --- */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
-            background-color: #111827; /* 為頁面增加一個深色背景 */
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 2rem 1rem;
-        }
+<!-- 1. 核心 HTML 結構 -->
+<div id="ac-calculator-app">
+    <h2>最適冷氣溫度與電費估算器</h2>
+    <div class="calculator-container">
+        <!-- 左側：環境與舒適度 -->
+        <div class="panel">
+            <h3>1. 輸入環境數值</h3>
+            <div class="control-group">
+                <label>目前室溫: <span class="value" id="temp-value">29°C</span></label>
+                <input type="range" class="slider" id="temp-slider" min="20" max="40" value="29" step="0.5">
+            </div>
+            <div class="control-group">
+                <label>相對濕度: <span class="value" id="humidity-value">75%</span></label>
+                <input type="range" class="slider" id="humidity-slider" min="30" max="100" value="75">
+            </div>
+            <div class="result-display">
+                <div class="label">體感溫度約為</div>
+                <div class="result-value" id="heat-index-value">33<span>°C</span></div>
+                <div class="result-subtext" id="comfort-level">感覺炎熱</div>
+            </div>
+        </div>
 
-        /* --- 整體佈局 (深色主題) --- */
-        #ac-calculator-app {
-            background-color: #1e293b !important; 
-            border: 1px solid #334155 !important;
-            border-radius: 0.75rem !important;
-            padding: 2.5rem !important;
-            width: 100%;
-            max-width: 800px !important;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.2) !important;
-            color: #cbd5e1 !important;
-        }
-        #ac-calculator-app *, 
-        #ac-calculator-app *::before, 
-        #ac-calculator-app *::after {
-            box-sizing: border-box !important;
-        }
-
-        /* --- 標題 --- */
-        #ac-calculator-app h2 {
-            color: #ffffff !important;
-            text-align: center !important;
-            font-size: 2rem !important;
-            font-weight: 700 !important;
-            margin: 0 0 2rem 0 !important;
-        }
-
-        /* --- 主容器 --- */
-        .calculator-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-        @media (min-width: 768px) {
-            .calculator-container {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        /* --- 面板通用樣式 --- */
-        .panel {
-            background-color: #334155;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-        }
-        .panel h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #ffffff;
-            margin: 0 0 1.5rem 0;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid #475569;
-        }
-        .control-group {
-            margin-bottom: 1.5rem;
-        }
-        .control-group label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1rem;
-            font-weight: 500;
-            color: #cbd5e1;
-            margin-bottom: 0.75rem;
-        }
-        .control-group .value {
-            color: #ffffff;
-            font-weight: 600;
-        }
-        .slider {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 8px;
-            background: #475569;
-            border-radius: 4px;
-            outline: none;
-        }
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            background: #ffffff;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        /* --- 結果顯示區 --- */
-        .result-display {
-            text-align: center;
-            padding: 1rem;
-        }
-        .result-display .label {
-            font-size: 1rem;
-            color: #94a3b8;
-            margin-bottom: 0.5rem;
-        }
-        .result-value {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: #60a5fa;
-            line-height: 1.1;
-        }
-        .result-value span {
-            font-size: 1.5rem;
-            font-weight: 500;
-        }
-        .result-subtext {
-            font-size: 0.9rem;
-            color: #94a3b8;
-            margin-top: 0.5rem;
-            min-height: 1.2em;
-        }
-
-        /* --- 電費估算 --- */
-        #cost-panel select {
-            width: 100%;
-            padding: 0.6rem;
-            background-color: #475569;
-            color: #e2e8f0;
-            border: 1px solid #64748b;
-            border-radius: 0.375rem;
-            font-size: 1rem;
-        }
-        .cost-result-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-    </style>
-</head>
-<body>
-    <div id="ac-calculator-app">
-        <h2>最適冷氣溫度與電費估算器</h2>
-        <div class="calculator-container">
-            <!-- 左側：環境與舒適度 -->
-            <div class="panel">
-                <h3>1. 輸入環境數值</h3>
-                <div class="control-group">
-                    <label>目前室溫: <span class="value" id="temp-value">29°C</span></label>
-                    <input type="range" class="slider" id="temp-slider" min="20" max="40" value="29" step="0.5">
-                </div>
-                <div class="control-group">
-                    <label>相對濕度: <span class="value" id="humidity-value">75%</span></label>
-                    <input type="range" class="slider" id="humidity-slider" min="30" max="100" value="75">
+        <!-- 右側：建議與電費 -->
+        <div id="cost-panel" class="panel">
+            <h3>2. 估算電費成本</h3>
+             <div class="result-display suggestion-box">
+                <div class="label">建議冷氣設定</div>
+                <div class="result-value" id="recommended-temp">26<span>°C</span></div>
+            </div>
+            <div class="control-group">
+                <label for="ac-power">冷氣機匹數</label>
+                <select id="ac-power">
+                    <option value="0.75">3/4 匹</option>
+                    <option value="1" selected>1 匹</option>
+                    <option value="1.5">1.5 匹</option>
+                    <option value="2">2 匹</option>
+                    <option value="2.5">2.5 匹</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>每日使用時數: <span class="value" id="hours-value">8 小時</span></label>
+                <input type="range" class="slider" id="hours-slider" min="1" max="24" value="8">
+            </div>
+            <div class="cost-result-grid">
+                <div class="result-display">
+                    <div class="label">預計每日用電</div>
+                    <div class="result-value" id="daily-kwh">5.9<span>度</span></div>
                 </div>
                 <div class="result-display">
-                    <div class="label">體感溫度約為</div>
-                    <div class="result-value" id="heat-index-value">33<span>°C</span></div>
-                    <div class="result-subtext" id="comfort-level">感覺炎熱</div>
-                </div>
-            </div>
-
-            <!-- 右側：建議與電費 -->
-            <div id="cost-panel" class="panel">
-                <h3>2. 估算電費成本</h3>
-                 <div class="result-display" style="background-color: #1f2937; border-radius: 0.5rem; margin-bottom: 1.5rem;">
-                    <div class="label">建議冷氣設定</div>
-                    <div class="result-value" id="recommended-temp">26<span>°C</span></div>
-                </div>
-                <div class="control-group">
-                    <label for="ac-power">冷氣機匹數</label>
-                    <select id="ac-power">
-                        <option value="0.75">3/4 匹</option>
-                        <option value="1" selected>1 匹</option>
-                        <option value="1.5">1.5 匹</option>
-                        <option value="2">2 匹</option>
-                        <option value="2.5">2.5 匹</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label>每日使用時數: <span class="value" id="hours-value">8 小時</span></label>
-                    <input type="range" class="slider" id="hours-slider" min="1" max="24" value="8">
-                </div>
-                <div class="cost-result-grid">
-                    <div class="result-display">
-                        <div class="label">預計每日用電</div>
-                        <div class="result-value" id="daily-kwh">5.9<span>度</span></div>
-                    </div>
-                    <div class="result-display">
-                        <div class="label">預計每月電費</div>
-                        <div class="result-value" id="monthly-cost">230<span>元</span></div>
-                    </div>
+                    <div class="label">預計每月電費</div>
+                    <div class="result-value" id="monthly-cost">230<span>元</span></div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-    (function() {
-        // 確保在頁面完全載入後才執行
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.getElementById('ac-calculator-app');
-            if (!container) {
-                console.error('AC Calculator App container not found!');
-                return;
-            }
+<!-- 2. 徹底隔離的 CSS -->
+<style>
+    /* --- 整體佈局 (深色主題) --- */
+    #ac-calculator-app {
+        background-color: #1e293b !important; 
+        border: 1px solid #334155 !important;
+        border-radius: 0.75rem !important;
+        padding: 2.5rem !important;
+        margin: 2rem auto !important;
+        max-width: 800px !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.2) !important;
+        color: #cbd5e1 !important;
+    }
+    #ac-calculator-app *, 
+    #ac-calculator-app *::before, 
+    #ac-calculator-app *::after {
+        box-sizing: border-box !important;
+    }
 
-            const tempSlider = container.querySelector('#temp-slider');
-            const tempValue = container.querySelector('#temp-value');
-            const humiditySlider = container.querySelector('#humidity-slider');
-            const humidityValue = container.querySelector('#humidity-value');
-            const heatIndexValue = container.querySelector('#heat-index-value');
-            const comfortLevel = container.querySelector('#comfort-level');
-            const recommendedTemp = container.querySelector('#recommended-temp');
-            const acPowerSelect = container.querySelector('#ac-power');
-            const hoursSlider = container.querySelector('#hours-slider');
-            const hoursValue = container.querySelector('#hours-value');
-            const dailyKwh = container.querySelector('#daily-kwh');
-            const monthlyCost = container.querySelector('#monthly-cost');
+    /* --- 標題 --- */
+    #ac-calculator-app h2 {
+        color: #ffffff !important;
+        text-align: center !important;
+        font-size: 2rem !important;
+        font-weight: 700 !important;
+        margin: 0 0 2rem 0 !important;
+    }
+
+    /* --- 主容器 --- */
+    #ac-calculator-app .calculator-container {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+    @media (min-width: 768px) {
+        #ac-calculator-app .calculator-container {
+            grid-template-columns: 1fr 1fr !important;
+        }
+    }
+
+    /* --- 面板通用樣式 --- */
+    #ac-calculator-app .panel {
+        background-color: #334155 !important;
+        padding: 1.5rem !important;
+        border-radius: 0.5rem !important;
+    }
+    #ac-calculator-app .panel h3 {
+        font-size: 1.25rem !important;
+        font-weight: 600 !important;
+        color: #ffffff !important;
+        margin: 0 0 1.5rem 0 !important;
+        padding-bottom: 0.75rem !important;
+        border-bottom: 1px solid #475569 !important;
+    }
+    #ac-calculator-app .control-group {
+        margin-bottom: 1.5rem !important;
+    }
+    #ac-calculator-app .control-group label {
+        display: flex !important;
+        justify-content: space-between !important;
+        font-size: 1rem !important;
+        font-weight: 500 !important;
+        color: #cbd5e1 !important;
+        margin-bottom: 0.75rem !important;
+    }
+    #ac-calculator-app .control-group .value {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+    #ac-calculator-app .slider {
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        width: 100% !important;
+        height: 8px !important;
+        background: #475569 !important;
+        border-radius: 4px !important;
+        outline: none !important;
+    }
+    #ac-calculator-app .slider::-webkit-slider-thumb {
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        width: 24px !important;
+        height: 24px !important;
+        background: #ffffff !important;
+        border-radius: 50% !important;
+        cursor: pointer !important;
+    }
+     #ac-calculator-app .slider::-moz-range-thumb {
+        width: 24px !important;
+        height: 24px !important;
+        background: #ffffff !important;
+        border-radius: 50% !important;
+        cursor: pointer !important;
+    }
+
+    /* --- 結果顯示區 --- */
+    #ac-calculator-app .result-display {
+        text-align: center !important;
+        padding: 1rem !important;
+    }
+    #ac-calculator-app .suggestion-box {
+        background-color: #1f2937 !important; 
+        border-radius: 0.5rem !important; 
+        margin-bottom: 1.5rem !important;
+    }
+    #ac-calculator-app .result-display .label {
+        font-size: 1rem !important;
+        color: #94a3b8 !important;
+        margin-bottom: 0.5rem !important;
+    }
+    #ac-calculator-app .result-value {
+        font-size: 3.5rem !important;
+        font-weight: 700 !important;
+        color: #60a5fa !important;
+        line-height: 1.1 !important;
+    }
+    #ac-calculator-app .result-value span {
+        font-size: 1.5rem !important;
+        font-weight: 500 !important;
+    }
+    #ac-calculator-app .result-subtext {
+        font-size: 0.9rem !important;
+        color: #94a3b8 !important;
+        margin-top: 0.5rem !important;
+        min-height: 1.2em !important;
+    }
+
+    /* --- 電費估算 --- */
+    #ac-calculator-app #cost-panel select {
+        width: 100% !important;
+        padding: 0.6rem !important;
+        background-color: #475569 !important;
+        color: #e2e8f0 !important;
+        border: 1px solid #64748b !important;
+        border-radius: 0.375rem !important;
+        font-size: 1rem !important;
+    }
+    #ac-calculator-app .cost-result-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 1rem !important;
+        margin-top: 1.5rem !important;
+    }
+</style>
+
+<!-- 3. WordPress 兼容的 JavaScript -->
+<script>
+(function() {
+    // 確保在頁面完全載入後才執行
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('ac-calculator-app');
+        if (!container) {
+            console.error('AC Calculator App container not found!');
+            return;
+        }
+
+        const tempSlider = container.querySelector('#temp-slider');
+        const tempValue = container.querySelector('#temp-value');
+        const humiditySlider = container.querySelector('#humidity-slider');
+        const humidityValue = container.querySelector('#humidity-value');
+        const heatIndexValue = container.querySelector('#heat-index-value');
+        const comfortLevel = container.querySelector('#comfort-level');
+        const recommendedTemp = container.querySelector('#recommended-temp');
+        const acPowerSelect = container.querySelector('#ac-power');
+        const hoursSlider = container.querySelector('#hours-slider');
+        const hoursValue = container.querySelector('#hours-value');
+        const dailyKwh = container.querySelector('#daily-kwh');
+        const monthlyCost = container.querySelector('#monthly-cost');
+        
+        const HP_TO_KW = 0.735; 
+        const HK_ELECTRIC_TARIFF = 1.3; 
+
+        function calculateAll() {
+            const T_C = parseFloat(tempSlider.value);
+            const RH = parseFloat(humiditySlider.value);
             
-            const HP_TO_KW = 0.735; 
-            const HK_ELECTRIC_TARIFF = 1.3; 
-
-            function calculateAll() {
-                const T_C = parseFloat(tempSlider.value);
-                const RH = parseFloat(humiditySlider.value);
-                
-                const T_F = T_C * 1.8 + 32;
-                
-                let HI_F = -42.379 + 2.04901523 * T_F + 10.14333127 * RH - 0.22475541 * T_F * RH - 6.83783e-3 * T_F * T_F - 5.481717e-2 * RH * RH + 1.22874e-3 * T_F * T_F * RH + 8.5282e-4 * T_F * RH * RH - 1.99e-6 * T_F * T_F * RH * RH;
-                
-                if (RH < 13 && T_F >= 80 && T_F <= 112) {
-                    const adjustment = ((13 - RH) / 4) * Math.sqrt((17 - Math.abs(T_F - 95)) / 17);
-                    HI_F -= adjustment;
-                } else if (RH > 85 && T_F >= 80 && T_F <= 87) {
-                    const adjustment = ((RH - 85) / 10) * ((87 - T_F) / 5);
-                    HI_F += adjustment;
-                }
-                
-                if (HI_F < T_F) {
-                    HI_F = T_F;
-                }
-
-                const HI_C = (HI_F - 32) * 5 / 9;
-                heatIndexValue.innerHTML = `${HI_C.toFixed(0)}<span>°C</span>`;
-
-                let comfort = '';
-                if (HI_C < 27) comfort = '舒適';
-                else if (HI_C < 32) comfort = '開始感覺溫暖';
-                else if (HI_C < 41) comfort = '感覺炎熱';
-                else if (HI_C < 54) comfort = '非常炎熱';
-                else comfort = '極度炎熱，注意身體';
-                comfortLevel.textContent = comfort;
-
-                let recTemp = 27; 
-                if (HI_C > 26) {
-                    recTemp = 27 - (HI_C - 26) * 0.4;
-                }
-                recTemp = Math.max(22, Math.min(27, recTemp)); 
-                recommendedTemp.innerHTML = `${recTemp.toFixed(0)}<span>°C</span>`;
-                
-                const powerHP = parseFloat(acPowerSelect.value);
-                const usageHours = parseFloat(hoursSlider.value);
-                const powerKW = powerHP * HP_TO_KW;
-                
-                const tempDifference = T_C - recTemp;
-                const baselineTempDifference = 5.0; 
-              
-                const loadFactor = Math.max(0, tempDifference) / baselineTempDifference;
-                
-                const operationalEfficiency = 0.85; 
-
-                const dailyConsumption = powerKW * usageHours * loadFactor * operationalEfficiency;
-                const monthlyConsumption = dailyConsumption * 30;
-                const cost = monthlyConsumption * HK_ELECTRIC_TARIFF;
-
-                dailyKwh.innerHTML = `${dailyConsumption.toFixed(1)}<span>度</span>`;
-                monthlyCost.innerHTML = `${cost.toFixed(0)}<span>元</span>`;
+            const T_F = T_C * 1.8 + 32;
+            
+            let HI_F = -42.379 + 2.04901523 * T_F + 10.14333127 * RH - 0.22475541 * T_F * RH - 6.83783e-3 * T_F * T_F - 5.481717e-2 * RH * RH + 1.22874e-3 * T_F * T_F * RH + 8.5282e-4 * T_F * RH * RH - 1.99e-6 * T_F * T_F * RH * RH;
+            
+            if (RH < 13 && T_F >= 80 && T_F <= 112) {
+                const adjustment = ((13 - RH) / 4) * Math.sqrt((17 - Math.abs(T_F - 95)) / 17);
+                HI_F -= adjustment;
+            } else if (RH > 85 && T_F >= 80 && T_F <= 87) {
+                const adjustment = ((RH - 85) / 10) * ((87 - T_F) / 5);
+                HI_F += adjustment;
+            }
+            
+            if (HI_F < T_F) {
+                HI_F = T_F;
             }
 
-            tempSlider.addEventListener('input', e => {
-                tempValue.textContent = `${e.target.value}°C`;
-                calculateAll();
-            });
-            humiditySlider.addEventListener('input', e => {
-                humidityValue.textContent = `${e.target.value}%`;
-                calculateAll();
-            });
-            hoursSlider.addEventListener('input', e => {
-                hoursValue.textContent = `${e.target.value} 小時`;
-                calculateAll();
-            });
-            acPowerSelect.addEventListener('change', calculateAll);
+            const HI_C = (HI_F - 32) * 5 / 9;
+            heatIndexValue.innerHTML = `${HI_C.toFixed(0)}<span>°C</span>`;
 
+            let comfort = '';
+            if (HI_C < 27) comfort = '舒適';
+            else if (HI_C < 32) comfort = '開始感覺溫暖';
+            else if (HI_C < 41) comfort = '感覺炎熱';
+            else if (HI_C < 54) comfort = '非常炎熱';
+            else comfort = '極度炎熱，注意身體';
+            comfortLevel.textContent = comfort;
+
+            let recTemp = 27; 
+            if (HI_C > 26) {
+                recTemp = 27 - (HI_C - 26) * 0.4;
+            }
+            recTemp = Math.max(22, Math.min(27, recTemp)); 
+            recommendedTemp.innerHTML = `${recTemp.toFixed(0)}<span>°C</span>`;
+            
+            const powerHP = parseFloat(acPowerSelect.value);
+            const usageHours = parseFloat(hoursSlider.value);
+            const powerKW = powerHP * HP_TO_KW;
+            
+            const tempDifference = T_C - recTemp;
+            const baselineTempDifference = 5.0; 
+            
+            const loadFactor = Math.max(0, tempDifference) / baselineTempDifference;
+            
+            const operationalEfficiency = 0.85; 
+
+            const dailyConsumption = powerKW * usageHours * loadFactor * operationalEfficiency;
+            const monthlyConsumption = dailyConsumption * 30;
+            const cost = monthlyConsumption * HK_ELECTRIC_TARIFF;
+
+            dailyKwh.innerHTML = `${dailyConsumption.toFixed(1)}<span>度</span>`;
+            monthlyCost.innerHTML = `${cost.toFixed(0)}<span>元</span>`;
+        }
+
+        tempSlider.addEventListener('input', e => {
+            tempValue.textContent = `${e.target.value}°C`;
             calculateAll();
         });
-    })();
-    </script>
-</body>
-</html>
+        humiditySlider.addEventListener('input', e => {
+            humidityValue.textContent = `${e.target.value}%`;
+            calculateAll();
+        });
+        hoursSlider.addEventListener('input', e => {
+            hoursValue.textContent = `${e.target.value} 小時`;
+            calculateAll();
+        });
+        acPowerSelect.addEventListener('change', calculateAll);
+
+        calculateAll();
+    });
+})();
+</script>
