@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 工具互動清單</title>
+    <style>
+        /* --- Google 字體 --- */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+        /* --- 整體容器 --- */
+        .ai-tool-checklist-container {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8fafc; /* 淺灰色背景，增加質感 */
+        }
+
+        /* --- 篩選按鈕樣式 --- */
+        .filter-buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .filter-btn {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 9999px;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .filter-btn:hover {
+            background-color: #f1f5f9;
+            border-color: #94a3b8;
+            transform: translateY(-2px);
+        }
+        .filter-btn.active {
+            background-color: #1e293b;
+            color: #ffffff;
+            border-color: #1e293b;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* --- 卡片網格佈局 --- */
+        .tool-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        /* --- 單一卡片樣式 --- */
+        .tool-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none; /* 讓整個卡片可點擊且無底線 */
+            color: inherit;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .card-logo {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+        .card-description {
+            font-size: 15px;
+            color: #64748b;
+            line-height: 1.7;
+            flex-grow: 1;
+            margin: 0 0 20px 0;
+        }
+        .card-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+        }
+        .tag {
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .tag-free { background-color: #ecfdf5; color: #067647; }
+        .tag-paid { background-color: #fef2f2; color: #b91c1c; }
+        .tag-lang-zh { background-color: #eef2ff; color: #4338ca; }
+        .tag-lang-en { background-color: #f0f9ff; color: #0c4a6e; }
+
+        /* 用於隱藏卡片的類別 */
+        .tool-card.hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="ai-tool-checklist-container">
+    
+    <!-- 1. 分類篩選按鈕 -->
+    <div id="ai-tool-filter-buttons" class="filter-buttons-container">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="日常工作">日常工作</button>
+        <button class="filter-btn" data-filter="寫作">寫作</button>
+        <button class="filter-btn" data-filter="創作">創作</button>
+        <button class="filter-btn" data-filter="行銷">行銷</button>
+        <button class="filter-btn" data-filter="報告">報告</button>
+        <button class="filter-btn" data-filter="求職">求職</button>
+        <button class="filter-btn" data-filter="程式">程式開發</button>
+        <button class="filter-btn" data-filter="學習">學習</button>
+    </div>
+
+    <!-- 2. AI 工具卡片列表 -->
+    <div id="ai-tool-list" class="tool-card-grid">
+        
+        <!-- 卡片模板 (複製此區塊來新增工具) -->
+        <!-- 
+        <a href="工具的官方網址" target="_blank" class="tool-card" data-category="分類一 分類二">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=工具的網域&sz=64" alt="工具名稱 Logo" class="card-logo">
+                <h3 class="card-title">工具名稱</h3>
+            </div>
+            <p class="card-description">一句話的客觀功能描述。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-zh">中文</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a> 
+        -->
+
+        <a href="https://chatgpt.com/" target="_blank" class="tool-card" data-category="日常工作 寫作 報告 學習 程式 創作">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=openai.com&sz=64" alt="ChatGPT Logo" class="card-logo">
+                <h3 class="card-title">ChatGPT</h3>
+            </div>
+            <p class="card-description">基於GPT模型的通用型對話式AI，應用範圍廣泛，可用於問答、寫作、翻譯及程式碼生成。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-zh">中文</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://gemini.google.com/" target="_blank" class="tool-card" data-category="日常工作 寫作 報告 學習 創作">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=gemini.google.com&sz=64" alt="Gemini Logo" class="card-logo">
+                <h3 class="card-title">Gemini (Google)</h3>
+            </div>
+            <p class="card-description">Google開發的多模態AI模型，能同時理解和處理文字、圖片、聲音等多種資訊，深度整合Google生態。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-zh">中文</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://www.midjourney.com/" target="_blank" class="tool-card" data-category="創作 行銷">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=midjourney.com&sz=64" alt="Midjourney Logo" class="card-logo">
+                <h3 class="card-title">Midjourney</h3>
+            </div>
+            <p class="card-description">一款透過Discord平台運作的AI圖像生成服務，使用者輸入文字提示詞以創造出具有獨特藝術風格的影像。</p>
+            <div class="card-tags">
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://www.notion.so/product/ai" target="_blank" class="tool-card" data-category="日常工作 寫作 報告">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=notion.so&sz=64" alt="Notion AI Logo" class="card-logo">
+                <h3 class="card-title">Notion AI</h3>
+            </div>
+            <p class="card-description">整合於Notion筆記軟體內的AI助理，可用於生成和編輯頁面內容、總結現有筆記及腦力激盪。</p>
+            <div class="card-tags">
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-zh">中文</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://gamma.app/" target="_blank" class="tool-card" data-category="報告 日常工作 行銷">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=gamma.app&sz=64" alt="Gamma Logo" class="card-logo">
+                <h3 class="card-title">Gamma</h3>
+            </div>
+            <p class="card-description">一款AI驅動的內容生成工具，可以用於快速創建簡報、文件或網頁，大幅簡化報告製作流程。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://www.kickresume.com/" target="_blank" class="tool-card" data-category="求職">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=kickresume.com&sz=64" alt="Kickresume Logo" class="card-logo">
+                <h3 class="card-title">Kickresume</h3>
+            </div>
+            <p class="card-description">其AI功能可以根據使用者輸入的職位和個人經歷，輔助撰寫履歷中的工作描述和個人簡介。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+        
+        <a href="https://github.com/features/copilot" target="_blank" class="tool-card" data-category="程式">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=github.com&sz=64" alt="GitHub Copilot Logo" class="card-logo">
+                <h3 class="card-title">GitHub Copilot</h3>
+            </div>
+            <p class="card-description">一款整合在程式碼編輯器中的AI工具，能根據上下文提供單行或整個函數的程式碼建議。</p>
+            <div class="card-tags">
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://www.jasper.ai/" target="_blank" class="tool-card" data-category="寫作 行銷">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=jasper.ai&sz=64" alt="Jasper Logo" class="card-logo">
+                <h3 class="card-title">Jasper</h3>
+            </div>
+            <p class="card-description">一款AI寫作平台，提供多種模板，用於生成市場營銷文案、部落格文章、社交媒體內容等。</p>
+            <div class="card-tags">
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://www.suno.ai/" target="_blank" class="tool-card" data-category="創作">
+             <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=suno.ai&sz=64" alt="Suno AI Logo" class="card-logo">
+                <h3 class="card-title">Suno AI</h3>
+            </div>
+            <p class="card-description">一款AI音樂生成工具，使用者輸入主題或歌詞，即可生成包含人聲和伴奏的完整歌曲。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://fireflies.ai/" target="_blank" class="tool-card" data-category="日常工作 報告">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=fireflies.ai&sz=64" alt="Fireflies.ai Logo" class="card-logo">
+                <h3 class="card-title">Fireflies.ai</h3>
+            </div>
+            <p class="card-description">連結線上會議平台進行自動錄音與轉錄，並在會後生成包含摘要與行動項目的筆記。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://www.perplexity.ai/" target="_blank" class="tool-card" data-category="學習 日常工作">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=perplexity.ai&sz=64" alt="Perplexity AI Logo" class="card-logo">
+                <h3 class="card-title">Perplexity AI</h3>
+            </div>
+            <p class="card-description">一款對話式AI搜尋引擎，它會直接提供整合、摘要後的答案，並附上資料來源連結。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://quillbot.com/" target="_blank" class="tool-card" data-category="寫作 學習 報告">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=quillbot.com&sz=64" alt="QuillBot Logo" class="card-logo">
+                <h3 class="card-title">QuillBot</h3>
+            </div>
+            <p class="card-description">核心功能是AI句子改寫（Paraphrasing），提供多種模式以調整句子的流暢度和正式程度。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-zh">中文</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://www.heygen.com/" target="_blank" class="tool-card" data-category="創作 行銷 報告">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=heygen.com&sz=64" alt="HeyGen Logo" class="card-logo">
+                <h3 class="card-title">HeyGen</h3>
+            </div>
+            <p class="card-description">一款用於生成AI虛擬人像影片的平台，能將文本轉換為由虛擬人像口述的影片內容。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://v0.dev/" target="_blank" class="tool-card" data-category="程式 創作">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=v0.dev&sz=64" alt="v0 by Vercel Logo" class="card-logo">
+                <h3 class="card-title">v0 by Vercel</h3>
+            </div>
+            <p class="card-description">一款實驗性工具，能根據使用者的文字和圖像描述，生成對應的前端（React）程式碼。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+        
+        <a href="https://www.adobe.com/products/firefly.html" target="_blank" class="tool-card" data-category="創作 行銷">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=adobe.com&sz=64" alt="Adobe Firefly Logo" class="card-logo">
+                <h3 class="card-title">Adobe Firefly</h3>
+            </div>
+            <p class="card-description">Adobe開發的圖像生成模型，其訓練數據強調商業應用的安全性，並整合於Photoshop等Adobe產品。</p>
+            <div class="card-tags">
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-zh">中文</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+        
+        <a href="https://elevenlabs.io/" target="_blank" class="tool-card" data-category="創作">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=elevenlabs.io&sz=64" alt="ElevenLabs Logo" class="card-logo">
+                <h3 class="card-title">ElevenLabs</h3>
+            </div>
+            <p class="card-description">提供AI語音生成與聲音複製（Voice Cloning）服務，其生成的聲音在情感和自然度上表現出色。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+        
+        <a href="https://www.descript.com/" target="_blank" class="tool-card" data-category="日常工作 報告 創作">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=descript.com&sz=64" alt="Descript Logo" class="card-logo">
+                <h3 class="card-title">Descript</h3>
+            </div>
+            <p class="card-description">一款整合AI轉錄功能的影音編輯器，使用者可以透過編輯逐字稿來剪輯對應的影音片段。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+        
+        <a href="https://claude.ai/" target="_blank" class="tool-card" data-category="日常工作 寫作 報告 學習">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=claude.ai&sz=64" alt="Claude Logo" class="card-logo">
+                <h3 class="card-title">Claude</h3>
+            </div>
+            <p class="card-description">由Anthropic公司開發，其設計強調AI的安全性和遵循憲法原則，並支援超長上下文輸入。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+        
+        <a href="https://looka.com/" target="_blank" class="tool-card" data-category="行銷 創作">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=looka.com&sz=64" alt="Looka Logo" class="card-logo">
+                <h3 class="card-title">Looka</h3>
+            </div>
+            <p class="card-description">使用者輸入公司名稱和行業後，系統會利用AI生成多種Logo設計選項和完整的品牌識別指南。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+        
+        <a href="https://tome.app/" target="_blank" class="tool-card" data-category="報告 日常工作">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=tome.app&sz=64" alt="Tome Logo" class="card-logo">
+                <h3 class="card-title">Tome</h3>
+            </div>
+            <p class="card-description">使用者輸入主題，即可利用AI生成包含完整故事線、文案和圖像的精美簡報。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://www.usemotion.com/" target="_blank" class="tool-card" data-category="日常工作">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=usemotion.com&sz=64" alt="Motion Logo" class="card-logo">
+                <h3 class="card-title">Motion</h3>
+            </div>
+            <p class="card-description">運用AI技術自動化排程，將任務、會議及待辦事項整合並規劃到使用者的行事曆中。</p>
+            <div class="card-tags">
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://www.khanacademy.org/" target="_blank" class="tool-card" data-category="學習">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=khanacademy.org&sz=64" alt="Khan Academy Logo" class="card-logo">
+                <h3 class="card-title">Khan Academy</h3>
+            </div>
+            <p class="card-description">其AI導師Khanmigo，能在學習過程中為學生提供個人化的提示、解釋和學習路徑建議。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-lang-zh">中文</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+        
+        <a href="https://pika.art/" target="_blank" class="tool-card" data-category="創作 行銷">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=pika.art&sz=64" alt="Pika Labs Logo" class="card-logo">
+                <h3 class="card-title">Pika Labs</h3>
+            </div>
+            <p class="card-description">一款廣受歡迎的文生影片工具，允許使用者對生成影片的局部區域進行修改和重新生成。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://www.grammarly.com/" target="_blank" class="tool-card" data-category="寫作 日常工作">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=grammarly.com&sz=64" alt="Grammarly Logo" class="card-logo">
+                <h3 class="card-title">Grammarly</h3>
+            </div>
+            <p class="card-description">除了文法與拼寫檢查，其AI功能也提供改寫建議、語氣檢測和寫作風格分析。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+
+        <a href="https://biginterview.com/" target="_blank" class="tool-card" data-category="求職">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=biginterview.com&sz=64" alt="Big Interview Logo" class="card-logo">
+                <h3 class="card-title">Big Interview</h3>
+            </div>
+            <p class="card-description">提供一個AI模擬面試平台，使用者可以針對不同行業和職位的常見問題進行練習。</p>
+            <div class="card-tags">
+                <span class="tag tag-paid">付費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+        
+         <a href="https://cursor.sh/" target="_blank" class="tool-card" data-category="程式">
+            <div class="card-header">
+                <img src="https://www.google.com/s2/favicons?domain=cursor.sh&sz=64" alt="Cursor Logo" class="card-logo">
+                <h3 class="card-title">Cursor</h3>
+            </div>
+            <p class="card-description">一款以AI為核心設計的程式碼編輯器，允許開發者用自然語言進行程式碼修改和重構。</p>
+            <div class="card-tags">
+                <span class="tag tag-free">免費</span>
+                <span class="tag tag-lang-en">英文</span>
+            </div>
+        </a>
+        
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterContainer = document.getElementById('ai-tool-filter-buttons');
+        const toolCards = document.querySelectorAll('#ai-tool-list .tool-card');
+
+        if (!filterContainer) {
+            return; 
+        }
+        
+        filterContainer.addEventListener('click', function(event) {
+            if (event.target.tagName !== 'BUTTON') {
+                return;
+            }
+
+            const filterValue = event.target.getAttribute('data-filter');
+
+            const allButtons = filterContainer.querySelectorAll('.filter-btn');
+            allButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            toolCards.forEach(card => {
+                const cardCategories = card.getAttribute('data-category');
+                
+                if (filterValue === 'all' || (cardCategories && cardCategories.includes(filterValue))) {
+                    card.style.display = 'flex';
+                    // 用一個小延遲來觸發動畫
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 10);
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(10px)';
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 200); // 等待動畫結束再隱藏
+                }
+            });
+        });
+
+        // 為卡片添加初始動畫效果
+        toolCards.forEach((card, index) => {
+            card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 50); // 錯開顯示，製造瀑布流效果
+        });
+    });
+</script>
+
+</body>
+</html>
