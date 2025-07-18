@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter & Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        /* Custom scrollbar for better aesthetics */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #e2e8f0; /* slate-200 */
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #94a3b8; /* slate-400 */
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #64748b; /* slate-500 */
+        }
+        /* Style for smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 py-8 md:py-12">
+
+        <!-- Sticky Navigation and Search Bar -->
+        <div id="controls" class="sticky top-0 z-50 bg-slate-50/90 backdrop-blur-lg pt-4 pb-2 mb-8 border-b border-slate-200">
+            <!-- Search Bar -->
+            <div class="relative w-full mb-4">
+                <input type="search" id="search-input" placeholder="搜尋工具名稱或描述..." class="w-full px-4 py-3 border border-slate-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+            </div>
+            <!-- Category Navigation -->
+            <nav id="category-nav" class="w-full overflow-x-auto custom-scrollbar">
+                <div id="category-buttons" class="flex items-center space-x-2 whitespace-nowrap pb-2">
+                    <!-- Category buttons will be inserted here by JavaScript -->
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content: AI Tools Grid -->
+        <main id="tool-list-container">
+            <!-- Tool cards will be inserted here by JavaScript -->
+        </main>
+        
+        <!-- Back to Top Button -->
+        <button id="back-to-top" class="hidden fixed bottom-8 right-8 bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg transition-opacity duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+            </svg>
+        </button>
+
+    </div>
+
+    <script>
+        // --- DATA SOURCE ---
+        // This data is updated based on your request: "聊天機器人" category removed.
+        const aiToolData = [
+            {
+                category: "熱門AI",
+                id: "popular-ai",
+                tools: [
+                    { name: "ChatGPT (OpenAI)", url: "https://chatgpt.com/", description: "基於GPT模型的通用型對話式AI，應用範圍廣泛。" },
+                    { name: "Gemini (Google)", url: "https://gemini.google.com/", description: "Google開發的多模態AI模型，能同時理解和處理文字、圖片、聲音等多種資訊。" },
+                    { name: "Claude (Anthropic)", url: "https://claude.ai/", description: "由Anthropic公司開發，其設計強調AI的安全性和遵循憲法原則。" },
+                    { name: "Poe by Quora", url: "https://poe.com/", description: "一個整合了多種第三方AI模型的平台，讓使用者可以在同一個介面下與不同模型對話。" },
+                    { name: "Character.ai", url: "https://character.ai/", description: "一個允許使用者創建虛構AI角色或與社群創建的角色進行對話的平台。" },
+                    { name: "Pi, your personal AI", url: "https://pi.ai/", description: "由Inflection AI開發，其定位是成為一個有同理心、善於傾聽的個人AI伴侶。" },
+                    { name: "文心一言 (百度)", url: "https://yiyan.baidu.com/", description: "由百度公司推出的中文大型語言模型。" },
+                    { name: "Kimi智能助手 (月之暗面)", url: "https://kimi.moonshot.cn/", description: "一款在處理長文本輸入方面表現突出的中文AI模型。" },
+                    { name: "通義千問 (阿里巴巴)", url: "https://tongyi.aliyun.com/", description: "由阿里巴巴集團開發的大型語言模型。" }
+                ]
+            },
+            {
+                category: "工作優化",
+                id: "productivity-optimization",
+                tools: [
+                    { name: "Notion AI", url: "https://www.notion.so/product/ai", description: "整合於Notion筆記軟體內的AI助理，可用於生成和編輯頁面內容、總結現有筆記及腦力激盪。" },
+                    { name: "Trello", url: "https://trello.com/", description: "其內建的Butler自動化工具，可根據使用者設定的規則，執行卡片移動、指派成員等重複性任務。" },
+                    { name: "Asana", url: "https://asana.com/", description: "在其專案管理平台中，提供AI功能以協助撰寫任務目標、生成進度報告及識別潛在的專案瓶頸。" },
+                    { name: "Motion", url: "https://www.usemotion.com/", description: "運用AI技術自動化排程，將任務、會議及待辦事項整合並規劃到使用者的行事曆中。" },
+                    { name: "Reclaim.ai", url: "https://reclaim.ai/", description: "一款智能行事曆工具，能自動在行事曆的空檔中，為任務和個人習慣找到彈性的執行時間。" },
+                    { name: "Todoist", url: "https://todoist.com/", description: "其自然語言辨識功能，讓使用者能用口語化方式快速輸入任務，並由系統自動設定日期與分類。" },
+                    { name: "ClickUp AI", url: "https://clickup.com/ai", description: "內建於ClickUp專案管理系統的AI助手，能在平台內完成文案撰寫、內容總結等工作。" },
+                    { name: "Wrike", url: "https://www.wrike.com/", description: "提供AI驅動的專案風險預測功能，並能根據少量輸入自動生成完整的任務描述。" },
+                    { name: "Microsoft Copilot", url: "https://copilot.microsoft.com/", description: "深度整合於Microsoft 365應用程式中，能在文件、郵件、簡報及試算表內提供內容生成與資料分析的協助。" },
+                    { name: "Fireflies.ai", url: "https://fireflies.ai/", description: "連結線上會議平台，進行自動錄音與轉錄，並在會後生成包含摘要與行動項目的筆記。" },
+                    { name: "Otter.ai", url: "https://otter.ai/", description: "提供即時的會議語音轉文字服務，能區分不同的發言者並生成帶有時間戳的逐字稿。" },
+                    { name: "x.ai", url: "https://x.ai/", description: "由Elon Musk創立的AI公司，其開發的Grok模型專注於以一種探索性、帶有反叛精神的方式回答問題。" },
+                    { name: "Zapier", url: "https://zapier.com/", description: "其AI功能允許使用者在建立自動化流程（Zaps）時，用自然語言描述需求，由系統生成對應的執行步驟。" },
+                    { name: "IFTTT", url: "https://ifttt.com/", description: "其AI服務能讓使用者建立更複雜的自動化規則，例如根據郵件內容的情緒分析來觸發不同的動作。" }
+                ]
+            },
+            {
+                category: "文案生成",
+                id: "copywriting-content-generation",
+                tools: [
+                    { name: "Jasper", url: "https://www.jasper.ai/", description: "一款AI寫作平台，提供多種模板，用於生成市場營銷文案、部落格文章、社交媒體內容等。" },
+                    { name: "Copy.ai", url: "https://www.copy.ai/", description: "透過提供工作流程和預設模板，引導使用者生成特定用途的文案，如廣告文案或電子郵件。" },
+                    { name: "Rytr", url: "https://rytr.me/", description: "一款AI寫作工具，支援多種語言，並允許使用者在生成內容時選擇不同的語氣（Tone of Voice）。" },
+                    { name: "Writesonic", url: "https://writesonic.com/", description: "提供AI寫作與SEO內容優化功能，可用於生成符合搜尋引擎指南的長篇文章。" },
+                    { name: "Anyword", url: "https://anyword.com/", description: "其平台包含文案表現預測功能，能對生成的不同版本文案給出潛在的成效評分。" },
+                    { name: "Frase.io", url: "https://www.frase.io/", description: "結合內容研究與AI寫作，能分析特定關鍵字的搜尋結果，並輔助使用者撰寫相關主題內容。" }
+                ]
+            },
+            {
+                category: "圖像生成",
+                id: "image-generation",
+                tools: [
+                    { name: "Midjourney", url: "https://www.midjourney.com/", description: "一款透過Discord平台運作的AI圖像生成服務，使用者輸入文字提示詞以創造出具有獨特藝術風格的影像。" },
+                    { name: "Stable Diffusion", url: "https://stability.ai/stable-diffusion", description: "一款開源的圖像生成模型，使用者可在本地或線上平台運行，並載入社群分享的風格模型。" },
+                    { name: "DALL-E 3", url: "https://openai.com/dall-e-3", description: "OpenAI開發的圖像生成模型，整合於ChatGPT中，擅長理解複雜的自然語言描述。" },
+                    { name: "Adobe Firefly", url: "https://www.adobe.com/products/firefly.html", description: "Adobe開發的圖像生成模型，其訓練數據強調商業應用的安全性，並整合於Photoshop等Adobe產品。" },
+                    { name: "Leonardo.Ai", url: "https://leonardo.ai/", description: "專為遊戲開發與概念藝術設計的AI圖像平台，提供多種用於生成遊戲資產的預訓練模型。" },
+                    { name: "Canva", url: "https://www.canva.com/", description: "在其設計平台內整合了名為「Magic Media」的AI圖像生成功能，供使用者在設計流程中直接使用。" },
+                    { name: "Artbreeder", url: "https://www.artbreeder.com/", description: "透過調整和混合不同圖像的參數（基因），讓使用者能夠迭代和演化出新的圖像。" },
+                    { name: "Bing Image Creator", url: "https://www.bing.com/images/create", description: "微軟在其搜尋引擎Bing中提供的免費圖像生成服務，由DALL-E模型驅動。" },
+                    { name: "Playground AI", url: "https://playground.com/", description: "提供一個結合AI圖像生成與線上編輯功能的平台，讓使用者能對生成結果進行後續調整。" },
+                    { name: "Magnific AI", url: "https://magnific.ai/", description: "專注於AI圖像放大與細節增強的工具，可用於提升現有圖像的解析度和質感。" },
+                    { name: "Krea.ai", url: "https://www.krea.ai/", description: "提供即時AI圖像生成功能，能夠根據使用者的滑鼠移動或簡單圖形即時產生對應的視覺效果。" },
+                    { name: "Civitai", url: "https://civitai.com/", description: "一個供使用者分享、發現和下載Stable Diffusion模型的社群平台。" },
+                    { name: "RunwayML", url: "https://runwayml.com/", description: "一個整合多種AI創意功能的平台，除圖像生成外，也包含影片生成與編輯工具。" },
+                    { name: "Ideogram", url: "https://ideogram.ai/", description: "一款專注於解決AI在圖像中生成準確、連貫文字難題的圖像生成工具。" },
+                    { name: "PhotoRoom", url: "https://www.photoroom.com/", description: "應用AI技術於圖像背景處理，能自動識別主體並進行移除、替換或生成新背景。" }
+                ]
+            },
+            {
+                category: "影音生成",
+                id: "video-audio-generation",
+                tools: [
+                    { name: "Google Veo", url: "https://deepmind.google/technologies/veo/", description: "Google開發的文生影片模型，能生成長度超過一分鐘的1080p影片，並理解影視拍攝術語。" },
+                    { name: "OpenAI Sora", url: "https://openai.com/sora", description: "OpenAI開發的文生影片模型，其展示的影片在物理世界模擬和視覺連貫性上達到了很高的水準。" },
+                    { name: "Runway Gen-2", url: "https://runwayml.com/", description: "一款同時提供「文字到影片」和「影片到影片」功能的AI工具。" },
+                    { name: "Pika Labs", url: "https://pika.art/", description: "一款文生影片工具，允許使用者對生成影片的局部區域進行修改和重新生成。" },
+                    { name: "HeyGen", url: "https://www.heygen.com/", description: "一款用於生成AI虛擬人像影片的平台，能將文本轉換為由虛擬人像口述的影片內容。" },
+                    { name: "Synthesia", url: "https://www.synthesia.io/", description: "提供多種虛擬人像和聲音選擇的AI影片製作平台，常用於企業培訓和產品說明影片。" },
+                    { name: "ElevenLabs", url: "https://elevenlabs.io/", description: "提供AI語音生成與聲音複製（Voice Cloning）服務，其生成的聲音在情感和自然度上表現出色。" },
+                    { name: "Descript", url: "https://www.descript.com/", description: "一款整合AI轉錄功能的影音編輯器，使用者可以透過編輯逐字稿來剪輯對應的影音片段。" },
+                    { name: "InVideo AI", url: "https://invideo.io/ai/", description: "透過單一文字指令，即可自動化生成包含腳本、配音、影片素材和字幕的完整影片。" },
+                    { name: "Veed.io", url: "https://www.veed.io/", description: "一款線上影片編輯工具，其AI功能包含自動字幕生成、背景噪音移除和眼神接觸校正。" },
+                    { name: "Luma AI", url: "https://lumalabs.ai/", description: "其推出的Dream Machine模型，提供高品質的文生影片功能，在物理動態和角色一致性上表現良好。" },
+                    { name: "Captions", url: "https://www.captions.ai/", description: "一款專為行動裝置設計的影片編輯App，運用AI自動生成符合社交媒體風格的動態字幕。" },
+                    { name: "Opus Clip", url: "https://www.opus.pro/", description: "運用AI分析長篇影片，並自動將其剪輯成多個具有病毒式傳播潛力的短片。" },
+                    { name: "Suno AI", url: "https://www.suno.ai/", description: "一款AI音樂生成工具，使用者輸入主題或歌詞，即可生成包含人聲和伴奏的完整歌曲。" },
+                    { name: "Udio", url: "https://www.udio.com/", description: "另一款高品質的AI歌曲生成工具，允許使用者對生成音樂的風格和結構進行更細緻的控制。" },
+                    { name: "Murf.ai", url: "https://murf.ai/", description: "提供多種AI配音聲音庫，並允許使用者調整語音的音高、速度和情感。" },
+                    { name: "Pictory", url: "https://pictory.ai/", description: "專注於將長篇文字內容（如部落格、白皮書）自動轉換為帶有摘要和配圖的影片。" },
+                    { name: "Fliki", url: "https://fliki.ai/", description: "提供將文本轉換為影片的功能，並整合了AI配音和可商用的媒體素材庫。" },
+                    { name: "Kaiber", url: "https://kaiber.ai/", description: "將使用者上傳的靜態圖片或影片，轉換為具有特定藝術風格（如動漫、奇幻）的動畫影片。" },
+                    { name: "Stable Video Diffusion", url: "https://stability.ai/stable-video", description: "由Stability AI發布的開源影片生成模型，為開發者提供基礎模型。" }
+                ]
+            },
+            {
+                category: "文件處理與總結",
+                id: "document-processing-summarization",
+                tools: [
+                    { name: "ChatGPT", url: "https://chatgpt.com/", description: "具備文件上傳功能，使用者可以針對PDF、Docx等文件的內容進行提問、總結或資料提取。" },
+                    { name: "Claude", url: "https://claude.ai/", description: "其特點是支援超長上下文輸入，適合用於處理和交叉分析多份長篇文件或報告。" },
+                    { name: "Perplexity AI", url: "https://www.perplexity.ai/", description: "一款結合搜尋引擎與AI回答的工具，能閱讀並引用多個來源的資訊來回答使用者問題。" },
+                    { name: "ChatPDF", url: "https://www.chatpdf.com/", description: "提供一個讓使用者透過對話方式與PDF文件互動的介面，以問答形式獲取文件資訊。" },
+                    { name: "Humata AI", url: "https://www.humata.ai/", description: "另一款針對研究報告和技術文檔設計的AI問答工具，能處理複雜的專業文件。" }
+                ]
+            },
+            {
+                category: "學習教育",
+                id: "learning-education",
+                tools: [
+                    { name: "Khan Academy", url: "https://www.khanacademy.org/", description: "其AI導師Khanmigo，能在學習過程中為學生提供個人化的提示、解釋和學習路徑建議。" },
+                    { name: "Duolingo", url: "https://www.duolingo.com/", description: "在其語言學習App中，運用AI來提供個人化的複習計畫和口語練習的即時回饋。" },
+                    { name: "Socratic by Google", url: "https://socratic.org/", description: "學生可透過拍攝作業題目，由系統提供解題步驟的詳細說明和相關的線上學習資源。" },
+                    { name: "Quizlet", url: "https://quizlet.com/", description: "其AI功能可以根據使用者上傳的學習筆記，自動生成不同題型的練習題和模擬測驗。" },
+                    { name: "Consensus", url: "https://consensus.app/", description: "運用AI在超過2億篇學術論文中進行搜尋，並直接提取研究結果來回答使用者問題。" }
+                ]
+            },
+            {
+                category: "寫作工具",
+                id: "writing-tools",
+                tools: [
+                    { name: "Grammarly", url: "https://www.grammarly.com/", description: "除了文法與拼寫檢查，其AI功能也提供改寫建議、語氣檢測和寫作風格分析。" },
+                    { name: "QuillBot", url: "https://quillbot.com/", description: "核心功能是AI句子改寫（Paraphrasing），提供多種模式以調整句子的流暢度和正式程度。" },
+                    { name: "Hemingway Editor", url: "https://hemingwayapp.com/", description: "透過標示長句、副詞和被動語態，輔助使用者進行文本的簡潔化和清晰化修改。" },
+                    { name: "Wordtune", url: "https://www.wordtune.com/", description: "一款整合於瀏覽器的寫作插件，能對使用者選取的句子提供多種語意相近的改寫版本。" },
+                    { name: "ProWritingAid", url: "https://prowritingaid.com/", description: "提供詳細的寫作分析報告，涵蓋文法、風格、重複用詞、句子結構等多個維度。" },
+                    { name: "DeepL Write", url: "https://www.deepl.com/write", description: "由DeepL開發的AI寫作改進工具，專注於修正文法錯誤和提出用詞的優化建議。" },
+                    { name: "Effidit (騰訊)", url: "https://effidit.qq.com/", description: "由騰訊AI Lab開發，提供文本潤色、糾錯、續寫和例句推薦等中文寫作輔助功能。" }
+                ]
+            },
+            {
+                category: "簡報生成",
+                id: "presentation-generation",
+                tools: [
+                    { name: "Tome", url: "https://tome.app/", description: "使用者輸入主題後，系統能自動生成包含大綱、內文、標題和AI配圖的完整簡報。" },
+                    { name: "Gamma", url: "https://gamma.app/", description: "另一款AI驅動的內容生成工具，可以用於快速創建簡報、文件或網頁。" }
+                ]
+            },
+            {
+                category: "求職面試",
+                id: "job-interview",
+                tools: [
+                    { name: "Big Interview", url: "https://biginterview.com/", description: "提供一個AI模擬面試平台，使用者可以針對不同行業和職位的常見問題進行練習。" },
+                    { name: "Vmock", url: "https://www.vmock.com/", description: "運用AI對上傳的履歷進行評分和分析，並根據行業標準提供逐項的修改建議。" },
+                    { name: "Interview.ai", url: "https://www.interview.ai/", description: "專注於AI模擬面試，使用者可以錄製自己的回答，並獲得關於表達和內容的AI回饋。" },
+                    { name: "Kickresume", url: "https://www.kickresume.com/", description: "其AI功能可以根據使用者輸入的職位和個人經歷，輔助撰寫履歷中的工作描述和個人簡介。" }
+                ]
+            },
+            {
+                category: "重點整理",
+                id: "summarization-organization",
+                tools: [
+                    { name: "Glasp", url: "https://glasp.co/", description: "一款瀏覽器插件，讓使用者可以在網頁上畫重點，並利用AI生成這些重點的摘要。" },
+                    { name: "Readwise", url: "https://readwise.io/", description: "用於匯總使用者在不同來源（如Kindle、網路文章）的數位筆記和重點。" },
+                    { name: "Napkin", url: "https://www.napkin.io/", description: "一款筆記工具，其設計理念是捕捉碎片化靈感，並由AI自動揭示不同筆記之間的隱藏關聯。" },
+                    { name: "Mem", url: "https://mem.ai/", description: "一款自組織筆記軟體，運用AI自動為筆記打上標籤並建立連結，無需使用者手動整理。" },
+                    { name: "TLDR This", url: "https://www.tldrthis.com/", description: "一款瀏覽器插件或線上工具，能將長篇文章快速提煉成簡短的摘要。" },
+                    { name: "Scispace", url: "https://typeset.io/", description: "具備論文閱讀輔助功能，可以對複雜的學術論文進行段落總結和提問。" },
+                    { name: "UPDF", url: "https://updf.com/", description: "在其PDF編輯器中，整合了AI功能，用於總結、翻譯、解釋PDF文件內容。" }
+                ]
+            },
+            {
+                category: "品牌工具",
+                id: "branding-tools",
+                tools: [
+                    { name: "Looka", url: "https://looka.com/", description: "使用者輸入公司名稱和行業後，系統會利用AI生成多種Logo設計選項。" },
+                    { name: "Brandmark.io", url: "https://brandmark.io/", description: "另一款AI Logo生成器，同時也會產出名片、社交媒體頭圖等品牌視覺資產。" },
+                    { name: "Namewizard.ai", url: "https://namewizard.ai/", description: "根據使用者輸入的關鍵字，AI會生成多種可用的品牌名稱和域名建議。" },
+                    { name: "Durable", url: "https://durable.co/", description: "一款AI網站生成器，聲稱能在短時間內為中小型企業建立一個包含文案和圖片的初始網站。" },
+                    { name: "BrandCrowd", url: "https://www.brandcrowd.com/", description: "提供大量由設計師創作的Logo模板，並允許使用者利用AI工具進行個人化調整。" },
+                    { name: "Framer", url: "https://www.framer.com/", description: "在其網站設計平台中加入了AI功能，可以根據文字描述生成網頁佈局、撰寫文案或尋找合適的配色。" }
+                ]
+            },
+            {
+                category: "搜尋引擎與瀏覽器",
+                id: "search-engines-browsers",
+                tools: [
+                    { name: "Perplexity AI", url: "https://www.perplexity.ai/", description: "一款對話式AI搜尋引擎，它會直接提供整合、摘要後的答案，並附上資料來源連結。" },
+                    { name: "Arc Browser", url: "https://arc.net/", description: "一款重新設計瀏覽器體驗的產品，其AI功能（Arc Max）可提供網頁摘要、連結預覽等。" },
+                    { name: "Microsoft Copilot (in Edge/Bing)", url: "https://copilot.microsoft.com/", description: "微軟將對話式AI整合進其搜尋引擎和瀏覽器側邊欄，提供即時的搜尋輔助。" },
+                    { name: "Brave Browser", url: "https://brave.com/", description: "其內建的AI助理Leo，可以在使用者瀏覽網頁時，提供頁面摘要或問答功能。" }
+                ]
+            },
+            {
+                category: "程式開發",
+                id: "code-development",
+                tools: [
+                    { name: "GitHub Copilot", url: "https://github.com/features/copilot", description: "一款整合在程式碼編輯器中的AI工具，能根據上下文提供單行或整個函數的程式碼建議。" },
+                    { name: "Replit Ghostwriter", url: "https://replit.com/ghostwriter", description: "Replit線上開發環境的AI功能，提供程式碼生成、解釋和除錯的輔助。" },
+                    { name: "Amazon CodeWhisperer", url: "https://aws.amazon.com/codewhisperer/", description: "亞馬遜開發的AI程式碼助理，對使用AWS服務的開發者提供特別優化。" },
+                    { name: "Tabnine", url: "https://www.tabnine.com/", description: "一款程式碼自動補全工具，其AI模型可以根據使用者的程式碼庫進行個人化學習。" },
+                    { name: "Cursor", url: "https://cursor.sh/", description: "一款以AI為核心設計的程式碼編輯器，允許開發者用自然語言進行程式碼修改和重構。" },
+                    { name: "Sourcegraph Cody", url: "https://sourcegraph.com/cody", description: "一款能理解整個程式碼庫的AI助理，用於回答關於程式碼結構和邏輯的問題。" },
+                    { name: "v0 by Vercel", url: "https://v0.dev/", description: "一款實驗性工具，能根據使用者的文字和圖像描述，生成對應的前端（React）程式碼。" },
+                    { name: "Codeium", url: "https://codeium.com/", description: "一款支援多種程式語言和IDE的AI程式碼補全工具。" },
+                    { name: "Devin (Cognition AI)", url: "https://www.cognition-labs.com/", description: "被定位為AI軟體工程師，旨在自主執行從需求分析到部署的完整開發任務。" },
+                    { name: "Mintlify", url: "https://mintlify.com/", description: "運用AI掃描程式碼，並自動生成符合標準格式的技術文檔。" },
+                    { name: "Bito", url: "https://bito.ai/", description: "一款整合於IDE的AI工具，能幫助開發者快速生成程式碼片段、單元測試和程式碼註解。" },
+                    { name: "Adrenaline", url: "https://www.adrenaline.com.br/", description: "允許開發者上傳整個程式碼庫，並透過對話方式理解程式碼庫的結構與內容。" },
+                    { name: "Mutable.ai", url: "https://mutable.ai/", description: "專注於AI輔助的程式碼重構，能幫助開發者改善現有程式碼的品質和結構。" }
+                ]
+            },
+            {
+                category: "設計師工具",
+                id: "ui-ux-design",
+                tools: [
+                    { name: "Figma", url: "https://www.figma.com/", description: "其龐大的社群生態中，包含了大量運用AI輔助設計的插件，用於內容填充、佈局建議等。" },
+                    { name: "Uizard", url: "https://uizard.io/", description: "能夠將使用者手繪的介面草圖或App截圖，轉換為可編輯的數位化UI設計稿。" },
+                    { name: "Galileo AI", url: "https://www.usegalileo.ai/", description: "使用者輸入簡單的文字描述，即可由AI生成包含元件和圖示的高擬真度UI介面設計。" }
+                ]
+            },
+            {
+                category: "ChatGPT 與 AI 應用",
+                id: "chatgpt-ai-applications",
+                tools: [
+                    { name: "GPT-4o (OpenAI)", url: "https://openai.com/gpt-4o", description: "OpenAI的多模態旗艦模型，在單一模型中原生整合了對文字、聲音和視覺的理解與生成能力。" },
+                    { name: "Plugins/GPTs (in ChatGPT)", url: "https://chatgpt.com/gpts", description: "ChatGPT的擴展功能，允許其連接到第三方服務，以執行如預訂機票、分析PDF等更具體任務。" }
+                ]
+            },
+            {
+                category: "有趣應用",
+                id: "fun-applications",
+                tools: [
+                    { name: "AI Dungeon", url: "https://aidungeon.com/", description: "一款由AI驅動的文字冒險遊戲，遊戲世界和故事情節會根據玩家的輸入動態生成。" },
+                    { name: "Neal.fun", url: "https://neal.fun/", description: "一個展示多種創意網路互動實驗的網站，其中包含了一些有趣的AI應用項目。" },
+                    { name: "Scribble Diffusion", url: "https://scribblediffusion.com/", description: "一款能將使用者隨手畫的簡單線條塗鴉，轉換成風格化、細節豐富圖像的工具。" },
+                    { name: "Nvidia Canvas", url: "https://www.nvidia.com/en-us/studio/canvas/", description: "運用AI技術，能將使用者的簡單筆觸即時渲染成照片級真實感的風景畫。" }
+                ]
+            }
+        ];
+
+        // --- DOM ELEMENTS ---
+        const toolContainer = document.getElementById('tool-list-container');
+        const searchInput = document.getElementById('search-input');
+        const categoryButtonsContainer = document.getElementById('category-buttons');
+        const backToTopButton = document.getElementById('back-to-top');
+
+        // --- FUNCTIONS ---
+
+        /**
+         * Generates a favicon URL using Google's service.
+         * Includes a fallback to a generic placeholder.
+         * @param {string} url The URL of the tool's website.
+         * @returns {string} The URL for the favicon image.
+         */
+        function getFaviconUrl(url) {
+            try {
+                const domain = new URL(url).hostname;
+                return `https://www.google.com/s2/favicons?sz=64&domain_url=${domain}`;
+            } catch (error) {
+                console.error("Invalid URL for favicon:", url);
+                return 'https://placehold.co/64x64/e2e8f0/64748b?text=AI'; // Fallback
+            }
+        }
+
+        /**
+         * Renders the list of AI tools based on the provided data.
+         * @param {Array} data The array of categories and tools to render.
+         */
+        function renderTools(data) {
+            toolContainer.innerHTML = ''; // Clear existing content
+            if (data.every(cat => cat.tools.length === 0)) {
+                toolContainer.innerHTML = `<p class="text-center text-slate-500 col-span-full py-12">找不到符合條件的工具。</p>`;
+                return;
+            }
+
+            data.forEach(category => {
+                if (category.tools.length === 0) return;
+
+                // Create category title
+                const categoryTitle = document.createElement('h2');
+                categoryTitle.className = 'text-3xl font-bold text-slate-800 mb-6 mt-8 col-span-full';
+                categoryTitle.id = category.id;
+                categoryTitle.textContent = category.category;
+                
+                // Create a grid for the cards in this category
+                const categoryGrid = document.createElement('div');
+                categoryGrid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+
+                category.tools.forEach(tool => {
+                    const faviconUrl = getFaviconUrl(tool.url);
+                    const card = document.createElement('a');
+                    card.href = tool.url;
+                    card.target = '_blank'; // Open in new tab
+                    card.rel = 'nofollow noopener noreferrer'; // SEO and security
+                    card.className = 'bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col group';
+                    
+                    card.innerHTML = `
+                        <div class="flex items-start gap-4 mb-4">
+                            <img src="${faviconUrl}" alt="${tool.name} Favicon" class="w-12 h-12 rounded-lg object-cover bg-white border border-slate-100" onerror="this.onerror=null;this.src='https://placehold.co/64x64/e2e8f0/64748b?text=AI';">
+                            <h3 class="text-lg font-semibold text-slate-800 mt-1 group-hover:text-blue-600 transition-colors">${tool.name}</h3>
+                        </div>
+                        <p class="text-slate-600 text-sm flex-grow">${tool.description}</p>
+                    `;
+                    categoryGrid.appendChild(card);
+                });
+
+                toolContainer.appendChild(categoryTitle);
+                toolContainer.appendChild(categoryGrid);
+            });
+        }
+        
+        /**
+         * Renders the category navigation buttons.
+         */
+        function renderCategoryButtons() {
+            let buttonsHTML = `<a href="#controls" class="category-btn active px-4 py-2 rounded-full text-sm font-medium bg-blue-500 text-white shadow" data-category="all">全部工具</a>`;
+            
+            aiToolData.forEach(cat => {
+                buttonsHTML += `<a href="#${cat.id}" class="category-btn px-4 py-2 rounded-full text-sm font-medium bg-white text-slate-700 hover:bg-slate-200 transition" data-category="${cat.id}">${cat.category}</a>`;
+            });
+            categoryButtonsContainer.innerHTML = buttonsHTML;
+        }
+
+        /**
+         * Filters and renders tools based on search term.
+         */
+        function filterAndRender() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            const filteredData = aiToolData.map(category => {
+                const filteredTools = category.tools.filter(tool => 
+                    tool.name.toLowerCase().includes(searchTerm) || tool.description.toLowerCase().includes(searchTerm)
+                );
+                return { ...category, tools: filteredTools };
+            });
+
+            renderTools(filteredData);
+        }
+
+        // --- EVENT LISTENERS ---
+
+        // Listen for input on the search bar
+        searchInput.addEventListener('input', filterAndRender);
+        
+        // Listen for clicks on category buttons (using event delegation)
+        categoryButtonsContainer.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A' && e.target.classList.contains('category-btn')) {
+                e.preventDefault(); 
+                const targetId = e.target.getAttribute('href');
+                const element = document.querySelector(targetId);
+                
+                // Update active button style
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.classList.remove('bg-blue-500', 'text-white', 'shadow');
+                    btn.classList.add('bg-white', 'text-slate-700');
+                });
+                e.target.classList.add('bg-blue-500', 'text-white', 'shadow');
+                e.target.classList.remove('bg-white', 'text-slate-700');
+
+                if (element) {
+                    const offset = 150; // Height of sticky header
+                    const bodyRect = document.body.getBoundingClientRect().top;
+                    const elementRect = element.getBoundingClientRect().top;
+                    const elementPosition = elementRect - bodyRect;
+                    const offsetPosition = elementPosition - offset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+        
+        // Show/hide "Back to Top" button
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('hidden');
+            } else {
+                backToTopButton.classList.add('hidden');
+            }
+        });
+
+        // "Back to Top" button click event
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+
+        // --- INITIALIZATION ---
+        
+        // Initial render of all tools and category buttons when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategoryButtons();
+            renderTools(aiToolData);
+        });
+
+    </script>
+
+</body>
+</html>
