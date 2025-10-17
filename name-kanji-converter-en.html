@@ -234,130 +234,132 @@
         </div>
     </div>
 
-    <script>
-    (function() {
-        document.addEventListener('DOMContentLoaded', function() {
-            const app = document.getElementById('jp-name-converter-app');
-            if (!app) return;
+<script>
+(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        const app = document.getElementById('jp-name-converter-app');
+        if (!app) return;
 
-            const lastNameInput = app.querySelector('#last-name');
-            const firstNameInput = app.querySelector('#first-name');
-            const convertBtn = app.querySelector('#convert-btn');
-            const clearBtn = app.querySelector('#clear-btn');
-            const resultsArea = app.querySelector('#results-area');
-            const validationFeedback = app.querySelector('#validation-feedback');
+        // 元素選擇
+        const lastNameInput = app.querySelector('#last-name');
+        const firstNameInput = app.querySelector('#first-name');
+        const convertBtn = app.querySelector('#convert-btn');
+        const clearBtn = app.querySelector('#clear-btn');
+        const resultsArea = app.querySelector('#results-area');
+        const validationFeedback = app.querySelector('#validation-feedback');
 
-            const surnameMap = { 'chan': { katakana: 'チャン', hiragana: 'ちゃん' }, 'chen': { katakana: 'チェン', hiragana: 'ちぇん' }, 'lam': { katakana: 'ラム', hiragana: 'らむ' }, 'lin': { katakana: 'リン', hiragana: 'りん' }, 'wong': { katakana: 'ウォン', hiragana: 'うぉん' }, 'huang': { katakana: 'ホァン', hiragana: 'ほぁん' }, 'cheung': { katakana: 'チョン', hiragana: 'ちょん' }, 'chang': { katakana: 'チャン', hiragana: 'ちゃん' }, 'lee': { katakana: 'リー', hiragana: 'りー' }, 'li': { katakana: 'リ', hiragana: 'り' }, 'ng': { katakana: 'ン', hiragana: 'ん' }, 'wu': { katakana: 'ウー', hiragana: 'うー' }, 'lau': { katakana: 'ラウ', hiragana: 'らう' }, 'liu': { katakana: 'リュウ', hiragana: 'りゅう' }, 'choi': { katakana: 'チョイ', hiragana: 'ちょい' }, 'tsoi': { katakana: 'ツォイ', hiragana: 'つぉい' }, 'tsai': { katakana: 'ツァイ', hiragana: 'つぁい' }, 'yeung': { katakana: 'ヨン', hiragana: 'よん' }, 'yang': { katakana: 'ヤン', hiragana: 'やん' }, 'hui': { katakana: 'ホイ', hiragana: 'ほい' }, 'hsu': { katakana: 'シュー', hiragana: 'しゅー' }, 'cheng': { katakana: 'チェン', hiragana: 'ちぇん' }, 'tse': { katakana: 'ツェ', hiragana: 'つぇ' }, 'che': { katakana: 'チェ', hiragana: 'ちぇ' }, 'hsieh': { katakana: 'シェ', hiragana: 'しぇ' }, 'kwok': { katakana: 'クォク', hiragana: 'くぉく' }, 'kuo': { katakana: 'クオ', hiragana: 'くお' }, 'ho': { katakana: 'ホー', hiragana: 'ほー' }, 'leung': { katakana: 'リョン', hiragana: 'りょん' }, 'liang': { katakana: 'リャン', hiragana: 'りゃん' }, 'so': { katakana: 'ソー', hiragana: 'そー' }, 'su': { katakana: 'スー', hiragana: 'すー' }, 'yip': { katakana: 'イップ', hiragana: 'いっぷ' }, 'ip': { katakana: 'イップ', hiragana: 'いっぷ' }, 'yeh': { katakana: 'イエ', hiragana: 'いえ' }, 'chow': { katakana: 'チャウ', hiragana: 'ちゃう' }, 'chau': { katakana: 'チャウ', hiragana: 'ちゃう' }, 'chou': { katakana: 'チョウ', hiragana: 'ちょう' }, 'tsang': { katakana: 'ツァン', hiragana: 'つぁん' }, 'tseng': { katakana: 'ツェン', hiragana: 'つぇん' }, 'tang': { katakana: 'タン', hiragana: 'たん' }, 'teng': { katakana: 'テン', hiragana: 'てん' }, 'chung': { katakana: 'チョン', hiragana: 'ちょん' }, 'law': { katakana: 'ロー', hiragana: 'ろー' }, 'lo': { katakana: 'ロー', hiragana: 'ろー' }, 'lai': { katakana: 'ライ', hiragana: 'らい' }, 'liao': { katakana: 'リャオ', hiragana: 'りゃお' }, 'poon': { katakana: 'プーン', hiragana: 'ぷーん' }, 'pun': { katakana: 'パン', hiragana: 'ぱん' }, 'pan': { katakana: 'パン', hiragana: 'ぱん' }, 'yiu': { katakana: 'ユウ', hiragana: 'ゆう' }, 'yao': { katakana: 'ヤオ', hiragana: 'やお' }, 'yau': { katakana: 'ヤウ', hiragana: 'やう' }, 'chiu': { katakana: 'チウ', hiragana: 'ちう' }, 'siu': { katakana: 'シウ', hiragana: 'しう' }, 'hsiao': { katakana: 'シャオ', hiragana: 'しゃお' }, 'fung': { katakana: 'フォン', hiragana: 'ふぉん' }, 'feng': { katakana: 'フェン', hiragana: 'ふぇん' }, 'kong': { katakana: 'コン', hiragana: 'こん' }, 'chiang': { katakana: 'チャン', hiragana: 'ちゃん' }, 'tai': { katakana: 'タイ', hiragana: 'たい' }, 'woo': { katakana: 'ウー', hiragana: 'うー' }, 'hu': { katakana: 'フー', hiragana: 'ふー' }, 'lui': { katakana: 'ルイ', hiragana: 'るい' }, 'lu': { katakana: 'ルー', hiragana: 'るー' }, 'yuen': { katakana: 'ユン', hiragana: 'ゆん' }, 'yuan': { katakana: 'ユアン', hiragana: 'ゆあん' }, 'pang': { katakana: 'パン', hiragana: 'ぱん' }, 'peng': { katakana: 'ポン', hiragana: 'ぽん' }, 'shum': { katakana: 'シャム', hiragana: 'しゃむ' }, 'sum': { katakana: 'サム', hiragana: 'さむ' }, 'shen': { katakana: 'シェン', hiragana: 'しぇん' }, 'to': { katakana: 'トー', hiragana: 'とー' }, 'tu': { katakana: 'トゥ', hiragana: 'とぅ' }, 'tso': { katakana: 'ツォ', hiragana: 'つぉ' }, 'cho': { katakana: 'チョ', hiragana: 'ちょ' }, 'tsao': { katakana: 'ツァオ', hiragana: 'つぁお' }, 'ngai': { katakana: 'ガイ', hiragana: 'がい' }, 'wei': { katakana: 'ウェイ', hiragana: 'うぇい' }, 'kwan': { katakana: 'クァン', hiragana: 'くぁん' }, 'kuan': { katakana: 'クアン', hiragana: 'くあん' }, 'fan': { katakana: 'ファン', hiragana: 'ふぁん' }, 'kan': { katakana: 'カン', hiragana: 'かん' }, 'chien': { katakana: 'チェン', hiragana: 'ちぇん' }, 'fong': { katakana: 'フォン', hiragana: 'ふぉん' }, 'fang': { katakana: 'ファン', hiragana: 'ふぁん' }, 'mak': { katakana: 'マク', hiragana: 'まく' }, 'mai': { katakana: 'マイ', hiragana: 'まい' }, };
-            const romajiToHiraganaMap = { 'a': 'あ', 'i': 'い', 'u': 'う', 'e': 'え', 'o': 'お', 'ka': 'か', 'ki': 'き', 'ku': 'く', 'ke': 'け', 'ko': 'こ', 'sa': 'さ', 'shi': 'し', 'su': 'す', 'se': 'せ', 'so': 'そ', 'ta': 'た', 'chi': 'ち', 'tsu': 'つ', 'te': 'て', 'to': 'と', 'na': 'な', 'ni': 'に', 'nu': 'ぬ', 'ne': 'ね', 'no': 'の', 'ha': 'は', 'hi': 'ひ', 'fu': 'ふ', 'he': 'へ', 'ho': 'ほ', 'ma': 'ま', 'mi': 'み', 'mu': 'む', 'me': 'め', 'mo': 'も', 'ya': 'や', 'yu': 'ゆ', 'yo': 'よ', 'ra': 'ら', 'ri': 'り', 'ru': 'る', 're': 'れ', 'ro': 'ろ', 'wa': 'わ', 'wo': 'を', 'n': 'ん', 'ga': 'が', 'gi': 'ぎ', 'gu': 'ぐ', 'ge': 'げ', 'go': 'ご', 'za': 'ざ', 'ji': 'じ', 'zu': 'ず', 'ze': 'ぜ', 'zo': 'ぞ', 'da': 'だ', 'di': 'ぢ', 'du': 'づ', 'de': 'で', 'do': 'ど', 'ba': 'ば', 'bi': 'び', 'bu': 'ぶ', 'be': 'べ', 'bo': 'ぼ', 'pa': 'ぱ', 'pi': 'ぴ', 'pu': 'ぷ', 'pe': 'ぺ', 'po': 'ぽ', 'kya': 'きゃ', 'kyu': 'きゅ', 'kyo': 'きょ', 'sha': 'しゃ', 'shu': 'しゅ', 'sho': 'しょ', 'cha': 'ちゃ', 'chu': 'ちゅ', 'cho': 'ちょ', 'nya': 'にゃ', 'nyu': 'にゅ', 'nyo': 'にょ', 'hya': 'ひゃ', 'hyu': 'ひゅ', 'hyo': 'ひょ', 'mya': 'みゃ', 'myu': 'みゅ', 'myo': 'みょ', 'rya': 'りゃ', 'ryu': 'りゅ', 'ryo': 'りょ', 'gya': 'ぎゃ', 'gyu': 'ぎゅ', 'gyo': 'ぎょ', 'ja': 'じゃ', 'ju': 'じゅ', 'jo': 'じょ', 'bya': 'びゃ', 'byu': 'びゅ', 'byo': 'びょ', 'pya': 'ぴゃ', 'pyu': 'ぴゅ', 'pyo': 'ぴょ', '-': 'ー' };
+        // 資料庫
+        const surnameMap = { 'chan': { katakana: 'チャン', hiragana: 'ちゃん' }, 'chen': { katakana: 'チェン', hiragana: 'ちぇん' }, 'lam': { katakana: 'ラム', hiragana: 'らむ' }, 'lin': { katakana: 'リン', hiragana: 'りん' }, 'wong': { katakana: 'ウォン', hiragana: 'うぉん' }, 'huang': { katakana: 'ホァン', hiragana: 'ほぁん' }, 'cheung': { katakana: 'チョン', hiragana: 'ちょん' }, 'chang': { katakana: 'チャン', hiragana: 'ちゃん' }, 'lee': { katakana: 'リー', hiragana: 'りー' }, 'li': { katakana: 'リ', hiragana: 'り' }, 'ng': { katakana: 'ン', hiragana: 'ん' }, 'wu': { katakana: 'ウー', hiragana: 'うー' }, 'lau': { katakana: 'ラウ', hiragana: 'らう' }, 'liu': { katakana: 'リュウ', hiragana: 'りゅう' }, 'choi': { katakana: 'チョイ', hiragana: 'ちょい' }, 'tsoi': { katakana: 'ツォイ', hiragana: 'つぉい' }, 'tsai': { katakana: 'ツァイ', hiragana: 'つぁい' }, 'yeung': { katakana: 'ヨン', hiragana: 'よん' }, 'yang': { katakana: 'ヤン', hiragana: 'やん' }, 'hui': { katakana: 'ホイ', hiragana: 'ほい' }, 'hsu': { katakana: 'シュー', hiragana: 'しゅー' }, 'cheng': { katakana: 'チェン', hiragana: 'ちぇん' }, 'tse': { katakana: 'ツェ', hiragana: 'つぇ' }, 'che': { katakana: 'チェ', hiragana: 'ちぇ' }, 'hsieh': { katakana: 'シェ', hiragana: 'しぇ' }, 'kwok': { katakana: 'クォク', hiragana: 'くぉく' }, 'kuo': { katakana: 'クオ', hiragana: 'くお' }, 'ho': { katakana: 'ホー', hiragana: 'ほー' }, 'leung': { katakana: 'リョン', hiragana: 'りょん' }, 'liang': { katakana: 'リャン', hiragana: 'りゃん' }, 'so': { katakana: 'ソー', hiragana: 'そー' }, 'su': { katakana: 'スー', hiragana: 'すー' }, 'yip': { katakana: 'イップ', hiragana: 'いっぷ' }, 'ip': { katakana: 'イップ', hiragana: 'いっぷ' }, 'yeh': { katakana: 'イエ', hiragana: 'いえ' }, 'chow': { katakana: 'チャウ', hiragana: 'ちゃう' }, 'chau': { katakana: 'チャウ', hiragana: 'ちゃう' }, 'chou': { katakana: 'チョウ', hiragana: 'ちょう' }, 'tsang': { katakana: 'ツァン', hiragana: 'つぁん' }, 'tseng': { katakana: 'ツェン', hiragana: 'つぇん' }, 'tang': { katakana: 'タン', hiragana: 'たん' }, 'teng': { katakana: 'テン', hiragana: 'てん' }, 'chung': { katakana: 'チョン', hiragana: 'ちょん' }, 'law': { katakana: 'ロー', hiragana: 'ろー' }, 'lo': { katakana: 'ロー', hiragana: 'ろー' }, 'lai': { katakana: 'ライ', hiragana: 'らい' }, 'liao': { katakana: 'リャオ', hiragana: 'りゃお' }, 'poon': { katakana: 'プーン', hiragana: 'ぷーん' }, 'pun': { katakana: 'パン', hiragana: 'ぱん' }, 'pan': { katakana: 'パン', hiragana: 'ぱん' }, 'yiu': { katakana: 'ユウ', hiragana: 'ゆう' }, 'yao': { katakana: 'ヤオ', hiragana: 'やお' }, 'yau': { katakana: 'ヤウ', hiragana: 'やう' }, 'chiu': { katakana: 'チウ', hiragana: 'ちう' }, 'siu': { katakana: 'シウ', hiragana: 'しう' }, 'hsiao': { katakana: 'シャオ', hiragana: 'しゃお' }, 'fung': { katakana: 'フォン', hiragana: 'ふぉん' }, 'feng': { katakana: 'フェン', hiragana: 'ふぇん' }, 'kong': { katakana: 'コン', hiragana: 'こん' }, 'chiang': { katakana: 'チャン', hiragana: 'ちゃん' }, 'tai': { katakana: 'タイ', hiragana: 'たい' }, 'woo': { katakana: 'ウー', hiragana: 'うー' }, 'hu': { katakana: 'フー', hiragana: 'ふー' }, 'lui': { katakana: 'ルイ', hiragana: 'るい' }, 'lu': { katakana: 'ルー', hiragana: 'るー' }, 'yuen': { katakana: 'ユン', hiragana: 'ゆん' }, 'yuan': { katakana: 'ユアン', hiragana: 'ゆあん' }, 'pang': { katakana: 'パン', hiragana: 'ぱん' }, 'peng': { katakana: 'ポン', hiragana: 'ぽん' }, 'shum': { katakana: 'シャム', hiragana: 'しゃむ' }, 'sum': { katakana: 'サム', hiragana: 'さむ' }, 'shen': { katakana: 'シェン', hiragana: 'しぇん' }, 'to': { katakana: 'トー', hiragana: 'とー' }, 'tu': { katakana: 'トゥ', hiragana: 'とぅ' }, 'tso': { katakana: 'ツォ', hiragana: 'つぉ' }, 'cho': { katakana: 'チョ', hiragana: 'ちょ' }, 'tsao': { katakana: 'ツァオ', hiragana: 'つぁお' }, 'ngai': { katakana: 'ガイ', hiragana: 'がい' }, 'wei': { katakana: 'ウェイ', hiragana: 'うぇい' }, 'kwan': { katakana: 'クァン', hiragana: 'くぁん' }, 'kuan': { katakana: 'クアン', hiragana: 'くあん' }, 'fan': { katakana: 'ファン', hiragana: 'ふぁん' }, 'kan': { katakana: 'カン', hiragana: 'かん' }, 'chien': { katakana: 'チェン', hiragana: 'ちぇん' }, 'fong': { katakana: 'フォン', hiragana: 'ふぉん' }, 'fang': { katakana: 'ファン', hiragana: 'ふぁん' }, 'mak': { katakana: 'マク', hiragana: 'まく' }, 'mai': { katakana: 'マイ', hiragana: 'まい' }, };
+        const romajiToHiraganaMap = { 'a': 'あ', 'i': 'い', 'u': 'う', 'e': 'え', 'o': 'お', 'ka': 'か', 'ki': 'き', 'ku': 'く', 'ke': 'け', 'ko': 'こ', 'sa': 'さ', 'shi': 'し', 'su': 'す', 'se': 'せ', 'so': 'そ', 'ta': 'た', 'chi': 'ち', 'tsu': 'つ', 'te': 'て', 'to': 'と', 'na': 'な', 'ni': 'に', 'nu': 'ぬ', 'ne': 'ね', 'no': 'の', 'ha': 'は', 'hi': 'ひ', 'fu': 'ふ', 'he': 'へ', 'ho': 'ほ', 'ma': 'ま', 'mi': 'み', 'mu': 'む', 'me': 'め', 'mo': 'も', 'ya': 'や', 'yu': 'ゆ', 'yo': 'よ', 'ra': 'ら', 'ri': 'り', 'ru': 'る', 're': 'れ', 'ro': 'ろ', 'wa': 'わ', 'wo': 'を', 'n': 'ん', 'ga': 'が', 'gi': 'ぎ', 'gu': 'ぐ', 'ge': 'げ', 'go': 'ご', 'za': 'ざ', 'ji': 'じ', 'zu': 'ず', 'ze': 'ぜ', 'zo': 'ぞ', 'da': 'だ', 'di': 'ぢ', 'du': 'づ', 'de': 'で', 'do': 'ど', 'ba': 'ば', 'bi': 'び', 'bu': 'ぶ', 'be': 'べ', 'bo': 'ぼ', 'pa': 'ぱ', 'pi': 'ぴ', 'pu': 'ぷ', 'pe': 'ぺ', 'po': 'ぽ', 'kya': 'きゃ', 'kyu': 'きゅ', 'kyo': 'きょ', 'sha': 'しゃ', 'shu': 'しゅ', 'sho': 'しょ', 'cha': 'ちゃ', 'chu': 'ちゅ', 'cho': 'ちょ', 'nya': 'にゃ', 'nyu': 'にゅ', 'nyo': 'にょ', 'hya': 'ひゃ', 'hyu': 'ひゅ', 'hyo': 'ひょ', 'mya': 'みゃ', 'myu': 'みゅ', 'myo': 'みょ', 'rya': 'りゃ', 'ryu': 'りゅ', 'ryo': 'りょ', 'gya': 'ぎゃ', 'gyu': 'ぎゅ', 'gyo': 'ぎょ', 'ja': 'じゃ', 'ju': 'じゅ', 'jo': 'じょ', 'bya': 'びゃ', 'byu': 'びゅ', 'byo': 'びょ', 'pya': 'ぴゃ', 'pyu': 'ぴゅ', 'pyo': 'ぴょ', '-': 'ー' };
 
-            function showFeedback(message, type = 'error') {
-                validationFeedback.textContent = message;
-                validationFeedback.className = `feedback-message ${type}`;
-                validationFeedback.style.display = 'block';
+        // 函數
+        function showFeedback(message, type = 'error') {
+            validationFeedback.textContent = message;
+            validationFeedback.className = `feedback-message ${type}`;
+            validationFeedback.style.display = 'block';
+        }
+
+        function hideFeedback() {
+            validationFeedback.style.display = 'none';
+        }
+
+        function preprocessRomaji(text) {
+            let processedText = text.toLowerCase().replace(/\s+/g, ''); // 移除所有空白
+            processedText = processedText.replace(/l/g, 'r');
+            if (processedText.endsWith('m')) {
+                processedText = processedText.slice(0, -1) + 'n';
             }
+            return processedText;
+        }
 
-            function hideFeedback() {
-                validationFeedback.style.display = 'none';
+        function convertRomajiToHiragana(text) {
+            let result = ''; let i = 0;
+            while (i < text.length) {
+                if (i + 1 < text.length && text[i] !== 'n' && text[i] === text[i+1]) { result += 'っ'; i++; continue; }
+                let sub3 = text.substring(i, i + 3);
+                if (romajiToHiraganaMap[sub3]) { result += romajiToHiraganaMap[sub3]; i += 3; continue; }
+                let sub2 = text.substring(i, i + 2);
+                if (romajiToHiraganaMap[sub2]) { result += romajiToHiraganaMap[sub2]; i += 2; continue; }
+                let sub1 = text.substring(i, i + 1);
+                if (romajiToHiraganaMap[sub1]) { result += romajiToHiraganaMap[sub1]; i += 1; }
+                else { result += sub1; i += 1; }
             }
+            return result;
+        }
 
-            function preprocessRomaji(text) {
-                let processedText = text.toLowerCase().replace(/\s+/g, '');
-                processedText = processedText.replace(/l/g, 'r');
-                if (processedText.endsWith('m')) {
-                    processedText = processedText.slice(0, -1) + 'n';
-                }
-                return processedText;
-            }
+        function convertHiraganaToKatakana(hiragana) {
+            return hiragana.replace(/[\u3041-\u3096]/g, match => String.fromCharCode(match.charCodeAt(0) + 0x60));
+        }
 
-            function convertRomajiToHiragana(text) {
-                let result = ''; let i = 0;
-                while (i < text.length) {
-                    if (i + 1 < text.length && text[i] !== 'n' && text[i] === text[i+1]) { result += 'っ'; i++; continue; }
-                    let sub3 = text.substring(i, i + 3);
-                    if (romajiToHiraganaMap[sub3]) { result += romajiToHiraganaMap[sub3]; i += 3; continue; }
-                    let sub2 = text.substring(i, i + 2);
-                    if (romajiToHiraganaMap[sub2]) { result += romajiToHiraganaMap[sub2]; i += 2; continue; }
-                    let sub1 = text.substring(i, i + 1);
-                    if (romajiToHiraganaMap[sub1]) { result += romajiToHiraganaMap[sub1]; i += 1; }
-                    else { result += sub1; i += 1; }
-                }
-                return result;
-            }
+        function cleanupResult(text) {
+            return text.replace(/[a-zA-Z]/g, '');
+        }
 
-            function convertHiraganaToKatakana(hiragana) {
-                return hiragana.replace(/[\u3041-\u3096]/g, match => String.fromCharCode(match.charCodeAt(0) + 0x60));
-            }
-
-            function cleanupResult(text) {
-                return text.replace(/[a-zA-Z]/g, '');
-            }
-
-            function copyToClipboard(text) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showFeedback('Copied to clipboard!', 'success');
-                    setTimeout(hideFeedback, 2000);
-                });
-            }
-
-            convertBtn.addEventListener('click', () => {
-                const lastNameRaw = lastNameInput.value.trim();
-                const firstNameRaw = firstNameInput.value.trim();
-
-                if (!lastNameRaw || !firstNameRaw) {
-                    showFeedback('Please enter both Last Name and First Name.');
-                    return;
-                }
-                hideFeedback();
-                
-                let lastNameHira, lastNameKata, firstNameHira, firstNameKata;
-                const lastNameLower = lastNameRaw.toLowerCase();
-                if (surnameMap[lastNameLower]) {
-                    lastNameHira = surnameMap[lastNameLower].hiragana;
-                    lastNameKata = surnameMap[lastNameLower].katakana;
-                } else {
-                    const lastNameProcessed = preprocessRomaji(lastNameRaw);
-                    lastNameHira = convertRomajiToHiragana(lastNameProcessed);
-                    lastNameKata = convertHiraganaToKatakana(lastNameHira);
-                }
-                
-                const firstNameProcessed = preprocessRomaji(firstNameRaw);
-                firstNameHira = convertRomajiToHiragana(firstNameProcessed);
-                firstNameKata = convertHiraganaToKatakana(firstNameHira);
-
-                app.querySelector('#last-hiragana-result').textContent = cleanupResult(lastNameHira);
-                app.querySelector('#last-katakana-result').textContent = cleanupResult(lastNameKata);
-                app.querySelector('#first-hiragana-result').textContent = cleanupResult(firstNameHira);
-                app.querySelector('#first-katakana-result').textContent = cleanupResult(firstNameKata);
-
-                resultsArea.style.display = 'block';
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showFeedback('已複製到剪貼簿！', 'success');
+                setTimeout(hideFeedback, 2000);
             });
+        }
 
-            clearBtn.addEventListener('click', () => {
-                lastNameInput.value = '';
-                firstNameInput.value = '';
-                resultsArea.style.display = 'none';
-                hideFeedback();
-            });
+        // 事件監聽器
+        convertBtn.addEventListener('click', () => {
+            const lastNameRaw = lastNameInput.value.trim();
+            const firstNameRaw = firstNameInput.value.trim();
 
-            resultsArea.addEventListener('click', (e) => {
-                const target = e.target.closest('.result-btn');
-                if (!target) return;
-                const targetId = target.dataset.target;
-                const textEl = app.querySelector(`#${targetId}`);
-                if (!textEl) return;
-                const text = textEl.textContent;
-                if (target.classList.contains('speech-btn')) {
-                    if (text && window.speechSynthesis) {
-                        const utterance = new SpeechSynthesisUtterance(text);
-                        utterance.lang = 'ja-JP';
-                        window.speechSynthesis.speak(utterance);
-                    }
-                } else if (target.classList.contains('copy-btn')) {
-                    copyToClipboard(text);
-                }
-            });
+            if (!lastNameRaw || !firstNameRaw) {
+                showFeedback('請同時輸入「姓」和「名」的英文拼音。');
+                return;
+            }
+            hideFeedback();
+            
+            let lastNameHira, lastNameKata, firstNameHira, firstNameKata;
+            const lastNameLower = lastNameRaw.toLowerCase();
+            if (surnameMap[lastNameLower]) {
+                lastNameHira = surnameMap[lastNameLower].hiragana;
+                lastNameKata = surnameMap[lastNameLower].katakana;
+            } else {
+                const lastNameProcessed = preprocessRomaji(lastNameRaw);
+                lastNameHira = convertRomajiToHiragana(lastNameProcessed);
+                lastNameKata = convertHiraganaToKatakana(lastNameHira);
+            }
+            
+            const firstNameProcessed = preprocessRomaji(firstNameRaw);
+            firstNameHira = convertRomajiToHiragana(firstNameProcessed);
+            firstNameKata = convertHiraganaToKatakana(firstNameHira);
+
+            app.querySelector('#last-hiragana-result').textContent = cleanupResult(lastNameHira);
+            app.querySelector('#last-katakana-result').textContent = cleanupResult(lastNameKata);
+            app.querySelector('#first-hiragana-result').textContent = cleanupResult(firstNameHira);
+            app.querySelector('#first-katakana-result').textContent = cleanupResult(firstNameKata);
+
+            resultsArea.style.display = 'block';
         });
-    })();
-    </script>
-</body>
-</html>
+
+        clearBtn.addEventListener('click', () => {
+            lastNameInput.value = '';
+            firstNameInput.value = '';
+            resultsArea.style.display = 'none';
+            hideFeedback();
+        });
+
+        resultsArea.addEventListener('click', (e) => {
+            const target = e.target.closest('.result-btn');
+            if (!target) return;
+            const targetId = target.dataset.target;
+            const textEl = app.querySelector(`#${targetId}`);
+            if (!textEl) return;
+            const text = textEl.textContent;
+            if (target.classList.contains('speech-btn')) {
+                if (text && window.speechSynthesis) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'ja-JP';
+                    window.speechSynthesis.speak(utterance);
+                }
+            } else if (target.classList.contains('copy-btn')) {
+                copyToClipboard(text);
+            }
+        });
+    });
+})();
+</script>
