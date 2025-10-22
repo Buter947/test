@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>漢字振り仮名ツール</title>
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/kuroshiro@1.2.0/dist/kuroshiro.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js"></script>
+    
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div id="furigana-converter-app-v3">
+        <div class="fca-card">
+            <h2>漢字振り仮名ツール</h2>
+            
+            <textarea id="fca-input" class="fca-textarea" placeholder="ここに日本語の文章を入力してください... (例：吾輩は猫である)"></textarea>
+            
+            <div class="fca-controls">
+                <button id="fca-convert-btn" class="fca-button" disabled>変換</button>
+                <div id="fca-status" class="fca-status">ライブラリを初期化中...</div>
+            </div>
+            
+            <div id="fca-progress-container" class="fca-progress-container">
+                <progress id="fca-progress-bar" value="0" max="100"></progress>
+                <span id="fca-progress-label">0%</span>
+            </div>
+            
+            <div id="fca-result-area" class="fca-result-area">
+                ここに変換結果が表示されます。
+            </div>
+        </div>
+    </div>
+</body>
+</html>
