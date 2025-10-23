@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【英単語クイズ】和訳（英→日）フラッシュカード（5レベル対応）</title>
+
+    <style>
+        /* [V1] 所有 Class 均使用 ejq-v1- (Eng-Jp Quiz V1) 前綴 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+            line-height: 1.6 !important;
+            background-color: #f8fafc !important;
+            margin: 0;
+            padding: 1rem;
+        }
+        .ejq-v1-container {
+            font-family: inherit !important;
+            line-height: 1.6 !important;
+            background-color: #f9fafb !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 0.75rem !important;
+            padding: 2rem !important;
+            margin: 2rem auto !important;
+            max-width: 650px !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+        }
+        .ejq-v1-container *, 
+        .ejq-v1-container *::before, 
+        .ejq-v1-container *::after {
+            box-sizing: border-box !important;
+        }
+        .ejq-v1-container .ejq-v1-screen {
+            display: none; 
+            animation: fadeInEjqV1 0.3s ease-in-out !important;
+        }
+        .ejq-v1-container .ejq-v1-screen.active {
+            display: block !important;
+        }
+         @keyframes fadeInEjqV1 {
+             from { opacity: 0; transform: translateY(10px); }
+             to { opacity: 1; transform: translateY(0); }
+         }
+        /* [V1] 顏色主題改為藍色 */
+        .ejq-v1-container h2 {
+            color: #0284c7 !important; 
+            text-align: center !important;
+            font-size: 2rem !important;
+            font-weight: 700 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0.5rem !important;
+        }
+        .ejq-v1-container h3 {
+            text-align: center !important;
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+            margin-top: 0 !important;
+            margin-bottom: 1.5rem !important;
+            color: #1f2937 !important;
+        }
+        .ejq-v1-container .ejq-v1-subtitle {
+            text-align: center !important;
+            font-size: 1.1rem !important;
+            color: #4b5563 !important;
+            margin: 0 auto 2rem auto !important;
+        }
+        .ejq-v1-container .ejq-v1-main-btn {
+            display: block !important;
+            width: 100% !important;
+            max-width: 300px !important;
+            margin: 2rem auto 0 auto !important;
+            padding: 1rem !important;
+            font-size: 1.25rem !important;
+            font-weight: 700 !important;
+            color: #ffffff !important;
+            background-color: #0284c7 !important; /* Blue */
+            border: none !important;
+            border-radius: 0.5rem !important;
+            cursor: pointer !important;
+            transition: background-color 0.2s, transform 0.1s !important;
+        }
+        .ejq-v1-container .ejq-v1-main-btn:hover { background-color: #0369a1 !important; }
+        .ejq-v1-container .ejq-v1-main-btn:active { transform: scale(0.98) !important; }
+        
+        /* 難易度選擇畫面 */
+        .ejq-v1-container .ejq-v1-level-grid {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+        }
+        .ejq-v1-container .ejq-v1-level-btn {
+            width: 100% !important;
+            padding: 1rem !important;
+            font-size: 1.1rem !important;
+            font-weight: 600 !important;
+            color: #374151 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.5rem !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            text-align: center;
+        }
+        .ejq-v1-container .ejq-v1-level-btn:hover {
+            border-color: #0284c7 !important;
+            color: #0284c7 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        }
+        .ejq-v1-container .ejq-v1-level-btn small {
+            font-size: 0.85rem;
+            color: #6b7280;
+            display: block;
+            font-weight: 400;
+        }
+
+        /* 測驗畫面 */
+        .ejq-v1-container .ejq-v1-header {
+             display: flex; 
+             justify-content: space-between; 
+             align-items: center; 
+             margin-bottom: 1rem; 
+             color: #4a5568; 
+             font-weight: 600;
+        }
+         .ejq-v1-container .ejq-v1-header-btn {
+             font-size: 0.9rem;
+             color: #0284c7;
+             cursor: pointer;
+             background: none;
+             border: none;
+             padding: 0.25rem;
+         }
+         .ejq-v1-container .ejq-v1-header-btn:hover {
+             text-decoration: underline;
+         }
+        .ejq-v1-container .ejq-v1-question-counter {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        .ejq-v1-container .ejq-v1-score-counter {
+             font-size: 1rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        .ejq-v1-container .ejq-v1-question-text {
+            font-size: 2.5rem !important; /* 英文單字可以大一點 */
+            font-weight: 700 !important;
+            color: #111827 !important;
+            text-align: center;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 2.5rem 1.5rem;
+            margin-bottom: 2rem;
+            min-height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .ejq-v1-container .ejq-v1-options-container {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 1rem !important;
+        }
+        .ejq-v1-container .ejq-v1-option-btn {
+            width: 100% !important;
+            padding: 1rem !important;
+            font-size: 1.25rem !important;
+            font-weight: 600 !important;
+            color: #374151 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.5rem !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            text-align: center;
+            min-height: 80px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .ejq-v1-container .ejq-v1-option-btn:not(:disabled):hover {
+            border-color: #0284c7 !important;
+            color: #0284c7 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        }
+        .ejq-v1-container .ejq-v1-option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .ejq-v1-container .ejq-v1-option-btn.correct {
+            background-color: #dcfce7 !important;
+            border-color: #16a34a !important;
+            color: #15803d !important;
+            font-weight: 700 !important;
+        }
+        .ejq-v1-container .ejq-v1-option-btn.wrong {
+            background-color: #fee2e2 !important;
+            border-color: #dc2626 !important;
+            color: #b91c1c !important;
+            opacity: 1 !important;
+        }
+        
+        .ejq-v1-container .ejq-v1-feedback-container {
+            display: none;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem; 
+            text-align: center;
+            animation: fadeInEjqV1 0.3s ease-in-out !important;
+        }
+        .ejq-v1-container .ejq-v1-feedback-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 1rem 0;
+        }
+        .ejq-v1-container .ejq-v1-feedback-text.correct { color: #16a34a; }
+        .ejq-v1-container .ejq-v1-feedback-text.wrong { color: #dc2626; }
+        
+        .ejq-v1-container .ejq-v1-answer-details {
+            text-align: left;
+        }
+        .ejq-v1-container .ejq-v1-answer-pair {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .ejq-v1-container .ejq-v1-answer-example {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #4b5563;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        .ejq-v1-container .ejq-v1-next-btn {
+            display: none; 
+            width: 100%;
+            background-color: #0284c7;
+            margin: 1.5rem auto 0 auto;
+            max-width: 300px;
+        }
+        .ejq-v1-container .ejq-v1-next-btn:hover {
+            background-color: #0369a1;
+        }
+        
+        /* 結果畫面 */
+        .ejq-v1-container .ejq-v1-score-display {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            text-align: center;
+        }
+         .ejq-v1-container .ejq-v1-score-display .score {
+             font-size: 3rem;
+             font-weight: 700;
+             color: #0284c7; /* Blue score */
+             display: block;
+             margin: 0.5rem 0;
+         }
+         .ejq-v1-container .ejq-v1-score-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 300px;
+            margin: 2rem auto 0 auto;
+         }
+         .ejq-v1-container .ejq-v1-score-controls .ejq-v1-main-btn {
+             margin-top: 0 !important;
+         }
+         .ejq-v1-container .ejq-v1-secondary-btn {
+             background-color: #ffffff !important;
+             color: #374151 !important;
+             border: 1px solid #d1d5db !important;
+         }
+         .ejq-v1-container .ejq-v1-secondary-btn:hover {
+             background-color: #f9fafb !important;
+         }
+         
+         @media (max-width: 600px) {
+            .ejq-v1-container {
+                padding: 1.5rem !important;
+                margin: 1rem auto !important;
+            }
+             .ejq-v1-container h2 {
+                 font-size: 1.75rem !important;
+             }
+             .ejq-v1-container .ejq-v1-question-text {
+                 font-size: 2rem !important;
+             }
+         }
+         @media (max-width: 480px) {
+             .ejq-v1-container .ejq-v1-options-container {
+                 grid-template-columns: 1fr !important; /* Stack options */
+             }
+         }
+    </style>
+</head>
+<body>
+
+    <div id="eng-jp-flashcard-quiz-v1" class="ejq-v1-container">
+        <div class="ejq-v1-card">
+            
+            <div id="ejq-v1-screen-level-select" class="ejq-v1-screen active">
+                <h2>和訳クイズ (英→日)</h2>
+                <p class="ejq-v1-subtitle">英単語に合う正しい日本語の意味を<br>4つの選択肢から選んでください。</p>
+                <div class="ejq-v1-level-grid">
+                    <button class="ejq-v1-level-btn" data-level="level_1">入門 <small>(N5相当・基礎名詞)</small></button>
+                    <button class="ejq-v1-level-btn" data-level="level_2">初級 <small>(N4相当・日常生活)</small></button>
+                    <button class="ejq-v1-level-btn" data-level="level_3">中級 <small>(N3相当・抽象/社会)</small></button>
+                    <button class="ejq-v1-level-btn" data-level="level_4">上級 <small>(N2相当・商務/学術)</small></button>
+                    <button class="ejq-v1-level-btn" data-level="level_5">最上級 <small>(N1/Expert相当)</small></button>
+                </div>
+            </div>
+
+            <div id="ejq-v1-screen-quiz" class="ejq-v1-screen">
+                <div class="ejq-v1-header">
+                     <span id="ejq-v1-question-counter" class="ejq-v1-question-counter"></span>
+                     <span id="ejq-v1-score-counter" class="ejq-v1-score-counter"></span>
+                </div>
+                <div id="ejq-v1-question-text" class="ejq-v1-question-text"></div>
+                <div id="ejq-v1-options-container" class="ejq-v1-options-container"></div>
+                
+                <button id="ejq-v1-next-btn" class="ejq-v1-main-btn ejq-v1-next-btn">次の問題へ</button>
+                <div id="ejq-v1-feedback-container" class="ejq-v1-feedback-container">
+                    <h3 id="ejq-v1-feedback-text" class="ejq-v1-feedback-text"></h3>
+                    <div class="ejq-v1-answer-details">
+                        <div id="ejq-v1-answer-pair" class="ejq-v1-answer-pair"></div>
+                        <p id="ejq-v1-answer-example" class="ejq-v1-answer-example"></p>
+                    </div>
+                </div>
+                </div>
+
+            <div id="ejq-v1-screen-score" class="ejq-v1-screen">
+                <h3>お疲れ様でした！</h3>
+                <div class="ejq-v1-score-display">
+                    あなたのスコア:
+                    <span id="ejq-v1-final-score" class="score">10問中 8問</span>
+                    正解
+                </div>
+                <div class="ejq-v1-score-controls">
+                    <button id="ejq-v1-restart-btn" class="ejq-v1-main-btn">もう一度挑戦する</button>
+                    <button id="ejq-v1-back-to-menu-score" class="ejq-v1-main-btn ejq-v1-secondary-btn">レベル選択に戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // 規範 1.6 (IIFE)
+    (function() {
+        
+        // --- [V1 英→日] 核心資料庫 (100 詞) ---
+        const ejq_v1_quizData = {
+            'level_1': [
+                { q: 'Dog', a: '犬 (いぬ)', ex: 'He has a dog. (彼は犬を飼っています)' },
+                { q: 'Cat', a: '猫 (ねこ)', ex: 'The cat is sleeping. (猫が寝ています)' },
+                { q: 'Eat', a: '食べる (たべる)', ex: 'I eat breakfast at 7. (7時に朝ご飯を食べます)' },
+                { q: 'Drink', a: '飲む (のむ)', ex: 'Please drink water. (水を飲んでください)' },
+                { q: 'Big', a: '大きい (おおきい)', ex: 'That is a big house. (あれは大きい家です)' },
+                { q: 'Small', a: '小さい (ちいさい)', ex: 'This box is small. (この箱は小さいです)' },
+                { q: 'See', a: '見る (みる)', ex: 'I see a bird. (鳥が見えます)' },
+                { q: 'Go', a: '行く (いく)', ex: 'I go to school. (学校に行きます)' },
+                { q: 'Come', a: '来る (くる)', ex: 'Please come here. (ここに来てください)' },
+                { q: 'School', a: '学校 (がっこう)', ex: 'He is a student at this school. (彼はこの学校の生徒です)' },
+                { q: 'Station', a: '駅 (えき)', ex: 'Where is the station? (駅はどこですか)' },
+                { q: 'Book', a: '本 (ほん)', ex: 'I am reading a book. (本を読んでいます)' },
+                { q: 'Water', a: '水 (みず)', ex: 'Glass of water, please. (お水を一杯ください)' },
+                { q: 'Red', a: '赤い (あかい)', ex: 'She likes red flowers. (彼女は赤い花が好きです)' },
+                { q: 'Blue', a: '青い (あおい)', ex: 'The sky is blue. (空は青いです)' },
+                { q: 'One', a: '一 (いち)', ex: 'I have one apple. (リンゴを一つ持っています)' },
+                { q: 'Two', a: '二 (に)', ex: 'Two tickets, please. (チケットを二枚ください)' },
+                { q: 'Three', a: '三 (さん)', ex: 'There are three cats. (猫が三匹います)' },
+                { q: 'I', a: '私 (わたし)', ex: 'I am a student. (私は学生です)' },
+                { q: 'You', a: 'あなた', ex: 'Are you hungry? (お腹が空いていますか)' }
+                // ... 擴展 80 N5 詞 ...
+            ],
+            'level_2': [ 
+                { q: 'Buy', a: '買う (かう)', ex: 'I will buy milk. (牛乳を買います)' },
+                { q: 'Read', a: '読む (よむ)', ex: 'She likes to read books. (彼女は本を読むのが好きです)' },
+                { q: 'Write', a: '書く (かく)', ex: 'He wrote a letter. (彼は手紙を書きました)' },
+                { q: 'Speak', a: '話す (はなす)', ex: 'Can you speak English? (英語を話せますか)' },
+                { q: 'Listen', a: '聞く (きく)', ex: 'I listen to music. (音楽を聞きます)' },
+                { q: 'Study', a: '勉強する (べんきょうする)', ex: 'I study Japanese every day. (毎日日本語を勉強します)' },
+                { q: 'Yesterday', a: '昨日 (きのう)', ex: 'I was busy yesterday. (昨日は忙しかった)' },
+                { q: 'Tomorrow', a: '明日 (あした)', ex: 'See you tomorrow. (また明日)' },
+                { q: 'Time', a: '時間 (じかん)', ex: 'What time is it now? (今、何時ですか)' },
+                { q: 'Money', a: 'お金 (おかね)', ex: 'I don\'t have money. (お金がありません)' },
+                { q: 'Hospital', a: '病院 (びょういん)', ex: 'I need to go to the hospital. (病院に行かなければなりません)' },
+                { q: 'Movie', a: '映画 (えいが)', ex: 'Let\'s watch a movie. (映画を見ましょう)' },
+                { q: 'Busy', a: '忙しい (いそがしい)', ex: 'Are you busy now? (今、忙しいですか)' },
+                { q: 'Difficult', a: '難しい (むずかしい)', ex: 'Kanji is difficult. (漢字は難しいです)' },
+                { q: 'Easy', a: '易しい (やさしい)', ex: 'This book is easy. (この本は易しいです)' },
+                { q: 'Train', a: '電車 (でんしゃ)', ex: 'I take the train to work. (電車で通勤します)' },
+                { q: 'Weather', a: '天気 (てんき)', ex: 'The weather is nice today. (今日はいい天気です)' },
+                { q: 'Fruit', a: '果物 (くだもの)', ex: 'I like to eat fruit. (果物を食べるのが好きです)' },
+                { q: 'Clothes', a: '服 (ふく)', ex: 'I bought new clothes. (新しい服を買いました)' },
+                { q: 'Family', a: '家族 (かぞく)', ex: 'My family lives in Tokyo. (私の家族は東京に住んでいます)' }
+                // ... 擴展 80 N4 詞 ...
+            ],
+            'level_3': [
+                { q: 'Information', a: '情報 (じょうほう)', ex: 'I need more information. (もっと情報が必要です)' },
+                { q: 'Society', a: '社会 (しゃかい)', ex: 'We live in a global society. (私たちはグローバル社会に生きています)' },
+                { q: 'Decide', a: '決める (きめる)', ex: 'I can\'t decide. (決められません)' },
+                { q: 'Continue', a: '続ける (つづける)', ex: 'Please continue your speech. (スピーチを続けてください)' },
+                { q: 'Experience', a: '経験 (けいけん)', ex: 'I have experience in sales. (私には営業の経験があります)' },
+                { q: 'Important', a: '重要 (じゅうよう)', ex: 'This is very important. (これは非常に重要です)' },
+                { q: 'Interesting', a: '面白い (おもしろい)', ex: 'That book was interesting. (あの本は面白かった)' },
+                { q: 'Different', a: '違う (ちがう)', ex: 'My opinion is different from yours. (私の意見はあなたと違います)' },
+                { q: 'Problem', a: '問題 (もんだい)', ex: 'I have a problem. (問題があります)' },
+                { q: 'Reason', a: '理由 (りゆう)', ex: 'What is the reason? (理由は何ですか)' },
+                { q: 'Result', a: '結果 (けっか)', ex: 'The result was successful. (結果は成功でした)' },
+                { q: 'Plan', a: '計画 (けいかく)', ex: 'Do you have a plan? (計画はありますか)' },
+                { q: 'Develop', a: '発展する (はってんする)', ex: 'The city will develop quickly. (その都市は急速に発展するだろう)' },
+                { q: 'Research', a: '研究 (けんきゅう)', ex: 'He is doing research. (彼は研究をしています)' },
+                { q: 'Culture', a: '文化 (ぶんか)', ex: 'I am interested in Japanese culture. (日本文化に興味があります)' },
+                { q: 'Future', a: '未来 (みらい)', ex: 'This is a car of the future. (これは未来の車です)' },
+                { q: 'Safety', a: '安全 (あんぜん)', ex: 'Safety is our top priority. (安全第一です)' },
+                { q: 'Promise', a: '約束 (やくそく)', ex: 'I made a promise. (約束をしました)' },
+                { q: 'Send', a: '送る (おくる)', ex: 'Please send me an email. (私にメールを送ってください)' },
+                { q: 'Travel', a: '旅行 (りょこう)', ex: 'I like to travel. (旅行が好きです)' }
+                // ... 擴展 80 N3 詞 ...
+            ],
+            'level_4': [
+                { q: 'Environment', a: '環境 (かんきょう)', ex: 'We must protect the environment. (環境を守らなければならない)' },
+                { q: 'Economy', a: '経済 (けいざい)', ex: 'The economy is growing. (経済は成長しています)' },
+                { q: 'Increase', a: '増加する (ぞうかする)', ex: 'The population is increasing. (人口が増加している)' },
+                { q: 'Decrease', a: '減少する (げんしょうする)', ex: 'The number of students decreased. (生徒数が減少した)' },
+                { q: 'Suggest', a: '提案する (ていあんする)', ex: 'I suggest a new plan. (新しい計画を提案します)' },
+                { q: 'Require', a: '要求する (ようきゅうする)', ex: 'This job requires special skills. (この仕事は特別なスキルを要求する)' },
+                { q: 'Achieve', a: '達成する (たっせいする)', ex: 'She achieved her goal. (彼女は目標を達成した)' },
+                { q: 'Responsibility', a: '責任 (せきにん)', ex: 'He has a strong sense of responsibility. (彼は責任感が強い)' },
+                { q: 'Opportunity', a: '機会 (きかい)', ex: 'This is a great opportunity. (これは絶好の機会だ)' },
+                { q: 'Policy', a: '政策 (せいさく)', ex: 'The government announced a new policy. (政府は新政策を発表した)' },
+                { q: 'Analysis', a: '分析 (ぶんせき)', ex: 'We need a detailed analysis. (詳細な分析が必要です)' },
+                { q: 'Evidence', a: '証拠 (しょうこ)', ex: 'There is no evidence. (証拠がありません)' },
+                { q: 'Significant', a: '重大 (じゅうだい)', ex: 'This is a significant discovery. (これは重大な発見だ)' },
+                { q: 'Effective', a: '効果的 (こうかてき)', ex: 'This method is very effective. (この方法は非常に効果的です)' },
+                { q: 'Available', a: '利用可能 (りようかのう)', ex: 'Tickets are still available. (チケットはまだ利用可能です)' },
+                { q: 'Community', a: '地域社会 (ちいきしゃかい)', ex: 'I am active in my local community. (私は地域社会で活動しています)' },
+                { q: 'Resource', a: '資源 (しげん)', ex: 'Water is a precious resource. (水は貴重な資源です)' },
+                { q: 'Strategy', a: '戦略 (せんりゃく)', ex: 'We need a new business strategy. (新しいビジネス戦略が必要だ)' },
+                { q: 'Impact', a: '影響 (えいきょう)', ex: 'It had a big impact on society. (それは社会に大きな影響を与えた)' },
+                { q: 'Financial', a: '金融 (きんゆう)', ex: 'He works in the financial industry. (彼は金融業界で働いている)' }
+                // ... 擴展 80 N2 詞 ...
+            ],
+            'level_5': [
+                { q: 'Alleviate', a: '緩和する (かんわする)', ex: 'This medicine will alleviate the pain. (この薬は痛みを緩和します)' },
+                { q: 'Scrutinize', a: '精査する (せいさする)', ex: 'We must scrutinize the document. (我々はその文書を精査しなければならない)' },
+                { q: 'Ubiquitous', a: '遍在する (へんざいする)', ex: 'Smartphones are ubiquitous today. (今日、スマートフォンは遍在している)' },
+                { q: 'Meticulous', a: '細心の (さいしんの)', ex: 'She is meticulous in her work. (彼女は仕事に細心の注意を払う)' },
+                { q: 'Conundrum', a: '難問 (なんもん)', ex: 'This is a difficult conundrum. (これは難問だ)' },
+                { q: 'Disparity', a: '格差 (かくさ)', ex: 'There is a disparity in wealth. (富の格差が存在する)' },
+                { q: 'Mitigate', a: '軽減する (けいげんする)', ex: 'We need to mitigate the risks. (リスクを軽減する必要がある)' },
+                { q: 'Ambiguous', a: '曖昧な (あいまいな)', ex: 'His reply was ambiguous. (彼の返事は曖昧だった)' },
+                { q: 'Eloquent', a: '雄弁な (ゆうべんな)', ex: 'She gave an eloquent speech. (彼女は雄弁なスピーチを行った)' },
+                { q: 'Ephemeral', a: '儚い (はかない)', ex: 'Life is ephemeral. (命は儚いものだ)' },
+                { q: 'Paradigm', a: '模範 (もはん)', ex: 'This is a new paradigm of computing. (これはコンピューティングの新しい模範だ)' },
+                { q: 'Consensus', a: '総意 (そうい)', ex: 'We reached a consensus. (我々は総意に達した)' },
+                { q: 'Sustainable', a: '持続可能 (じぞくかのう)', ex: 'We need sustainable energy. (持続可能なエネルギーが必要だ)' },
+                { q: 'Reciprocal', a: '相互の (そうごの)', ex: 'It was a reciprocal agreement. (それは相互の合意だった)' },
+                { q: 'Proliferate', a: '急増する (きゅうぞうする)', ex: 'Digital devices have proliferated. (デジタル機器が急増した)' },
+                { q: 'Deteriorate', a: '悪化する (あっかする)', ex: 'His health began to deteriorate. (彼の健康は悪化し始めた)' },
+                { q: 'Comprehensive', a: '包括的な (ほうかつてきな)', ex: 'We need a comprehensive review. (包括的な見直しが必要だ)' },
+                { q: 'Innovative', a: '革新的な (かくしんてきな)', ex: 'That is an innovative idea. (それは革新的なアイデアだ)' },
+                { q: 'Lucrative', a: '利益の上がる (りえきのあがる)', ex: 'It is a lucrative business. (それは利益の上がるビジネスだ)' },
+                { q: 'Pragmatic', a: '実用的な (じつようてきな)', ex: 'We need a pragmatic approach. (実用的なアプローチが必要だ)' }
+                // ... 擴展 80 N1/Expert 詞 ...
+            ]
+        };
+        // --- 資料庫結束 (共 100 詞) ---
+
+        // [V2.1 修正] 採用您範例中的穩定載入邏輯
+        function ejq_v1_initializeQuiz() {
+            // [V3 修正] 使用 ID 啟動
+            const app = document.getElementById('eng-jp-flashcard-quiz-v1'); 
+            if (!app) {
+                console.error("EJQ V1: Container #eng-jp-flashcard-quiz-v1 not found.");
+                return;
+            }
+
+            // --- 元素獲取 (使用 ID) ---
+            const screens = {
+                levelSelect: app.querySelector('#ejq-v1-screen-level-select'),
+                quiz: app.querySelector('#ejq-v1-screen-quiz'),
+                score: app.querySelector('#ejq-v1-screen-score')
+            };
+            
+            const elements = {
+                levelBtnContainer: app.querySelector('.ejq-v1-level-grid'),
+                restartBtn: app.querySelector('#ejq-v1-restart-btn'),
+                backToMenuBtnScore: app.querySelector('#ejq-v1-back-to-menu-score'),
+                // [V4 修正] 移除 'backToMenuBtnQuiz'
+                nextBtn: app.querySelector('#ejq-v1-next-btn'),
+                questionCounter: app.querySelector('#ejq-v1-question-counter'),
+                scoreCounter: app.querySelector('#ejq-v1-score-counter'),
+                questionText: app.querySelector('#ejq-v1-question-text'),
+                optionsContainer: app.querySelector('#ejq-v1-options-container'),
+                feedbackContainer: app.querySelector('#ejq-v1-feedback-container'),
+                feedbackText: app.querySelector('#ejq-v1-feedback-text'),
+                answerPair: app.querySelector('.ejq-v1-answer-pair'),
+                answerExample: app.querySelector('.ejq-v1-answer-example')
+            };
+            
+            const scoreDisplay = app.querySelector('#ejq-v1-final-score'); 
+            
+            // --- 遊戲狀態 ---
+            let currentQuizData = []; 
+            let currentQuestions = [];
+            let score = 0;
+            let currentQuestionIndex = 0;
+            const QUESTIONS_PER_GAME = 10; 
+            let currentLevel = 'level_1'; 
+
+            // --- 函數定義 ---
+            
+            function ejq_v1_shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex != 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [
+                        array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function ejq_v1_showScreen(screenId) {
+                Object.values(screens).forEach(screen => screen.classList.remove('active'));
+                const screenEl = app.querySelector(`#${screenId}`);
+                if (screenEl) screenEl.classList.add('active');
+            }
+
+            function ejq_v1_startGame(level) {
+                if (!ejq_v1_quizData[level]) {
+                     console.error(`EJQ V1: Level "${level}" not found in database.`);
+                     return;
+                }
+                currentLevel = level;
+                currentQuizData = ejq_v1_quizData[level];
+                score = 0;
+                currentQuestionIndex = 0;
+                
+                currentQuestions = ejq_v1_shuffle([...currentQuizData]).slice(0, QUESTIONS_PER_GAME); 
+                
+                ejq_v1_showScreen('ejq-v1-screen-quiz');
+                ejq_v1_showQuestion();
+            }
+
+            function ejq_v1_showQuestion() {
+                // [V4 修正] 確保在顯示新問題時隱藏按鈕和解說
+                elements.feedbackContainer.style.display = 'none';
+                elements.nextBtn.style.display = 'none';
+                elements.optionsContainer.innerHTML = '';
+                
+                const q = currentQuestions[currentQuestionIndex];
+                
+                elements.questionCounter.textContent = `問題 ${currentQuestionIndex + 1} / ${QUESTIONS_PER_GAME}`;
+                elements.scoreCounter.textContent = `スコア: ${score}`;
+                elements.questionText.textContent = q.q; // 顯示英文問題
+                
+                const correctAnswer = q.a; // 日文答案
+                const fakes = [];
+                const pool = currentQuizData.filter(word => word.a !== correctAnswer);
+                ejq_v1_shuffle(pool); 
+                
+                for (let i = 0; i < 3; i++) {
+                    if (pool[i] && pool[i].a) {
+                         fakes.push(pool[i].a);
+                    } else {
+                         const randomFake = ejq_v1_quizData.level_1[Math.floor(Math.random() * ejq_v1_quizData.level_1.length)].a;
+                         if(randomFake !== correctAnswer) fakes.push(randomFake);
+                    }
+                }
+                
+                const options = ejq_v1_shuffle([correctAnswer, ...fakes]);
+                
+                options.forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.className = 'ejq-v1-option-btn';
+                    btn.textContent = option; // 顯示日文選項
+                    btn.dataset.answer = option;
+                    elements.optionsContainer.appendChild(btn);
+                });
+            }
+
+            function ejq_v1_checkAnswer(selectedBtn, selectedAnswer) {
+                elements.optionsContainer.querySelectorAll('.ejq-v1-option-btn').forEach(btn => {
+                    btn.disabled = true;
+                });
+                
+                const q = currentQuestions[currentQuestionIndex];
+                const correctAnswer = q.a; 
+
+                elements.answerPair.textContent = `正解： ${q.q} = ${q.a}`;
+                elements.answerExample.textContent = `例文： ${q.ex}`;
+                elements.feedbackContainer.style.display = 'block';
+
+                if (selectedAnswer === correctAnswer) {
+                    score++;
+                    selectedBtn.classList.add('correct');
+                    elements.feedbackText.textContent = '正解！';
+                    elements.feedbackText.className = 'ejq-v1-feedback-text correct';
+                } else {
+                    selectedBtn.classList.add('wrong');
+                    const correctBtn = elements.optionsContainer.querySelector(`[data-answer="${correctAnswer}"]`);
+                    if (correctBtn) {
+                        correctBtn.classList.add('correct');
+                    }
+                    elements.feedbackText.textContent = '不正解...';
+                    elements.feedbackText.className = 'ejq-v1-feedback-text wrong';
+                }
+
+                elements.scoreCounter.textContent = `スコア: ${score}`;
+
+                if (currentQuestionIndex < QUESTIONS_PER_GAME - 1) {
+                    elements.nextBtn.textContent = '次の問題へ';
+                } else {
+                    elements.nextBtn.textContent = '結果を見る';
+                }
+                elements.nextBtn.style.display = 'block'; // [V4 修正] 答題後才顯示
+            }
+            
+            function ejq_v1_nextQuestion() {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < QUESTIONS_PER_GAME) {
+                    ejq_v1_showQuestion();
+                } else {
+                    ejq_v1_showScore();
+                }
+            }
+
+            function ejq_v1_showScore() {
+                ejq_v1_showScreen('ejq-v1-screen-score');
+                scoreDisplay.textContent = `${QUESTIONS_PER_GAME}問中 ${score}問`;
+            }
+
+            // --- 事件綁定 ---
+            if (elements.levelBtnContainer) {
+                 elements.levelBtnContainer.addEventListener('click', function(e) {
+                     const targetBtn = e.target.closest('.ejq-v1-level-btn');
+                     if (targetBtn && targetBtn.dataset.level) {
+                         ejq_v1_startGame(targetBtn.dataset.level);
+                     }
+                 });
+            }
+
+            if (elements.restartBtn) {
+                 elements.restartBtn.addEventListener('click', function() {
+                      ejq_v1_startGame(currentLevel); 
+                 });
+            }
+            
+            if (elements.backToMenuBtnScore) {
+                 elements.backToMenuBtnScore.addEventListener('click', function() {
+                     ejq_v1_showScreen('ejq-v1-screen-level-select');
+                 });
+            }
+            
+            if (elements.nextBtn) {
+                 elements.nextBtn.addEventListener('click', ejq_v1_nextQuestion);
+            }
+            
+            if (elements.optionsContainer) {
+                elements.optionsContainer.addEventListener('click', function(e) {
+                    const targetBtn = e.target.closest('.ejq-v1-option-btn');
+                    if (targetBtn && !targetBtn.disabled) {
+                        ejq_v1_checkAnswer(targetBtn, targetBtn.dataset.answer);
+                    }
+                });
+            }
+        } // --- End of ejq_v1_initializeQuiz ---
+
+        // [V2.1 修正] 檢查頁面載入狀態
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', ejq_v1_initializeQuiz);
+        } else {
+            // DOM 已載入，立即執行
+            ejq_v1_initializeQuiz();
+        }
+
+    })();
+    </script>
+</body>
+</html>
