@@ -6,15 +6,15 @@
     <title>【四字熟語クイズ】穴埋め問題で腕試し！厳選100問</title>
 
     <style>
-        /* [V3] 所有 Class 均使用 yjq-v3- 前綴 */
+        /* [V5] 所有 Class 均使用 yjq-v5- 前綴 */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
             line-height: 1.6 !important;
-            background-color: #f8fafb !important;
+            background-color: #f8fafc !important;
             margin: 0;
             padding: 1rem;
         }
-        .yjq-v3-container {
+        .yjq-v5-container {
             font-family: inherit !important;
             line-height: 1.6 !important;
             background-color: #f9fafb !important;
@@ -25,23 +25,23 @@
             max-width: 650px !important;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
         }
-        .yjq-v3-container *, 
-        .yjq-v3-container *::before, 
-        .yjq-v3-container *::after {
+        .yjq-v5-container *, 
+        .yjq-v5-container *::before, 
+        .yjq-v5-container *::after {
             box-sizing: border-box !important;
         }
-        .yjq-v3-container .yjq-v3-screen {
+        .yjq-v5-container .yjq-v5-screen {
             display: none; 
-            animation: fadeInYjqV3 0.3s ease-in-out !important;
+            animation: fadeInYjqV5 0.3s ease-in-out !important;
         }
-        .yjq-v3-container .yjq-v3-screen.active {
+        .yjq-v5-container .yjq-v5-screen.active {
             display: block !important;
         }
-         @keyframes fadeInYjqV3 {
+         @keyframes fadeInYjqV5 { /* 獨立動畫名稱 */
              from { opacity: 0; transform: translateY(10px); }
              to { opacity: 1; transform: translateY(0); }
          }
-        .yjq-v3-container h2 {
+        .yjq-v5-container h2 {
             color: #B45309 !important;
             text-align: center !important;
             font-size: 2rem !important;
@@ -49,13 +49,13 @@
             margin-top: 0 !important;
             margin-bottom: 0.5rem !important;
         }
-        .yjq-v3-container .yjq-v3-subtitle {
+        .yjq-v5-container .yjq-v5-subtitle {
             text-align: center !important;
             font-size: 1.1rem !important;
             color: #4b5563 !important;
             margin: 0 auto 2rem auto !important;
         }
-        .yjq-v3-container .yjq-v3-main-btn {
+        .yjq-v5-container .yjq-v5-main-btn {
             display: block !important;
             width: 100% !important;
             max-width: 300px !important;
@@ -70,17 +70,17 @@
             cursor: pointer !important;
             transition: background-color 0.2s, transform 0.1s !important;
         }
-        .yjq-v3-container .yjq-v3-main-btn:hover { background-color: #15803d !important; }
-        .yjq-v3-container .yjq-v3-main-btn:active { transform: scale(0.98) !important; }
+        .yjq-v5-container .yjq-v5-main-btn:hover { background-color: #15803d !important; }
+        .yjq-v5-container .yjq-v5-main-btn:active { transform: scale(0.98) !important; }
         
-        .yjq-v3-container .yjq-v3-question-counter {
+        .yjq-v5-container .yjq-v5-question-counter {
             text-align: center;
             font-size: 1rem;
             font-weight: 600;
             color: #6b7280;
             margin-bottom: 1rem;
         }
-        .yjq-v3-container .yjq-v3-question-text {
+        .yjq-v5-container .yjq-v5-question-text {
             font-size: 2.5rem !important;
             font-weight: 700 !important;
             color: #111827 !important;
@@ -92,12 +92,12 @@
             margin-bottom: 2rem;
             letter-spacing: 0.1em; 
         }
-        .yjq-v3-container .yjq-v3-options-container {
+        .yjq-v5-container .yjq-v5-options-container {
             display: grid !important;
             grid-template-columns: 1fr !important;
             gap: 0.75rem !important;
         }
-        .yjq-v3-container .yjq-v3-option-btn {
+        .yjq-v5-container .yjq-v5-option-btn {
             width: 100% !important;
             padding: 1rem !important;
             font-size: 1.25rem !important;
@@ -110,82 +110,85 @@
             transition: all 0.2s ease !important;
             text-align: center;
         }
-        .yjq-v3-container .yjq-v3-option-btn:not(:disabled):hover {
+        .yjq-v5-container .yjq-v5-option-btn:not(:disabled):hover {
             border-color: #B45309 !important;
             color: #B45309 !important;
             transform: translateY(-2px) !important;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
         }
-        .yjq-v3-container .yjq-v3-option-btn:disabled {
+        .yjq-v5-container .yjq-v5-option-btn:disabled {
             cursor: not-allowed;
             opacity: 0.7;
         }
-        .yjq-v3-container .yjq-v3-option-btn.correct {
+        .yjq-v5-container .yjq-v5-option-btn.correct {
             background-color: #dcfce7 !important;
             border-color: #16a34a !important;
             color: #15803d !important;
             font-weight: 700 !important;
         }
-        .yjq-v3-container .yjq-v3-option-btn.wrong {
+        .yjq-v5-container .yjq-v5-option-btn.wrong {
             background-color: #fee2e2 !important;
             border-color: #dc2626 !important;
             color: #b91c1c !important;
             opacity: 1 !important;
         }
         
-        .yjq-v3-container .yjq-v3-feedback-container {
+        .yjq-v5-container .yjq-v5-feedback-container {
             display: none;
             background-color: #ffffff;
             border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
             padding: 1.5rem;
-            margin-top: 2rem;
+            /* [V5 修正] 調整 margin-top */
+            margin-top: 1.5rem; 
             text-align: center;
-            animation: fadeInYjqV3 0.3s ease-in-out !important;
+            animation: fadeInYjqV5 0.3s ease-in-out !important;
         }
-        .yjq-v3-container .yjq-v3-feedback-text {
+        .yjq-v5-container .yjq-v5-feedback-text {
             font-size: 1.5rem;
             font-weight: 700;
             margin: 0 0 1rem 0;
         }
-        .yjq-v3-container .yjq-v3-feedback-text.correct { color: #16a34a; }
-        .yjq-v3-container .yjq-v3-feedback-text.wrong { color: #dc2626; }
+        .yjq-v5-container .yjq-v5-feedback-text.correct { color: #16a34a; }
+        .yjq-v5-container .yjq-v5-feedback-text.wrong { color: #dc2626; }
         
-        .yjq-v3-container .yjq-v3-answer-details {
+        .yjq-v5-container .yjq-v5-answer-details {
             text-align: left;
         }
-        .yjq-v3-container .yjq-v3-answer-full {
+        .yjq-v5-container .yjq-v5-answer-full {
             font-size: 1.25rem;
             font-weight: 700;
             color: #1f2937;
         }
-        .yjq-v3-container .yjq-v3-answer-read {
+        .yjq-v5-container .yjq-v5-answer-read {
             font-size: 1rem;
             font-weight: 500;
             color: #4b5563;
         }
-        .yjq-v3-container .yjq-v3-answer-mean {
+        .yjq-v5-container .yjq-v5-answer-mean {
             font-size: 0.95rem;
             color: #374151;
             margin-top: 0.5rem;
         }
         
-        .yjq-v3-container .yjq-v3-next-btn {
+        .yjq-v5-container .yjq-v5-next-btn {
             display: none; 
             width: 100%;
             background-color: #0284c7;
+            /* [V5 修正] 調整 margin-top */
+            margin-top: 1.5rem; 
         }
-        .yjq-v3-container .yjq-v3-next-btn:hover {
+        .yjq-v5-container .yjq-v5-next-btn:hover {
             background-color: #0369a1;
         }
         
-        .yjq-v3-container .yjq-v3-score-display {
+        .yjq-v5-container .yjq-v5-score-display {
             font-size: 1.5rem;
             font-weight: 600;
             color: #1f2937;
             text-align: center;
         }
-         .yjq-v3-container .yjq-v3-score-display .score {
+         .yjq-v5-container .yjq-v5-score-display .score {
              font-size: 3rem;
              font-weight: 700;
              color: #B45309;
@@ -194,14 +197,14 @@
          }
          
          @media (max-width: 600px) {
-            .yjq-v3-container {
+            .yjq-v5-container {
                 padding: 1.5rem !important;
                 margin: 1rem auto !important; /* Mobile margin */
             }
-             .yjq-v3-container h2 {
+             .yjq-v5-container h2 {
                  font-size: 1.75rem !important;
              }
-             .yjq-v3-container .yjq-v3-question-text {
+             .yjq-v5-container .yjq-v5-question-text {
                  font-size: 2rem !important;
              }
          }
@@ -209,37 +212,38 @@
 </head>
 <body>
 
-    <div id="yojijukugo-quiz-app-v3" class="yjq-v3-container">
-        <div class="yjq-v3-card">
-            <div class="yjq-v3-screen active" data-screen="start">
+    <div id="yojijukugo-quiz-app-v5" class="yjq-v5-container">
+        <div class="yjq-v5-card">
+            <div class="yjq-v5-screen active" data-screen="start">
                 <h2>四字熟語 穴埋めクイズ</h2>
-                <p class="yjq-v3-subtitle">ランダムに10問出題されます。<br>正しい漢字の組み合わせを選んでください。</p>
-                <button class="yjq-v3-main-btn" data-action="start">クイズ開始</button>
+                <p class="yjq-v5-subtitle">ランダムに10問出題されます。<br>正しい漢字の組み合わせを選んでください。</p>
+                <button class="yjq-v5-main-btn" data-action="start">クイズ開始</button>
             </div>
 
-            <div class="yjq-v3-screen" data-screen="quiz">
-                <div class="yjq-v3-question-counter" data-text="counter"></div>
-                <div class="yjq-v3-question-text" data-text="question"></div>
-                <div class="yjq-v3-options-container" data-container="options"></div>
-                <div class="yjq-v3-feedback-container" data-container="feedback">
-                    <h3 class="yjq-v3-feedback-text" data-text="feedback"></h3>
-                    <div class="yjq-v3-answer-details">
-                        <div class="yjq-v3-answer-full" data-text="answer-full"></div>
-                        <div class="yjq-v3-answer-read" data-text="answer-read"></div>
-                        <p class="yjq-v3-answer-mean" data-text="answer-mean"></p>
+            <div class="yjq-v5-screen" data-screen="quiz">
+                <div class="yjq-v5-question-counter" data-text="counter"></div>
+                <div class="yjq-v5-question-text" data-text="question"></div>
+                <div class="yjq-v5-options-container" data-container="options"></div>
+                
+                <button class="yjq-v5-main-btn yjq-v5-next-btn" data-action="next">次の問題へ</button>
+                <div class="yjq-v5-feedback-container" data-container="feedback">
+                    <h3 class="yjq-v5-feedback-text" data-text="feedback"></h3>
+                    <div class="yjq-v5-answer-details">
+                        <div class="yjq-v5-answer-full" data-text="answer-full"></div>
+                        <div class="yjq-v5-answer-read" data-text="answer-read"></div>
+                        <p class="yjq-v5-answer-mean" data-text="answer-mean"></p>
                     </div>
                 </div>
-                <button class="yjq-v3-main-btn yjq-v3-next-btn" data-action="next">次の問題へ</button>
             </div>
 
-            <div class="yjq-v3-screen" data-screen="score">
+            <div class="yjq-v5-screen" data-screen="score">
                 <h2>お疲れ様でした！</h2>
-                <div class="yjq-v3-score-display">
+                <div class="yjq-v5-score-display">
                     あなたのスコア:
                     <span class="score" data-text="score">10問中 8問</span>
                     正解
                 </div>
-                <button class="yjq-v3-main-btn" data-action="restart">もう一度挑戦する</button>
+                <button class="yjq-v5-main-btn" data-action="restart">もう一度挑戦する</button>
             </div>
         </div>
     </div>
@@ -247,21 +251,19 @@
     <script>
     // 規範 1.6 (IIFE)
     (function() {
-        // [V3 修正] 不再需要 document.currentScript
-        
         // 規範 1.5 (DOMContentLoaded)
         document.addEventListener('DOMContentLoaded', function() {
-            // [V3 修正] 使用固定 ID 啟動
-            const app = document.getElementById('yojijukugo-quiz-app-v3'); 
+            // [V5 修正] 使用固定 ID 啟動
+            const app = document.getElementById('yojijukugo-quiz-app-v5'); 
             if (!app) {
-                console.error("YJQ V3: Container #yojijukugo-quiz-app-v3 not found.");
+                console.error("YJQ V5: Container #yojijukugo-quiz-app-v5 not found.");
                 return;
             }
 
-            // --- [V3 擴展] 核心資料庫 (100 詞) ---
-            const yjq_v3_quizData = [
-                // 原始 30 詞
-{ q: '一石□□', a: '二鳥', fakes: ['二兎', '二足', '二兆'], full: '一石二鳥', read: 'いっせきにちょう', mean: '一つのことで二つの利益を得ること。' },
+            // --- [V5 修正] 核心資料庫 (100 詞，已修正錯誤選項) ---
+            const yjq_v5_quizData = [
+                // 基本 (1-20)
+                { q: '一石□□', a: '二鳥', fakes: ['二兎', '二足', '二兆'], full: '一石二鳥', read: 'いっせきにちょう', mean: '一つのことで二つの利益を得ること。' },
                 { q: '一期□□', a: '一会', fakes: ['一期', '一合', '一絵'], full: '一期一会', read: 'いちごいちえ', mean: '一生に一度だけの機会。' },
                 { q: '以心□□', a: '伝心', fakes: ['伝信', '同心', '電信'], full: '以心伝心', read: 'いしんでんしん', mean: '言葉にしなくてもお互いの気持ちが通じ合うこと。' },
                 { q: '一長□□', a: '一短', fakes: ['一利', '一失', '一得'], full: '一長一短', read: 'いっちょういったん', mean: '良いところもあれば、悪いところもあること。' },
@@ -400,9 +402,9 @@
             let currentQuestionIndex = 0;
             const QUESTIONS_PER_GAME = 10; // 每次測驗10題
 
-            // --- [V3 修正] 函數加上 yjq_v3_ 前綴 ---
+            // --- [V5] 函數加上 yjq_v5_ 前綴 ---
             
-            function yjq_v3_shuffle(array) {
+            function yjq_v5_shuffle(array) {
                 for (let i = array.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [array[i], array[j]] = [array[j], array[i]];
@@ -410,8 +412,7 @@
                 return array;
             }
 
-            function yjq_v3_showScreen(screenName) {
-                // 確保 screens 物件中的所有元素都有效
+            function yjq_v5_showScreen(screenName) {
                 if (screens.start) screens.start.classList.remove('active');
                 if (screens.quiz) screens.quiz.classList.remove('active');
                 if (screens.score) screens.score.classList.remove('active');
@@ -421,16 +422,16 @@
                 }
             }
 
-            function yjq_v3_startGame() {
+            function yjq_v5_startGame() {
                 score = 0;
                 currentQuestionIndex = 0;
-                currentQuestions = yjq_v3_shuffle([...yjq_v3_quizData]).slice(0, QUESTIONS_PER_GAME);
+                currentQuestions = yjq_v5_shuffle([...yjq_v5_quizData]).slice(0, QUESTIONS_PER_GAME);
                 
-                yjq_v3_showScreen('quiz');
-                yjq_v3_showQuestion();
+                yjq_v5_showScreen('quiz');
+                yjq_v5_showQuestion();
             }
 
-            function yjq_v3_showQuestion() {
+            function yjq_v5_showQuestion() {
                 elements.feedbackContainer.style.display = 'none';
                 elements.nextBtn.style.display = 'none';
                 elements.optionsContainer.innerHTML = '';
@@ -440,26 +441,20 @@
                 elements.questionCounter.textContent = `問題 ${currentQuestionIndex + 1} / ${QUESTIONS_PER_GAME}`;
                 elements.questionText.textContent = q.q;
                 
-                let fakes = [...q.fakes];
-                while (fakes.length < 3) {
-                     const randomFake = yjq_v3_quizData[Math.floor(Math.random() * yjq_v3_quizData.length)].a;
-                     if (randomFake !== q.a && !fakes.includes(randomFake)) {
-                         fakes.push(randomFake);
-                     }
-                }
-
-                const options = yjq_v3_shuffle([q.a, ...fakes.slice(0, 3)]);
+                // [V5 修正] fakes 已經在啟動時清理乾淨，直接使用
+                const options = yjq_v5_shuffle([q.a, ...q.fakes]);
+                
                 options.forEach(option => {
                     const btn = document.createElement('button');
-                    btn.className = 'yjq-v3-option-btn';
+                    btn.className = 'yjq-v5-option-btn';
                     btn.textContent = option;
                     btn.dataset.answer = option;
                     elements.optionsContainer.appendChild(btn);
                 });
             }
 
-            function yjq_v3_checkAnswer(selectedBtn, selectedAnswer) {
-                elements.optionsContainer.querySelectorAll('.yjq-v3-option-btn').forEach(btn => {
+            function yjq_v5_checkAnswer(selectedBtn, selectedAnswer) {
+                elements.optionsContainer.querySelectorAll('.yjq-v5-option-btn').forEach(btn => {
                     btn.disabled = true;
                 });
                 
@@ -475,7 +470,7 @@
                     score++;
                     selectedBtn.classList.add('correct');
                     elements.feedbackText.textContent = '正解！';
-                    elements.feedbackText.className = 'yjq-v3-feedback-text correct';
+                    elements.feedbackText.className = 'yjq-v5-feedback-text correct';
                 } else {
                     selectedBtn.classList.add('wrong');
                     const correctBtn = elements.optionsContainer.querySelector(`[data-answer="${correctAnswer}"]`);
@@ -483,7 +478,7 @@
                         correctBtn.classList.add('correct');
                     }
                     elements.feedbackText.textContent = '不正解...';
-                    elements.feedbackText.className = 'yjq-v3-feedback-text wrong';
+                    elements.feedbackText.className = 'yjq-v5-feedback-text wrong';
                 }
 
                 if (currentQuestionIndex < QUESTIONS_PER_GAME - 1) {
@@ -494,36 +489,36 @@
                 elements.nextBtn.style.display = 'block';
             }
             
-            function yjq_v3_nextQuestion() {
+            function yjq_v5_nextQuestion() {
                 currentQuestionIndex++;
                 if (currentQuestionIndex < QUESTIONS_PER_GAME) {
-                    yjq_v3_showQuestion();
+                    yjq_v5_showQuestion();
                 } else {
-                    yjq_v3_showScore();
+                    yjq_v5_showScore();
                 }
             }
 
-            function yjq_v3_showScore() {
-                yjq_v3_showScreen('score');
+            function yjq_v5_showScore() {
+                yjq_v5_showScreen('score');
                 elements.scoreDisplay.textContent = `${QUESTIONS_PER_GAME}問中 ${score}問`;
             }
 
             // --- 事件綁定 ---
             if (elements.startBtn) {
-                 elements.startBtn.addEventListener('click', yjq_v3_startGame);
+                 elements.startBtn.addEventListener('click', yjq_v5_startGame);
             }
             if (elements.restartBtn) {
-                 elements.restartBtn.addEventListener('click', yjq_v3_startGame);
+                 elements.restartBtn.addEventListener('click', yjq_v5_startGame);
             }
             if (elements.nextBtn) {
-                 elements.nextBtn.addEventListener('click', yjq_v3_nextQuestion);
+                 elements.nextBtn.addEventListener('click', yjq_v5_nextQuestion);
             }
             
             if (elements.optionsContainer) {
                 elements.optionsContainer.addEventListener('click', function(e) {
-                    const targetBtn = e.target.closest('.yjq-v3-option-btn');
+                    const targetBtn = e.target.closest('.yjq-v5-option-btn');
                     if (targetBtn && !targetBtn.disabled) {
-                        yjq_v3_checkAnswer(targetBtn, targetBtn.dataset.answer);
+                        yjq_v5_checkAnswer(targetBtn, targetBtn.dataset.answer);
                     }
                 });
             }
