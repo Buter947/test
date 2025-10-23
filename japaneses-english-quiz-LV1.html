@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>【英単語クイズ】（日→英）5レベル対応フラッシュカード（全500語）</title>
+    <title>【英単語クイズ V3】（日→英）5レベル対応フラッシュカード</title>
 
     <style>
-        /* [V2.1] 樣式保持不變 */
+        /* [V3] 所有 Class 均使用 ejq-v3- (English-Japanese Quiz V3) 前綴 */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
             line-height: 1.6 !important;
@@ -14,7 +14,7 @@
             margin: 0;
             padding: 1rem;
         }
-        .ejq-v2-container {
+        .ejq-v3-container {
             font-family: inherit !important;
             line-height: 1.6 !important;
             background-color: #f9fafb !important;
@@ -25,23 +25,23 @@
             max-width: 650px !important;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
         }
-        .ejq-v2-container *, 
-        .ejq-v2-container *::before, 
-        .ejq-v2-container *::after {
+        .ejq-v3-container *, 
+        .ejq-v3-container *::before, 
+        .ejq-v3-container *::after {
             box-sizing: border-box !important;
         }
-        .ejq-v2-container .ejq-v2-screen {
+        .ejq-v3-container .ejq-v3-screen {
             display: none; 
-            animation: fadeInEjqV2 0.3s ease-in-out !important;
+            animation: fadeInEjqV3 0.3s ease-in-out !important;
         }
-        .ejq-v2-container .ejq-v2-screen.active {
+        .ejq-v3-container .ejq-v3-screen.active {
             display: block !important;
         }
-         @keyframes fadeInEjqV2 {
+         @keyframes fadeInEjqV3 {
              from { opacity: 0; transform: translateY(10px); }
              to { opacity: 1; transform: translateY(0); }
          }
-        .ejq-v2-container h2 {
+        .ejq-v3-container h2 {
             color: #0284c7 !important; /* Blue Title */
             text-align: center !important;
             font-size: 2rem !important;
@@ -49,13 +49,21 @@
             margin-top: 0 !important;
             margin-bottom: 0.5rem !important;
         }
-        .ejq-v2-container .ejq-v2-subtitle {
+        .ejq-v3-container h3 {
+            text-align: center !important;
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+            margin-top: 0 !important;
+            margin-bottom: 1.5rem !important;
+            color: #1f2937 !important;
+        }
+        .ejq-v3-container .ejq-v3-subtitle {
             text-align: center !important;
             font-size: 1.1rem !important;
             color: #4b5563 !important;
             margin: 0 auto 2rem auto !important;
         }
-        .ejq-v2-container .ejq-v2-main-btn {
+        .ejq-v3-container .ejq-v3-main-btn {
             display: block !important;
             width: 100% !important;
             max-width: 300px !important;
@@ -70,15 +78,16 @@
             cursor: pointer !important;
             transition: background-color 0.2s, transform 0.1s !important;
         }
-        .ejq-v2-container .ejq-v2-main-btn:hover { background-color: #0369a1 !important; }
-        .ejq-v2-container .ejq-v2-main-btn:active { transform: scale(0.98) !important; }
+        .ejq-v3-container .ejq-v3-main-btn:hover { background-color: #0369a1 !important; }
+        .ejq-v3-container .ejq-v3-main-btn:active { transform: scale(0.98) !important; }
         
-        .ejq-v2-container .ejq-v2-level-grid {
+        /* [V3] 難易度選擇畫面 */
+        .ejq-v3-container .ejq-v3-level-grid {
             display: grid !important;
             grid-template-columns: 1fr !important;
             gap: 1rem !important;
         }
-        .ejq-v2-container .ejq-v2-level-btn {
+        .ejq-v3-container .ejq-v3-level-btn {
             width: 100% !important;
             padding: 1rem !important;
             font-size: 1.1rem !important;
@@ -91,27 +100,52 @@
             transition: all 0.2s ease !important;
             text-align: center;
         }
-        .ejq-v2-container .ejq-v2-level-btn:hover {
+        .ejq-v3-container .ejq-v3-level-btn:hover {
             border-color: #0284c7 !important;
             color: #0284c7 !important;
             transform: translateY(-2px) !important;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
         }
-        .ejq-v2-container .ejq-v2-level-btn small {
+        .ejq-v3-container .ejq-v3-level-btn small {
             font-size: 0.85rem;
             color: #6b7280;
             display: block;
             font-weight: 400;
         }
 
-        .ejq-v2-container .ejq-v2-question-counter {
-            text-align: center;
+        /* 測驗畫面 */
+        .ejq-v3-container .ejq-v3-header {
+             display: flex; 
+             justify-content: space-between; 
+             align-items: center; 
+             margin-bottom: 1rem; 
+             color: #4a5568; 
+             font-weight: 600;
+        }
+         .ejq-v3-container .ejq-v3-header-btn {
+             font-size: 0.9rem;
+             color: #0284c7;
+             cursor: pointer;
+             background: none;
+             border: none;
+             padding: 0.25rem;
+         }
+         .ejq-v3-container .ejq-v3-header-btn:hover {
+             text-decoration: underline;
+         }
+        
+        .ejq-v3-container .ejq-v3-question-counter {
             font-size: 1rem;
             font-weight: 600;
             color: #6b7280;
-            margin-bottom: 1rem;
         }
-        .ejq-v2-container .ejq-v2-question-text {
+        .ejq-v3-container .ejq-v3-score-counter {
+             font-size: 1rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        
+        .ejq-v3-container .ejq-v3-question-text {
             font-size: 2.25rem !important; 
             font-weight: 700 !important;
             color: #111827 !important;
@@ -121,13 +155,17 @@
             border-radius: 0.5rem;
             padding: 2.5rem 1.5rem;
             margin-bottom: 2rem;
+            min-height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .ejq-v2-container .ejq-v2-options-container {
+        .ejq-v3-container .ejq-v3-options-container {
             display: grid !important;
             grid-template-columns: 1fr 1fr !important;
             gap: 1rem !important;
         }
-        .ejq-v2-container .ejq-v2-option-btn {
+        .ejq-v3-container .ejq-v3-option-btn {
             width: 100% !important;
             padding: 1rem !important;
             font-size: 1.25rem !important;
@@ -144,30 +182,30 @@
             justify-content: center;
             align-items: center;
         }
-        .ejq-v2-container .ejq-v2-option-btn:not(:disabled):hover {
+        .ejq-v3-container .ejq-v3-option-btn:not(:disabled):hover {
             border-color: #0284c7 !important;
             color: #0284c7 !important;
             transform: translateY(-2px) !important;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
         }
-        .ejq-v2-container .ejq-v2-option-btn:disabled {
+        .ejq-v3-container .ejq-v3-option-btn:disabled {
             cursor: not-allowed;
             opacity: 0.7;
         }
-        .ejq-v2-container .ejq-v2-option-btn.correct {
+        .ejq-v3-container .ejq-v3-option-btn.correct {
             background-color: #dcfce7 !important;
             border-color: #16a34a !important;
             color: #15803d !important;
             font-weight: 700 !important;
         }
-        .ejq-v2-container .ejq-v2-option-btn.wrong {
+        .ejq-v3-container .ejq-v3-option-btn.wrong {
             background-color: #fee2e2 !important;
             border-color: #dc2626 !important;
             color: #b91c1c !important;
             opacity: 1 !important;
         }
         
-        .ejq-v2-container .ejq-v2-feedback-container {
+        .ejq-v3-container .ejq-v3-feedback-container {
             display: none;
             background-color: #ffffff;
             border: 1px solid #e5e7eb;
@@ -175,25 +213,25 @@
             padding: 1.5rem;
             margin-top: 1.5rem; 
             text-align: center;
-            animation: fadeInEjqV2 0.3s ease-in-out !important;
+            animation: fadeInEjqV3 0.3s ease-in-out !important;
         }
-        .ejq-v2-container .ejq-v2-feedback-text {
+        .ejq-v3-container .ejq-v3-feedback-text {
             font-size: 1.5rem;
             font-weight: 700;
             margin: 0 0 1rem 0;
         }
-        .ejq-v2-container .ejq-v2-feedback-text.correct { color: #16a34a; }
-        .ejq-v2-container .ejq-v2-feedback-text.wrong { color: #dc2626; }
+        .ejq-v3-container .ejq-v3-feedback-text.correct { color: #16a34a; }
+        .ejq-v3-container .ejq-v3-feedback-text.wrong { color: #dc2626; }
         
-        .ejq-v2-container .ejq-v2-answer-details {
+        .ejq-v3-container .ejq-v3-answer-details {
             text-align: left;
         }
-        .ejq-v2-container .ejq-v2-answer-pair {
+        .ejq-v3-container .ejq-v3-answer-pair {
             font-size: 1.25rem;
             font-weight: 700;
             color: #1f2937;
         }
-        .ejq-v2-container .ejq-v2-answer-example {
+        .ejq-v3-container .ejq-v3-answer-example {
             font-size: 1rem;
             font-weight: 500;
             color: #4b5563;
@@ -201,63 +239,64 @@
             font-style: italic;
         }
         
-        .ejq-v2-container .ejq-v2-next-btn {
+        .ejq-v3-container .ejq-v3-next-btn {
             display: none; 
             width: 100%;
             background-color: #0284c7;
-            margin-top: 1.5rem; 
+            margin: 1.5rem auto 0 auto; /* [V3] 修正 margin */
+            max-width: 300px;
         }
-        .ejq-v2-container .ejq-v2-next-btn:hover {
+        .ejq-v3-container .ejq-v3-next-btn:hover {
             background-color: #0369a1;
         }
         
         /* 結果畫面 */
-        .ejq-v2-container .ejq-v2-score-display {
+        .ejq-v3-container .ejq-v3-score-display {
             font-size: 1.5rem;
             font-weight: 600;
             color: #1f2937;
             text-align: center;
         }
-         .ejq-v2-container .ejq-v2-score-display .score {
+         .ejq-v3-container .ejq-v3-score-display .score {
              font-size: 3rem;
              font-weight: 700;
              color: #0284c7; /* Blue score */
              display: block;
              margin: 0.5rem 0;
          }
-         .ejq-v2-container .ejq-v2-score-controls {
+         .ejq-v3-container .ejq-v3-score-controls {
             display: flex;
             flex-direction: column;
             gap: 1rem;
             max-width: 300px;
             margin: 2rem auto 0 auto;
          }
-         .ejq-v2-container .ejq-v2-score-controls .ejq-v2-main-btn {
+         .ejq-v3-container .ejq-v3-score-controls .ejq-v3-main-btn {
              margin-top: 0 !important;
          }
-         .ejq-v2-container .ejq-v2-secondary-btn {
+         .ejq-v3-container .ejq-v3-secondary-btn {
              background-color: #ffffff !important;
              color: #374151 !important;
              border: 1px solid #d1d5db !important;
          }
-         .ejq-v2-container .ejq-v2-secondary-btn:hover {
+         .ejq-v3-container .ejq-v3-secondary-btn:hover {
              background-color: #f9fafb !important;
          }
          
          @media (max-width: 600px) {
-            .ejq-v2-container {
+            .ejq-v3-container {
                 padding: 1.5rem !important;
                 margin: 1rem auto !important;
             }
-             .ejq-v2-container h2 {
+             .ejq-v3-container h2 {
                  font-size: 1.75rem !important;
              }
-             .ejq-v2-container .ejq-v2-question-text {
+             .ejq-v3-container .ejq-v3-question-text {
                  font-size: 2rem !important;
              }
          }
          @media (max-width: 480px) {
-             .ejq-v2-container .ejq-v2-options-container {
+             .ejq-v3-container .ejq-v3-options-container {
                  grid-template-columns: 1fr !important; /* Stack options */
              }
          }
@@ -265,46 +304,50 @@
 </head>
 <body>
 
-    <div id="eng-jp-flashcard-quiz-v2" class="ejq-v2-container">
-        <div class="ejq-v2-card">
+    <div id="eng-jp-flashcard-quiz-v3" class="ejq-v3-container">
+        <div class="ejq-v3-card">
             
-            <div class="ejq-v2-screen active" data-screen="level-select">
+            <div id="ejq-v3-screen-level-select" class="ejq-v3-screen active">
                 <h2>英単語クイズ</h2>
-                <p class="ejq-v2-subtitle">挑戦するレベルを選んでください。</p>
-                <div class="ejq-v2-level-grid">
-                    <button class="ejq-v2-level-btn" data-level="level_1">入門 <small>(N5相当・基礎名詞)</small></button>
-                    <button class="ejq-v2-level-btn" data-level="level_2">初級 <small>(N4相当・日常生活)</small></button>
-                    <button class="ejq-v2-level-btn" data-level="level_3">中級 <small>(N3相当・抽象/社会)</small></button>
-                    <button class="ejq-v2-level-btn" data-level="level_4">上級 <small>(N2相当・商務/学術)</small></button>
-                    <button class="ejq-v2-level-btn" data-level="level_5">最上級 <small>(N1/Expert相当)</small></button>
+                <p class="ejq-v3-subtitle">挑戦するレベルを選んでください。</p>
+                <div class="ejq-v3-level-grid">
+                    <button class="ejq-v3-level-btn" data-level="level_1">入門 <small>(N5相当・基礎名詞)</small></button>
+                    <button class="ejq-v3-level-btn" data-level="level_2">初級 <small>(N4相当・日常生活)</small></button>
+                    <button class="ejq-v3-level-btn" data-level="level_3">中級 <small>(N3相当・抽象/社会)</small></button>
+                    <button class="ejq-v3-level-btn" data-level="level_4">上級 <small>(N2相当・商務/学術)</small></button>
+                    <button class="ejq-v3-level-btn" data-level="level_5">最上級 <small>(N1/Expert相当)</small></button>
                 </div>
             </div>
 
-            <div class="ejq-v2-screen" data-screen="quiz">
-                <div class="ejq-v2-question-counter" data-text="counter"></div>
-                <div class="ejq-v2-question-text" data-text="question"></div>
-                <div class="ejq-v2-options-container" data-container="options"></div>
+            <div id="ejq-v3-screen-quiz" class="ejq-v3-screen">
+                <div class="ejq-v3-header">
+                     <span id="ejq-v3-question-counter" class="ejq-v3-question-counter"></span>
+                     <span id="ejq-v3-score-counter" class="ejq-v3-score-counter"></span>
+                </div>
+                <div id="ejq-v3-question-text" class="ejq-v3-question-text"></div>
+                <div id="ejq-v3-options-container" class="ejq-v3-options-container"></div>
                 
-                <button class="ejq-v2-main-btn ejq-v2-next-btn" data-action="next">次の問題へ</button>
-                <div class="ejq-v2-feedback-container" data-container="feedback">
-                    <h3 class="ejq-v2-feedback-text" data-text="feedback"></h3>
-                    <div class="ejq-v2-answer-details">
-                        <div class="ejq-v2-answer-pair" data-text="answer-pair"></div>
-                        <p class="ejq-v2-answer-example" data-text="answer-example"></p>
+                <button id="ejq-v3-next-btn" class="ejq-v3-main-btn ejq-v3-next-btn">次の問題へ</button>
+                <div id="ejq-v3-feedback-container" class="ejq-v3-feedback-container">
+                    <h3 id="ejq-v3-feedback-text" class="ejq-v3-feedback-text"></h3>
+                    <div class="ejq-v3-answer-details">
+                        <div id="ejq-v3-answer-pair" class="ejq-v3-answer-pair"></div>
+                        <p id="ejq-v3-answer-example" class="ejq-v3-answer-example"></p>
                     </div>
                 </div>
+                <button id="ejq-v3-back-to-menu-quiz" class="ejq-v3-main-btn ejq-v3-secondary-btn" style="max-width: 300px; margin-top: 1rem;">レベル選択に戻る</button>
             </div>
 
-            <div class="ejq-v2-screen" data-screen="score">
-                <h2>お疲れ様でした！</h2>
-                <div class="ejq-v2-score-display">
+            <div id="ejq-v3-screen-score" class="ejq-v3-screen">
+                <h3>お疲れ様でした！</h3>
+                <div class="ejq-v3-score-display">
                     あなたのスコア:
-                    <span class="score" data-text="score">10問中 8問</span>
+                    <span id="ejq-v3-final-score" class="score">10問中 8問</span>
                     正解
                 </div>
-                <div class="ejq-v2-score-controls">
-                    <button class="ejq-v2-main-btn" data-action="restart">もう一度挑戦する</button>
-                    <button class="ejq-v2-main-btn ejq-v2-secondary-btn" data-action="back-to-menu">レベル選択に戻る</button>
+                <div class="ejq-v3-score-controls">
+                    <button id="ejq-v3-restart-btn" class="ejq-v3-main-btn">もう一度挑戦する</button>
+                    <button id="ejq-v3-back-to-menu-score" class="ejq-v3-main-btn ejq-v3-secondary-btn">レベル選択に戻る</button>
                 </div>
             </div>
         </div>
@@ -314,8 +357,8 @@
     // 規範 1.6 (IIFE)
     (function() {
         
-        // --- 核心資料庫 (100 詞) ---
-        const ejq_v2_quizData = {
+        // --- [V2 擴展] 核心資料庫 (100 詞) ---
+        const ejq_v3_quizData = {
             'level_1': [
                 { q: '犬 (いぬ)', a: 'Dog', ex: 'I have a dog. (彼は犬を飼っています)' },
                 { q: '猫 (ねこ)', a: 'Cat', ex: 'The cat is sleeping. (猫が寝ています)' },
@@ -337,9 +380,9 @@
                 { q: '三 (さん)', a: 'Three', ex: 'There are three cats. (猫が三匹います)' },
                 { q: '私 (わたし)', a: 'I', ex: 'I am a student. (私は学生です)' },
                 { q: 'あなた', a: 'You', ex: 'Are you hungry? (お腹が空いていますか)' }
-                // ... 擴展 80 個 N5 詞 ...
+                // ... 擴展 80 N5 詞 ...
             ],
-            'level_2': [
+            'level_2': [ 
                 { q: '買う (かう)', a: 'Buy', ex: 'I will buy milk. (牛乳を買います)' },
                 { q: '読む (よむ)', a: 'Read', ex: 'She likes to read books. (彼女は本を読むのが好きです)' },
                 { q: '書く (かく)', a: 'Write', ex: 'He wrote a letter. (彼は手紙を書きました)' },
@@ -360,7 +403,7 @@
                 { q: '果物 (くだもの)', a: 'Fruit', ex: 'I like to eat fruit. (果物を食べるのが好きです)' },
                 { q: '服 (ふく)', a: 'Clothes', ex: 'I bought new clothes. (新しい服を買いました)' },
                 { q: '家族 (かぞく)', a: 'Family', ex: 'My family lives in Tokyo. (私の家族は東京に住んでいます)' }
-                // ... 擴展 80 個 N4 詞 ...
+                // ... 擴展 80 N4 詞 ...
             ],
             'level_3': [
                 { q: '情報 (じょうほう)', a: 'Information', ex: 'I need more information. (もっと情報が必要です)' },
@@ -383,7 +426,7 @@
                 { q: '約束 (やくそく)', a: 'Promise', ex: 'I made a promise. (約束をしました)' },
                 { q: '送る (おくる)', a: 'Send', ex: 'Please send me an email. (私にメールを送ってください)' },
                 { q: '旅行 (りょこう)', a: 'Travel', ex: 'I like to travel. (旅行が好きです)' }
-                // ... 擴展 80 個 N3 詞 ...
+                // ... 擴展 80 N3 詞 ...
             ],
             'level_4': [
                 { q: '環境 (かんきょう)', a: 'Environment', ex: 'We must protect the environment. (環境を守らなければならない)' },
@@ -406,7 +449,7 @@
                 { q: '戦略 (せんりゃく)', a: 'Strategy', ex: 'We need a new business strategy. (新しいビジネス戦略が必要だ)' },
                 { q: '影響 (えいきょう)', a: 'Impact', ex: 'It had a big impact on society. (それは社会に大きな影響を与えた)' },
                 { q: '金融 (きんゆう)', a: 'Financial', ex: 'He works in the financial industry. (彼は金融業界で働いている)' }
-                // ... 擴展 80 個 N2 詞 ...
+                // ... 擴展 80 N2 詞 ...
             ],
             'level_5': [
                 { q: '緩和する (かんわする)', a: 'Alleviate', ex: 'This medicine will alleviate the pain. (この薬は痛みを緩和します)' },
@@ -429,41 +472,44 @@
                 { q: '革新的な (かくしんてきな)', a: 'Innovative', ex: 'That is an innovative idea. (それは革新的なアイデアだ)' },
                 { q: '利益の上がる (りえきのあがる)', a: 'Lucrative', ex: 'It is a lucrative business. (それは利益の上がるビジネスだ)' },
                 { q: '実用的な (じつようてきな)', a: 'Pragmatic', ex: 'We need a pragmatic approach. (実用的なアプローチが必要だ)' }
-                // ... 擴展 80 個 N1/Expert 詞 ...
+                // ... 擴展 80 N1/Expert 詞 ...
             ]
         };
         // --- 資料庫結束 (共 100 詞) ---
 
         // [V2.1 修正] 採用您範例中的穩定載入邏輯
-        function ejq_v2_initializeQuiz() {
-            const app = document.getElementById('eng-jp-flashcard-quiz-v2'); 
+        function ejq_v3_initializeQuiz() {
+            // [V3 修正] 使用 ID 啟動
+            const app = document.getElementById('eng-jp-flashcard-quiz-v3'); 
             if (!app) {
-                console.error("EJQ V2: Container #eng-jp-flashcard-quiz-v2 not found.");
+                console.error("EJQ V3: Container #eng-jp-flashcard-quiz-v3 not found.");
                 return;
             }
 
-            // --- 元素獲取 (使用 data-* 屬性) ---
+            // --- 元素獲取 (使用 ID) ---
             const screens = {
-                levelSelect: app.querySelector('[data-screen="level-select"]'),
-                quiz: app.querySelector('[data-screen="quiz"]'),
-                score: app.querySelector('[data-screen="score"]')
+                levelSelect: app.querySelector('#ejq-v3-screen-level-select'),
+                quiz: app.querySelector('#ejq-v3-screen-quiz'),
+                score: app.querySelector('#ejq-v3-screen-score')
             };
             
             const elements = {
-                levelBtnContainer: app.querySelector('.ejq-v2-level-grid'),
-                restartBtn: app.querySelector('[data-action="restart"]'),
-                backToMenuBtn: app.querySelector('[data-action="back-to-menu"]'),
-                nextBtn: app.querySelector('[data-action="next"]'),
-                questionCounter: app.querySelector('[data-text="counter"]'),
-                questionText: app.querySelector('[data-text="question"]'),
-                optionsContainer: app.querySelector('[data-container="options"]'),
-                feedbackContainer: app.querySelector('[data-container="feedback"]'),
-                feedbackText: app.querySelector('[data-text="feedback"]'),
-                answerPair: app.querySelector('[data-text="answer-pair"]'),
-                answerExample: app.querySelector('[data-text="answer-example"]')
+                levelBtnContainer: app.querySelector('.ejq-v3-level-grid'),
+                restartBtn: app.querySelector('#ejq-v3-restart-btn'),
+                backToMenuBtnScore: app.querySelector('#ejq-v3-back-to-menu-score'),
+                backToMenuBtnQuiz: app.querySelector('#ejq-v3-back-to-menu-quiz'),
+                nextBtn: app.querySelector('#ejq-v3-next-btn'),
+                questionCounter: app.querySelector('#ejq-v3-question-counter'),
+                scoreCounter: app.querySelector('#ejq-v3-score-counter'),
+                questionText: app.querySelector('#ejq-v3-question-text'),
+                optionsContainer: app.querySelector('#ejq-v3-options-container'),
+                feedbackContainer: app.querySelector('#ejq-v3-feedback-container'),
+                feedbackText: app.querySelector('#ejq-v3-feedback-text'),
+                answerPair: app.querySelector('.ejq-v3-answer-pair'),
+                answerExample: app.querySelector('.ejq-v3-answer-example')
             };
             
-            const scoreDisplay = app.querySelector('[data-text="score"]'); 
+            const scoreDisplay = app.querySelector('#ejq-v3-final-score'); 
             
             // --- 遊戲狀態 ---
             let currentQuizData = []; 
@@ -471,10 +517,11 @@
             let score = 0;
             let currentQuestionIndex = 0;
             const QUESTIONS_PER_GAME = 10; 
+            let currentLevel = 'level_1'; 
 
             // --- 函數定義 ---
             
-            function ejq_v2_shuffle(array) {
+            function ejq_v3_shuffle(array) {
                 let currentIndex = array.length, randomIndex;
                 while (currentIndex != 0) {
                     randomIndex = Math.floor(Math.random() * currentIndex);
@@ -485,29 +532,34 @@
                 return array;
             }
 
-            function ejq_v2_showScreen(screenName) {
+            function ejq_v3_showScreen(screenId) {
                 Object.values(screens).forEach(screen => screen.classList.remove('active'));
-                if (screens[screenName]) {
-                    screens[screenName].classList.add('active');
+                if (screens[screenId]) {
+                    screens[screenId].classList.add('active');
+                } else {
+                    // [V3 修正] 確保 ID 匹配
+                    const screenEl = app.querySelector(`#${screenId}`);
+                    if (screenEl) screenEl.classList.add('active');
                 }
             }
 
-            function ejq_v2_startGame(level) {
-                if (!ejq_v2_quizData[level]) {
-                     console.error(`EJQ V2: Level "${level}" not found in database.`);
+            function ejq_v3_startGame(level) {
+                if (!ejq_v3_quizData[level]) {
+                     console.error(`EJQ V3: Level "${level}" not found in database.`);
                      return;
                 }
-                currentQuizData = ejq_v2_quizData[level];
+                currentLevel = level;
+                currentQuizData = ejq_v3_quizData[level];
                 score = 0;
                 currentQuestionIndex = 0;
                 
-                currentQuestions = ejq_v2_shuffle([...currentQuizData]).slice(0, QUESTIONS_PER_GAME); 
+                currentQuestions = ejq_v3_shuffle([...currentQuizData]).slice(0, QUESTIONS_PER_GAME); 
                 
-                ejq_v2_showScreen('quiz');
-                ejq_v2_showQuestion();
+                ejq_v3_showScreen('ejq-v3-screen-quiz');
+                ejq_v3_showQuestion();
             }
 
-            function ejq_v2_showQuestion() {
+            function ejq_v3_showQuestion() {
                 elements.feedbackContainer.style.display = 'none';
                 elements.nextBtn.style.display = 'none';
                 elements.optionsContainer.innerHTML = '';
@@ -515,32 +567,36 @@
                 const q = currentQuestions[currentQuestionIndex];
                 
                 elements.questionCounter.textContent = `問題 ${currentQuestionIndex + 1} / ${QUESTIONS_PER_GAME}`;
+                elements.scoreCounter.textContent = `スコア: ${score}`;
                 elements.questionText.textContent = q.q;
                 
                 const correctAnswer = q.a;
                 const fakes = [];
                 const pool = currentQuizData.filter(word => word.a !== correctAnswer);
-                ejq_v2_shuffle(pool); 
+                ejq_v3_shuffle(pool); 
                 
                 for (let i = 0; i < 3; i++) {
-                    if (pool[i]) {
+                    if (pool[i] && pool[i].a) {
                          fakes.push(pool[i].a);
+                    } else {
+                         const randomFake = ejq_v3_quizData.level_1[Math.floor(Math.random() * ejq_v3_quizData.level_1.length)].a;
+                         if(randomFake !== correctAnswer) fakes.push(randomFake);
                     }
                 }
                 
-                const options = ejq_v2_shuffle([correctAnswer, ...fakes]);
+                const options = ejq_v3_shuffle([correctAnswer, ...fakes]);
                 
                 options.forEach(option => {
                     const btn = document.createElement('button');
-                    btn.className = 'ejq-v2-option-btn';
+                    btn.className = 'ejq-v3-option-btn';
                     btn.textContent = option;
                     btn.dataset.answer = option;
                     elements.optionsContainer.appendChild(btn);
                 });
             }
 
-            function ejq_v2_checkAnswer(selectedBtn, selectedAnswer) {
-                elements.optionsContainer.querySelectorAll('.ejq-v2-option-btn').forEach(btn => {
+            function ejq_v3_checkAnswer(selectedBtn, selectedAnswer) {
+                elements.optionsContainer.querySelectorAll('.ejq-v3-option-btn').forEach(btn => {
                     btn.disabled = true;
                 });
                 
@@ -555,7 +611,7 @@
                     score++;
                     selectedBtn.classList.add('correct');
                     elements.feedbackText.textContent = '正解！';
-                    elements.feedbackText.className = 'ejq-v2-feedback-text correct';
+                    elements.feedbackText.className = 'ejq-v3-feedback-text correct';
                 } else {
                     selectedBtn.classList.add('wrong');
                     const correctBtn = elements.optionsContainer.querySelector(`[data-answer="${correctAnswer}"]`);
@@ -563,8 +619,11 @@
                         correctBtn.classList.add('correct');
                     }
                     elements.feedbackText.textContent = '不正解...';
-                    elements.feedbackText.className = 'ejq-v2-feedback-text wrong';
+                    elements.feedbackText.className = 'ejq-v3-feedback-text wrong';
                 }
+
+                // 更新分數顯示
+                elements.scoreCounter.textContent = `スコア: ${score}`;
 
                 if (currentQuestionIndex < QUESTIONS_PER_GAME - 1) {
                     elements.nextBtn.textContent = '次の問題へ';
@@ -574,69 +633,68 @@
                 elements.nextBtn.style.display = 'block';
             }
             
-            function ejq_v2_nextQuestion() {
+            function ejq_v3_nextQuestion() {
                 currentQuestionIndex++;
                 if (currentQuestionIndex < QUESTIONS_PER_GAME) {
-                    ejq_v2_showQuestion();
+                    ejq_v3_showQuestion();
                 } else {
-                    ejq_v2_showScore();
+                    ejq_v3_showScore();
                 }
             }
 
-            function ejq_v2_showScore() {
-                ejq_v2_showScreen('score');
+            function ejq_v3_showScore() {
+                ejq_v3_showScreen('ejq-v3-screen-score');
                 scoreDisplay.textContent = `${QUESTIONS_PER_GAME}問中 ${score}問`;
             }
 
             // --- 事件綁定 ---
             if (elements.levelBtnContainer) {
                  elements.levelBtnContainer.addEventListener('click', function(e) {
-                     const targetBtn = e.target.closest('.ejq-v2-level-btn');
+                     const targetBtn = e.target.closest('.ejq-v3-level-btn');
                      if (targetBtn && targetBtn.dataset.level) {
-                         ejq_v2_startGame(targetBtn.dataset.level);
+                         ejq_v3_startGame(targetBtn.dataset.level);
                      }
                  });
             }
 
             if (elements.restartBtn) {
                  elements.restartBtn.addEventListener('click', function() {
-                      const currentLevelKey = Object.keys(ejq_v2_quizData).find(key => 
-                           currentQuestions.length > 0 && ejq_v2_quizData[key].includes(currentQuestions[0])
-                      );
-                      if (currentLevelKey) {
-                           ejq_v2_startGame(currentLevelKey);
-                      } else {
-                           ejq_v2_showScreen('level-select'); 
-                      }
+                      ejq_v3_startGame(currentLevel); // 使用儲存的 currentLevel
                  });
             }
             
-            if (elements.backToMenuBtn) {
-                 elements.backToMenuBtn.addEventListener('click', function() {
-                     ejq_v2_showScreen('level-select');
+            // [V3 修正] 綁定兩個返回按鈕
+            if (elements.backToMenuBtnScore) {
+                 elements.backToMenuBtnScore.addEventListener('click', function() {
+                     ejq_v3_showScreen('ejq-v3-screen-level-select');
+                 });
+            }
+             if (elements.backToMenuBtnQuiz) {
+                 elements.backToMenuBtnQuiz.addEventListener('click', function() {
+                     ejq_v3_showScreen('ejq-v3-screen-level-select');
                  });
             }
             
             if (elements.nextBtn) {
-                 elements.nextBtn.addEventListener('click', ejq_v2_nextQuestion);
+                 elements.nextBtn.addEventListener('click', ejq_v3_nextQuestion);
             }
             
             if (elements.optionsContainer) {
                 elements.optionsContainer.addEventListener('click', function(e) {
-                    const targetBtn = e.target.closest('.ejq-v2-option-btn');
+                    const targetBtn = e.target.closest('.ejq-v3-option-btn');
                     if (targetBtn && !targetBtn.disabled) {
-                        ejq_v2_checkAnswer(targetBtn, targetBtn.dataset.answer);
+                        ejq_v3_checkAnswer(targetBtn, targetBtn.dataset.answer);
                     }
                 });
             }
-        } // --- End of ejq_v2_initializeQuiz ---
+        } // --- End of ejq_v3_initializeQuiz ---
 
         // [V2.1 修正] 檢查頁面載入狀態
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', ejq_v2_initializeQuiz);
+            document.addEventListener('DOMContentLoaded', ejq_v3_initializeQuiz);
         } else {
             // DOM 已載入，立即執行
-            ejq_v2_initializeQuiz();
+            ejq_v3_initializeQuiz();
         }
 
     })();
