@@ -6,7 +6,7 @@
     <title>【英単語クイズ】（日→英）5レベル対応フラッシュカード（全500語）</title>
 
     <style>
-        /* [V2] 所有 Class 均使用 ejq-v2- (English-Japanese Quiz V2) 前綴 */
+        /* [V2.1] 樣式保持不變 */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
             line-height: 1.6 !important;
@@ -73,7 +73,6 @@
         .ejq-v2-container .ejq-v2-main-btn:hover { background-color: #0369a1 !important; }
         .ejq-v2-container .ejq-v2-main-btn:active { transform: scale(0.98) !important; }
         
-        /* [V2 新增] 難度選擇畫面 */
         .ejq-v2-container .ejq-v2-level-grid {
             display: grid !important;
             grid-template-columns: 1fr !important;
@@ -105,7 +104,6 @@
             font-weight: 400;
         }
 
-        /* 測驗畫面 */
         .ejq-v2-container .ejq-v2-question-counter {
             text-align: center;
             font-size: 1rem;
@@ -316,11 +314,9 @@
     // 規範 1.6 (IIFE)
     (function() {
         
-        // --- [V2 擴展] 核心資料庫 (500 詞) ---
-        // (為保持程式碼簡潔，這裡僅使用您批准的 100 詞 (20x5) 作為範例庫)
-        // (您可以輕易地將每個陣列擴展到 100 個單字)
+        // --- 核心資料庫 (100 詞) ---
         const ejq_v2_quizData = {
-            'level_1': [ // 入門 (N5相当) - 100 詞範例 (先放 20 詞)
+            'level_1': [
                 { q: '犬 (いぬ)', a: 'Dog', ex: 'I have a dog. (彼は犬を飼っています)' },
                 { q: '猫 (ねこ)', a: 'Cat', ex: 'The cat is sleeping. (猫が寝ています)' },
                 { q: '食べる (たべる)', a: 'Eat', ex: 'I eat breakfast at 7. (7時に朝ご飯を食べます)' },
@@ -341,9 +337,9 @@
                 { q: '三 (さん)', a: 'Three', ex: 'There are three cats. (猫が三匹います)' },
                 { q: '私 (わたし)', a: 'I', ex: 'I am a student. (私は学生です)' },
                 { q: 'あなた', a: 'You', ex: 'Are you hungry? (お腹が空いていますか)' }
-                // ... 在此處繼續添加 80 個 N5 級別的單字
+                // ... 擴展 80 個 N5 詞 ...
             ],
-            'level_2': [ // 初級 (N4相当) - 100 詞範例 (先放 20 詞)
+            'level_2': [
                 { q: '買う (かう)', a: 'Buy', ex: 'I will buy milk. (牛乳を買います)' },
                 { q: '読む (よむ)', a: 'Read', ex: 'She likes to read books. (彼女は本を読むのが好きです)' },
                 { q: '書く (かく)', a: 'Write', ex: 'He wrote a letter. (彼は手紙を書きました)' },
@@ -364,9 +360,9 @@
                 { q: '果物 (くだもの)', a: 'Fruit', ex: 'I like to eat fruit. (果物を食べるのが好きです)' },
                 { q: '服 (ふく)', a: 'Clothes', ex: 'I bought new clothes. (新しい服を買いました)' },
                 { q: '家族 (かぞく)', a: 'Family', ex: 'My family lives in Tokyo. (私の家族は東京に住んでいます)' }
-                // ... 在此處繼續添加 80 個 N4 級別的單字
+                // ... 擴展 80 個 N4 詞 ...
             ],
-            'level_3': [ // 中級 (N3相当) - 100 詞範例 (先放 20 詞)
+            'level_3': [
                 { q: '情報 (じょうほう)', a: 'Information', ex: 'I need more information. (もっと情報が必要です)' },
                 { q: '社会 (しゃかい)', a: 'Society', ex: 'We live in a global society. (私たちはグローバル社会に生きています)' },
                 { q: '決める (きめる)', a: 'Decide', ex: 'I can\'t decide. (決められません)' },
@@ -387,9 +383,9 @@
                 { q: '約束 (やくそく)', a: 'Promise', ex: 'I made a promise. (約束をしました)' },
                 { q: '送る (おくる)', a: 'Send', ex: 'Please send me an email. (私にメールを送ってください)' },
                 { q: '旅行 (りょこう)', a: 'Travel', ex: 'I like to travel. (旅行が好きです)' }
-                // ... 在此處繼續添加 80 個 N3 級別的單字
+                // ... 擴展 80 個 N3 詞 ...
             ],
-            'level_4': [ // 上級 (N2相当) - 100 詞範例 (先放 20 詞)
+            'level_4': [
                 { q: '環境 (かんきょう)', a: 'Environment', ex: 'We must protect the environment. (環境を守らなければならない)' },
                 { q: '経済 (けいざい)', a: 'Economy', ex: 'The economy is growing. (経済は成長しています)' },
                 { q: '増加する (ぞうかする)', a: 'Increase', ex: 'The population is increasing. (人口が増加している)' },
@@ -410,15 +406,15 @@
                 { q: '戦略 (せんりゃく)', a: 'Strategy', ex: 'We need a new business strategy. (新しいビジネス戦略が必要だ)' },
                 { q: '影響 (えいきょう)', a: 'Impact', ex: 'It had a big impact on society. (それは社会に大きな影響を与えた)' },
                 { q: '金融 (きんゆう)', a: 'Financial', ex: 'He works in the financial industry. (彼は金融業界で働いている)' }
-                // ... 在此處繼續添加 80 個 N2 級別的單字
+                // ... 擴展 80 個 N2 詞 ...
             ],
-            'level_5': [ // 最上級 (N1/Expert) - 100 詞範例 (先放 20 詞)
+            'level_5': [
                 { q: '緩和する (かんわする)', a: 'Alleviate', ex: 'This medicine will alleviate the pain. (この薬は痛みを緩和します)' },
                 { q: '精査する (せいさする)', a: 'Scrutinize', ex: 'We must scrutinize the document. (我々はその文書を精査しなければならない)' },
                 { q: '遍在する (へんざいする)', a: 'Ubiquitous', ex: 'Smartphones are ubiquitous today. (今日、スマートフォンは遍在している)' },
                 { q: '細心の (さいしんの)', a: 'Meticulous', ex: 'She is meticulous in her work. (彼女は仕事に細心の注意を払う)' },
                 { q: '難問 (なんもん)', a: 'Conundrum', ex: 'This is a difficult conundrum. (これは難問だ)' },
-                { q:Code: '格差 (かくさ)', a: 'Disparity', ex: 'There is a disparity in wealth. (富の格差が存在する)' },
+                { q: '格差 (かくさ)', a: 'Disparity', ex: 'There is a disparity in wealth. (富の格差が存在する)' },
                 { q: '軽減する (けいげんする)', a: 'Mitigate', ex: 'We need to mitigate the risks. (リスクを軽減する必要がある)' },
                 { q: '曖昧な (あいまいな)', a: 'Ambiguous', ex: 'His reply was ambiguous. (彼の返事は曖昧だった)' },
                 { q: '雄弁な (ゆうべんな)', a: 'Eloquent', ex: 'She gave an eloquent speech. (彼女は雄弁なスピーチを行った)' },
@@ -433,13 +429,13 @@
                 { q: '革新的な (かくしんてきな)', a: 'Innovative', ex: 'That is an innovative idea. (それは革新的なアイデアだ)' },
                 { q: '利益の上がる (りえきのあがる)', a: 'Lucrative', ex: 'It is a lucrative business. (それは利益の上がるビジネスだ)' },
                 { q: '実用的な (じつようてきな)', a: 'Pragmatic', ex: 'We need a pragmatic approach. (実用的なアプローチが必要だ)' }
-                // ... 在此處繼續添加 80 個 N1/Expert 級別的單字
+                // ... 擴展 80 個 N1/Expert 詞 ...
             ]
         };
+        // --- 資料庫結束 (共 100 詞) ---
 
-        // 規範 1.5 (DOMContentLoaded)
-        document.addEventListener('DOMContentLoaded', function() {
-            // [V2] 使用固定 ID 啟動
+        // [V2.1 修正] 採用您範例中的穩定載入邏輯
+        function ejq_v2_initializeQuiz() {
             const app = document.getElementById('eng-jp-flashcard-quiz-v2'); 
             if (!app) {
                 console.error("EJQ V2: Container #eng-jp-flashcard-quiz-v2 not found.");
@@ -454,9 +450,9 @@
             };
             
             const elements = {
-                levelBtnContainer: app.querySelector('.ejq-v2-level-grid'), // [V2 新增]
+                levelBtnContainer: app.querySelector('.ejq-v2-level-grid'),
                 restartBtn: app.querySelector('[data-action="restart"]'),
-                backToMenuBtn: app.querySelector('[data-action="back-to-menu"]'), // [V2 新增]
+                backToMenuBtn: app.querySelector('[data-action="back-to-menu"]'),
                 nextBtn: app.querySelector('[data-action="next"]'),
                 questionCounter: app.querySelector('[data-text="counter"]'),
                 questionText: app.querySelector('[data-text="question"]'),
@@ -470,13 +466,13 @@
             const scoreDisplay = app.querySelector('[data-text="score"]'); 
             
             // --- 遊戲狀態 ---
-            let currentQuizData = []; // [V2 新增] 當前等級的題庫
+            let currentQuizData = []; 
             let currentQuestions = [];
             let score = 0;
             let currentQuestionIndex = 0;
             const QUESTIONS_PER_GAME = 10; 
 
-            // --- 函數定義 (全部為 IIFE 內的局部函數) ---
+            // --- 函數定義 ---
             
             function ejq_v2_shuffle(array) {
                 let currentIndex = array.length, randomIndex;
@@ -496,17 +492,15 @@
                 }
             }
 
-            // [V2 修改] 啟動遊戲
             function ejq_v2_startGame(level) {
                 if (!ejq_v2_quizData[level]) {
                      console.error(`EJQ V2: Level "${level}" not found in database.`);
                      return;
                 }
-                currentQuizData = ejq_v2_quizData[level]; // 設置當前題庫
+                currentQuizData = ejq_v2_quizData[level];
                 score = 0;
                 currentQuestionIndex = 0;
                 
-                // 從當前等級的 100 詞中隨機抽取 10 題
                 currentQuestions = ejq_v2_shuffle([...currentQuizData]).slice(0, QUESTIONS_PER_GAME); 
                 
                 ejq_v2_showScreen('quiz');
@@ -521,16 +515,13 @@
                 const q = currentQuestions[currentQuestionIndex];
                 
                 elements.questionCounter.textContent = `問題 ${currentQuestionIndex + 1} / ${QUESTIONS_PER_GAME}`;
-                elements.questionText.textContent = q.q; // 顯示日文問題
+                elements.questionText.textContent = q.q;
                 
-                // [V2 修正] 動態生成 Fakes
                 const correctAnswer = q.a;
                 const fakes = [];
-                // 從當前等級的題庫中過濾掉正確答案
                 const pool = currentQuizData.filter(word => word.a !== correctAnswer);
-                ejq_v2_shuffle(pool); // 打亂題庫
+                ejq_v2_shuffle(pool); 
                 
-                // 添加 3 個 Fakes
                 for (let i = 0; i < 3; i++) {
                     if (pool[i]) {
                          fakes.push(pool[i].a);
@@ -542,7 +533,7 @@
                 options.forEach(option => {
                     const btn = document.createElement('button');
                     btn.className = 'ejq-v2-option-btn';
-                    btn.textContent = option; // 顯示英文選項
+                    btn.textContent = option;
                     btn.dataset.answer = option;
                     elements.optionsContainer.appendChild(btn);
                 });
@@ -556,7 +547,6 @@
                 const q = currentQuestions[currentQuestionIndex];
                 const correctAnswer = q.a; 
 
-                // 顯示解說
                 elements.answerPair.textContent = `正解： ${q.q} = ${q.a}`;
                 elements.answerExample.textContent = `例文： ${q.ex}`;
                 elements.feedbackContainer.style.display = 'block';
@@ -599,8 +589,6 @@
             }
 
             // --- 事件綁定 ---
-            
-            // [V2 修正] 綁定難度選擇按鈕
             if (elements.levelBtnContainer) {
                  elements.levelBtnContainer.addEventListener('click', function(e) {
                      const targetBtn = e.target.closest('.ejq-v2-level-btn');
@@ -611,16 +599,14 @@
             }
 
             if (elements.restartBtn) {
-                 // [V2 修正] "再玩一次" 應該是玩同一個難度
                  elements.restartBtn.addEventListener('click', function() {
-                      // 獲取當前題庫的難度 (從第一個問題反查)
                       const currentLevelKey = Object.keys(ejq_v2_quizData).find(key => 
-                           ejq_v2_quizData[key].includes(currentQuestions[0])
+                           currentQuestions.length > 0 && ejq_v2_quizData[key].includes(currentQuestions[0])
                       );
                       if (currentLevelKey) {
                            ejq_v2_startGame(currentLevelKey);
                       } else {
-                           ejq_v2_showScreen('level-select'); // Fallback
+                           ejq_v2_showScreen('level-select'); 
                       }
                  });
             }
@@ -643,8 +629,16 @@
                     }
                 });
             }
+        } // --- End of ejq_v2_initializeQuiz ---
 
-        });
+        // [V2.1 修正] 檢查頁面載入狀態
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', ejq_v2_initializeQuiz);
+        } else {
+            // DOM 已載入，立即執行
+            ejq_v2_initializeQuiz();
+        }
+
     })();
     </script>
 </body>
