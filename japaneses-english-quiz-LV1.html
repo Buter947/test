@@ -1,0 +1,378 @@
+<div id="japanese-quiz-app-v1">
+    <style>
+        #japanese-quiz-app-v1 {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+            line-height: 1.6 !important;
+            color: #333 !important;
+        }
+        #japanese-quiz-app-v1 .jq-card {
+            background-color: #ffffff !important;
+            padding: 2rem !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1) !important;
+            border: 1px solid #e5e7eb !important;
+            max-width: 500px;
+            margin: 2rem auto !important;
+            text-align: center;
+        }
+        #japanese-quiz-app-v1 h2 {
+            color: #B45309 !important;
+            font-size: 1.75rem !important;
+            font-weight: 700 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0.5rem !important;
+        }
+        #japanese-quiz-app-v1 .jq-subtitle {
+            text-align: center !important;
+            color: #4b5563 !important;
+            margin-bottom: 2rem !important;
+        }
+        
+        /* --- Screen Styling --- */
+        #japanese-quiz-app-v1 .jq-start-screen,
+        #japanese-quiz-app-v1 .jq-results-area {
+            padding: 2rem 0;
+        }
+        #japanese-quiz-app-v1 .jq-quiz-area {
+            padding: 1rem 0;
+            display: none; /* Hidden by default */
+        }
+        #japanese-quiz-app-v1 .jq-hidden {
+            display: none !important;
+        }
+
+        /* --- Quiz Elements --- */
+        #japanese-quiz-app-v1 .jq-progress {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+        #japanese-quiz-app-v1 .jq-character-display {
+            font-size: 6rem; /* Very large character */
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            line-height: 1;
+            /* Ensure Japanese font is loaded if possible */
+             font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif, -apple-system;
+        }
+        #japanese-quiz-app-v1 .jq-options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        #japanese-quiz-app-v1 .jq-option-btn {
+            padding: 1rem !important;
+            border-radius: 0.5rem !important;
+            font-size: 1.1rem !important;
+            font-weight: 600 !important;
+            border: 1px solid #d1d5db !important;
+            background-color: #ffffff !important;
+            color: #374151 !important;
+            cursor: pointer !important;
+            transition: background-color 0.2s, transform 0.1s, border-color 0.2s !important;
+        }
+        #japanese-quiz-app-v1 .jq-option-btn:hover {
+             background-color: #f9fafb !important;
+             border-color: #9ca3af !important;
+        }
+        #japanese-quiz-app-v1 .jq-option-btn:active {
+             transform: scale(0.98) !important;
+        }
+        #japanese-quiz-app-v1 .jq-option-btn:disabled {
+             opacity: 0.7;
+             cursor: not-allowed;
+        }
+        /* Correct/Incorrect Styling */
+        #japanese-quiz-app-v1 .jq-option-btn.correct {
+             background-color: #dcfce7 !important;
+             border-color: #16a34a !important;
+             color: #15803d !important;
+        }
+        #japanese-quiz-app-v1 .jq-option-btn.incorrect {
+             background-color: #fee2e2 !important;
+             border-color: #ef4444 !important;
+             color: #b91c1c !important;
+        }
+
+        /* --- Buttons & Feedback --- */
+        #japanese-quiz-app-v1 .jq-button {
+            padding: 0.8rem 1.5rem !important;
+            border-radius: 0.5rem !important;
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            border: none !important;
+            cursor: pointer !important;
+            transition: background-color 0.2s, transform 0.1s !important;
+            color: #ffffff !important;
+            display: inline-block;
+            margin-top: 1.5rem;
+        }
+        #japanese-quiz-app-v1 .jq-start-btn,
+        #japanese-quiz-app-v1 .jq-restart-btn {
+            background-color: #16a34a !important; /* Green */
+        }
+        #japanese-quiz-app-v1 .jq-start-btn:hover,
+        #japanese-quiz-app-v1 .jq-restart-btn:hover {
+             background-color: #15803d !important;
+        }
+        #japanese-quiz-app-v1 .jq-next-btn {
+             background-color: #0284c7 !important; /* Blue */
+        }
+         #japanese-quiz-app-v1 .jq-next-btn:hover {
+             background-color: #0369a1 !important;
+        }
+        
+        #japanese-quiz-app-v1 .jq-feedback {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 1rem;
+            min-height: 1.5em; /* Reserve space */
+        }
+        #japanese-quiz-app-v1 .jq-feedback.correct {
+             color: #15803d; /* Dark Green */
+        }
+        #japanese-quiz-app-v1 .jq-feedback.incorrect {
+             color: #b91c1c; /* Dark Red */
+        }
+
+        /* --- Results Screen --- */
+        #japanese-quiz-app-v1 .jq-results-text {
+            font-size: 1.2rem;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        #japanese-quiz-app-v1 .jq-score-display {
+             font-size: 3rem;
+             font-weight: bold;
+             color: #B45309;
+             margin-bottom: 1.5rem;
+        }
+    </style>
+
+    <div class="jq-card">
+        <h2>Japanese Kana Quiz</h2>
+        <p class="jq-subtitle">Test your knowledge of Hiragana and Katakana!</p>
+
+        <div id="jq-start-screen" class="jq-start-screen">
+            <p>You will be tested on 10 random characters.</p>
+            <button id="jq-start-btn" class="jq-button jq-start-btn">Start Quiz</button>
+        </div>
+
+        <div id="jq-quiz-area" class="jq-quiz-area jq-hidden">
+            <div id="jq-progress" class="jq-progress">Question 1 / 10</div>
+            <div id="jq-character-display" class="jq-character-display">あ</div>
+            <div id="jq-options-grid" class="jq-options-grid">
+                </div>
+            <div id="jq-feedback" class="jq-feedback"></div>
+            <button id="jq-next-btn" class="jq-button jq-next-btn jq-hidden">Next Question</button>
+        </div>
+
+        <div id="jq-results-area" class="jq-results-area jq-hidden">
+             <p class="jq-results-text">Quiz Complete!</p>
+             <p class="jq-results-text">Your Score:</p>
+             <div id="jq-score-display" class="jq-score-display">0 / 10</div>
+             <button id="jq-restart-btn" class="jq-button jq-restart-btn">Try Again</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+console.log("J-QUIZ V1: Script starting.");
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("J-QUIZ V1: DOMContentLoaded.");
+    
+    // V1: Add slight delay for stability in WordPress frontend
+    setTimeout(initializeQuiz, 150); 
+    
+    function initializeQuiz() {
+        console.log("J-QUIZ V1: Initializing app...");
+        const container = document.getElementById('japanese-quiz-app-v1');
+        if (!container) { console.error("J-QUIZ V1: Container not found."); return; }
+
+        // --- Get Elements ---
+        const startScreen = container.querySelector('#jq-start-screen');
+        const quizArea = container.querySelector('#jq-quiz-area');
+        const resultsArea = container.querySelector('#jq-results-area');
+        const startBtn = container.querySelector('#jq-start-btn');
+        const restartBtn = container.querySelector('#jq-restart-btn');
+        const nextBtn = container.querySelector('#jq-next-btn');
+        const progressText = container.querySelector('#jq-progress');
+        const charDisplay = container.querySelector('#jq-character-display');
+        const optionsGrid = container.querySelector('#jq-options-grid');
+        const feedbackText = container.querySelector('#jq-feedback');
+        const scoreDisplay = container.querySelector('#jq-score-display');
+        
+        // Check if all elements were found
+        if (!startScreen || !quizArea || !resultsArea || !startBtn || !restartBtn || !nextBtn || !progressText || !charDisplay || !optionsGrid || !feedbackText || !scoreDisplay) {
+            console.error("J-QUIZ V1: One or more UI elements are missing!");
+            container.innerHTML = "<p style='color:red; text-align:center;'>Error: Failed to load quiz UI.</p>";
+            return;
+        }
+        console.log("J-QUIZ V1: All UI elements found.");
+
+        // --- Question Database (20 items) ---
+        const questionDatabase = [
+            // Hiragana
+            { char: 'あ', answer: 'a', options: ['a', 'i', 'u', 'o'] },
+            { char: 'か', answer: 'ka', options: ['ka', 'ki', 'ku', 'ke'] },
+            { char: 'さ', answer: 'sa', options: ['sa', 'shi', 'su', 'se'] },
+            { char: 'た', answer: 'ta', options: ['ta', 'chi', 'tsu', 'te'] },
+            { char: 'な', answer: 'na', options: ['na', 'ni', 'nu', 'ne'] },
+            { char: 'は', answer: 'ha', options: ['ha', 'hi', 'fu', 'he'] },
+            { char: 'ま', answer: 'ma', options: ['ma', 'mi', 'mu', 'me'] },
+            { char: 'や', answer: 'ya', options: ['ya', 'yu', 'yo', 'wa'] },
+            { char: 'ら', answer: 'ra', options: ['ra', 'ri', 'ru', 're'] },
+            { char: 'ん', answer: 'n', options: ['n', 'm', 'o', 'a'] },
+            // Katakana
+            { char: 'ア', answer: 'a', options: ['a', 'i', 'u', 'o'] },
+            { char: 'カ', answer: 'ka', options: ['ka', 'ki', 'ku', 'ke'] },
+            { char: 'サ', answer: 'sa', options: ['sa', 'shi', 'su', 'se'] },
+            { char: 'タ', answer: 'ta', options: ['ta', 'chi', 'tsu', 'te'] },
+            { char: 'ナ', answer: 'na', options: ['na', 'ni', 'nu', 'ne'] },
+            { char: 'ソ', answer: 'so', options: ['so', 'n', 'shi', 'tsu'] }, // 'so' and 'n' are commonly confused
+            { char: 'メ', answer: 'me', options: ['me', 'ma', 'nu', 'na'] },
+            { char: 'ヤ', answer: 'ya', options: ['ya', 'yu', 'yo', 'wa'] },
+            { char: 'ラ', answer: 'ra', options: ['ra', 'ri', 'ru', 're'] },
+            { char: 'ン', answer: 'n', options: ['n', 'so', 'shi', 'tsu'] } // 'n' and 'so' are commonly confused
+        ];
+
+        let shuffledQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // --- Functions ---
+        
+        function startQuiz() {
+            console.log("J-QUIZ V1: Starting quiz...");
+            score = 0;
+            currentQuestionIndex = 0;
+            
+            startScreen.classList.add('jq-hidden');
+            resultsArea.classList.add('jq-hidden');
+            quizArea.classList.remove('jq-hidden');
+            
+            shuffleQuestions();
+            loadQuestion();
+        }
+
+        function shuffleArray(array) {
+            // Fisher-Yates shuffle
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function shuffleQuestions() {
+            shuffledQuestions = shuffleArray([...questionDatabase]).slice(0, 10); // Get 10 random questions
+            console.log(`J-QUIZ V1: Shuffled ${shuffledQuestions.length} questions.`);
+        }
+
+        function loadQuestion() {
+            console.log(`J-QUIZ V1: Loading question ${currentQuestionIndex + 1}`);
+            // Reset feedback
+            feedbackText.textContent = '';
+            feedbackText.className = 'jq-feedback';
+            nextBtn.classList.add('jq-hidden');
+
+            const currentQuestion = shuffledQuestions[currentQuestionIndex];
+            
+            progressText.textContent = `Question ${currentQuestionIndex + 1} / 10`;
+            charDisplay.textContent = currentQuestion.char;
+
+            // Clear old options
+            optionsGrid.innerHTML = '';
+            
+            // Shuffle options before displaying
+            const shuffledOptions = shuffleArray([...currentQuestion.options]);
+
+            shuffledOptions.forEach(option => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'jq-option-btn';
+                button.textContent = option;
+                button.dataset.answer = option; // Store the answer in a data attribute
+                button.addEventListener('click', handleOptionClick);
+                optionsGrid.appendChild(button);
+            });
+        }
+
+        function handleOptionClick(event) {
+            console.log("J-QUIZ V1: Option clicked.");
+            const selectedButton = event.target;
+            const selectedAnswer = selectedButton.dataset.answer;
+            const correctAnswer = shuffledQuestions[currentQuestionIndex].answer;
+
+            // Disable all option buttons
+            const optionButtons = optionsGrid.querySelectorAll('.jq-option-btn');
+            optionButtons.forEach(btn => {
+                btn.disabled = true;
+                // Highlight the correct answer
+                if (btn.dataset.answer === correctAnswer) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            // Show feedback
+            if (selectedAnswer === correctAnswer) {
+                score++;
+                feedbackText.textContent = 'Correct!';
+                feedbackText.classList.add('correct');
+            } else {
+                selectedButton.classList.add('incorrect'); // Highlight the wrong one they clicked
+                feedbackText.textContent = `Wrong! The correct answer was "${correctAnswer}".`;
+                feedbackText.classList.add('incorrect');
+            }
+
+            // Show 'Next' or 'Finish' button
+            if (currentQuestionIndex < 9) {
+                nextBtn.textContent = 'Next Question';
+            } else {
+                nextBtn.textContent = 'Finish Quiz';
+            }
+            nextBtn.classList.remove('jq-hidden');
+        }
+
+        function handleNextClick() {
+            console.log("J-QUIZ V1: Next button clicked.");
+            currentQuestionIndex++;
+            if (currentQuestionIndex < 10) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            console.log("J-QUIZ V1: Showing results.");
+            quizArea.classList.add('jq-hidden');
+            resultsArea.classList.remove('jq-hidden');
+            scoreDisplay.textContent = `${score} / 10`;
+        }
+
+        // --- Attach Initial Event Listeners ---
+        try {
+            startBtn.addEventListener('click', startQuiz);
+            restartBtn.addEventListener('click', startQuiz); // Restart button just calls startQuiz again
+            nextBtn.addEventListener('click', handleNextClick);
+            console.log("J-QUIZ V1: Event listeners attached.");
+        } catch (e) {
+             console.error("J-QUIZ V1: Failed to attach listeners:", e);
+             showError("Error setting up quiz buttons."); // Use a function that shows error in UI
+        }
+        
+        function showError(message) { // Simple error display
+             if (container) {
+                 container.innerHTML = `<p style="color: red; text-align: center;">${message}</p>`;
+             }
+        }
+
+        console.log("J-QUIZ V1: Initialization complete.");
+    } // --- End initializeQuiz ---
+});
+</script>
