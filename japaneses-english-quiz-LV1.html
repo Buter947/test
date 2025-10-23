@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>【四字熟語クイズ】穴埋め問題で腕試し！厳選100問</title>
-<div class="yjq-container-v2">
+<div id="eng-jp-flashcard-quiz-v1" class="ejq-v1-container">
     <style>
-        .yjq-container-v2 {
+        /* [V1] 所有 Class 均使用 ejq-v1- (English-Japanese Quiz V1) 前綴 */
+        .ejq-v1-container {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
             line-height: 1.6 !important;
             background-color: #f9fafb !important;
@@ -17,41 +18,37 @@
             max-width: 650px !important;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
         }
-        .yjq-container-v2 *, 
-        .yjq-container-v2 *::before, 
-        .yjq-container-v2 *::after {
+        .ejq-v1-container *, 
+        .ejq-v1-container *::before, 
+        .ejq-v1-container *::after {
             box-sizing: border-box !important;
         }
-
-        /* --- 畫面通用 --- */
-        .yjq-container-v2 .yjq-screen {
-            display: none; /* 預設隱藏 */
-            animation: fadeInYjqV2 0.3s ease-in-out !important;
+        .ejq-v1-container .ejq-v1-screen {
+            display: none; 
+            animation: fadeInEjqV1 0.3s ease-in-out !important;
         }
-        .yjq-container-v2 .yjq-screen.active {
-            display: block !important; /* 顯示當前畫面 */
+        .ejq-v1-container .ejq-v1-screen.active {
+            display: block !important;
         }
-         @keyframes fadeInYjqV2 { /* 獨立動畫名稱 */
+         @keyframes fadeInEjqV1 {
              from { opacity: 0; transform: translateY(10px); }
              to { opacity: 1; transform: translateY(0); }
          }
-        
-        /* --- 標題 & 按鈕 --- */
-        .yjq-container-v2 h2 {
-            color: #B45309 !important;
+        .ejq-v1-container h2 {
+            color: #0284c7 !important; /* Blue Title */
             text-align: center !important;
             font-size: 2rem !important;
             font-weight: 700 !important;
             margin-top: 0 !important;
             margin-bottom: 0.5rem !important;
         }
-        .yjq-container-v2 .yjq-subtitle {
+        .ejq-v1-container .ejq-v1-subtitle {
             text-align: center !important;
             font-size: 1.1rem !important;
             color: #4b5563 !important;
             margin: 0 auto 2rem auto !important;
         }
-        .yjq-container-v2 .yjq-main-btn {
+        .ejq-v1-container .ejq-v1-main-btn {
             display: block !important;
             width: 100% !important;
             max-width: 300px !important;
@@ -60,25 +57,24 @@
             font-size: 1.25rem !important;
             font-weight: 700 !important;
             color: #ffffff !important;
-            background-color: #16a34a !important;
+            background-color: #0284c7 !important; /* Blue */
             border: none !important;
             border-radius: 0.5rem !important;
             cursor: pointer !important;
             transition: background-color 0.2s, transform 0.1s !important;
         }
-        .yjq-container-v2 .yjq-main-btn:hover { background-color: #15803d !important; }
-        .yjq-container-v2 .yjq-main-btn:active { transform: scale(0.98) !important; }
+        .ejq-v1-container .ejq-v1-main-btn:hover { background-color: #0369a1 !important; }
+        .ejq-v1-container .ejq-v1-main-btn:active { transform: scale(0.98) !important; }
         
-        /* --- 測驗畫面 --- */
-        .yjq-container-v2 .yjq-question-counter {
+        .ejq-v1-container .ejq-v1-question-counter {
             text-align: center;
             font-size: 1rem;
             font-weight: 600;
             color: #6b7280;
             margin-bottom: 1rem;
         }
-        .yjq-container-v2 .yjq-question-text {
-            font-size: 2.5rem !important;
+        .ejq-v1-container .ejq-v1-question-text {
+            font-size: 2.25rem !important; 
             font-weight: 700 !important;
             color: #111827 !important;
             text-align: center;
@@ -87,14 +83,13 @@
             border-radius: 0.5rem;
             padding: 2.5rem 1.5rem;
             margin-bottom: 2rem;
-            letter-spacing: 0.1em; 
         }
-        .yjq-container-v2 .yjq-options-container {
+        .ejq-v1-container .ejq-v1-options-container {
             display: grid !important;
-            grid-template-columns: 1fr !important;
-            gap: 0.75rem !important;
+            grid-template-columns: 1fr 1fr !important; /* 2x2 Grid */
+            gap: 1rem !important;
         }
-        .yjq-container-v2 .yjq-option-btn {
+        .ejq-v1-container .ejq-v1-option-btn {
             width: 100% !important;
             padding: 1rem !important;
             font-size: 1.25rem !important;
@@ -106,208 +101,180 @@
             cursor: pointer !important;
             transition: all 0.2s ease !important;
             text-align: center;
+            min-height: 80px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .yjq-container-v2 .yjq-option-btn:not(:disabled):hover {
-            border-color: #B45309 !important;
-            color: #B45309 !important;
+        .ejq-v1-container .ejq-v1-option-btn:not(:disabled):hover {
+            border-color: #0284c7 !important;
+            color: #0284c7 !important;
             transform: translateY(-2px) !important;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
         }
-        .yjq-container-v2 .yjq-option-btn:disabled {
+        .ejq-v1-container .ejq-v1-option-btn:disabled {
             cursor: not-allowed;
             opacity: 0.7;
         }
-        .yjq-container-v2 .yjq-option-btn.correct {
+        .ejq-v1-container .ejq-v1-option-btn.correct {
             background-color: #dcfce7 !important;
             border-color: #16a34a !important;
             color: #15803d !important;
             font-weight: 700 !important;
         }
-        .yjq-container-v2 .yjq-option-btn.wrong {
+        .ejq-v1-container .ejq-v1-option-btn.wrong {
             background-color: #fee2e2 !important;
             border-color: #dc2626 !important;
             color: #b91c1c !important;
             opacity: 1 !important;
         }
         
-        /* --- 反饋/結果畫面 --- */
-        .yjq-container-v2 .yjq-feedback-container {
-            display: none; /* 預設隱藏 */
+        .ejq-v1-container .ejq-v1-feedback-container {
+            display: none;
             background-color: #ffffff;
             border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
             padding: 1.5rem;
-            margin-top: 2rem;
+            margin-top: 1.5rem; 
             text-align: center;
-            animation: fadeInYjqV2 0.3s ease-in-out !important;
+            animation: fadeInEjqV1 0.3s ease-in-out !important;
         }
-        .yjq-container-v2 .yjq-feedback-text {
+        .ejq-v1-container .ejq-v1-feedback-text {
             font-size: 1.5rem;
             font-weight: 700;
             margin: 0 0 1rem 0;
         }
-        .yjq-container-v2 .yjq-feedback-text.correct { color: #16a34a; }
-        .yjq-container-v2 .yjq-feedback-text.wrong { color: #dc2626; }
+        .ejq-v1-container .ejq-v1-feedback-text.correct { color: #16a34a; }
+        .ejq-v1-container .ejq-v1-feedback-text.wrong { color: #dc2626; }
         
-        .yjq-container-v2 .yjq-answer-details {
+        .ejq-v1-container .ejq-v1-answer-details {
             text-align: left;
         }
-        .yjq-container-v2 .yjq-answer-full {
+        .ejq-v1-container .ejq-v1-answer-pair {
             font-size: 1.25rem;
             font-weight: 700;
             color: #1f2937;
         }
-        .yjq-container-v2 .yjq-answer-read {
+        .ejq-v1-container .ejq-v1-answer-example {
             font-size: 1rem;
             font-weight: 500;
             color: #4b5563;
-        }
-        .yjq-container-v2 .yjq-answer-mean {
-            font-size: 0.95rem;
-            color: #374151;
             margin-top: 0.5rem;
+            font-style: italic;
         }
         
-        .yjq-container-v2 .yjq-next-btn {
-            display: none; /* 預設隱藏 */
+        .ejq-v1-container .ejq-v1-next-btn {
+            display: none; 
             width: 100%;
             background-color: #0284c7;
+            margin-top: 1.5rem; 
         }
-        .yjq-container-v2 .yjq-next-btn:hover {
+        .ejq-v1-container .ejq-v1-next-btn:hover {
             background-color: #0369a1;
         }
         
-        .yjq-container-v2 .yjq-score-display {
+        .ejq-v1-container .ejq-v1-score-display {
             font-size: 1.5rem;
             font-weight: 600;
             color: #1f2937;
             text-align: center;
         }
-         .yjq-container-v2 .yjq-score-display .score {
+         .ejq-v1-container .ejq-v1-score-display .score {
              font-size: 3rem;
              font-weight: 700;
-             color: #B45309;
+             color: #0284c7; /* Blue score */
              display: block;
              margin: 0.5rem 0;
          }
          
          @media (max-width: 600px) {
-            .yjq-container-v2 {
+            .ejq-v1-container {
                 padding: 1.5rem !important;
+                margin: 1rem auto !important;
             }
-             .yjq-container-v2 h2 {
+             .ejq-v1-container h2 {
                  font-size: 1.75rem !important;
              }
-             .yjq-container-v2 .yjq-question-text {
+             .ejq-v1-container .ejq-v1-question-text {
                  font-size: 2rem !important;
+             }
+         }
+         @media (max-width: 480px) {
+             .ejq-v1-container .ejq-v1-options-container {
+                 grid-template-columns: 1fr !important; /* Stack options on very small screens */
              }
          }
     </style>
 
-    <div class="yjq-card">
-        <div class="yjq-screen active" data-screen="start">
-            <h2>四字熟語 穴埋めクイズ</h2>
-            <p class="yjq-subtitle">ランダムに10問出題されます。<br>正しい漢字の組み合わせを選んでください。</p>
-            <button class="yjq-main-btn" data-action="start">クイズ開始</button>
+    <div class="ejq-v1-card">
+        <div class="ejq-v1-screen active" data-screen="start">
+            <h2>英単語フラッシュカードクイズ</h2>
+            <p class="ejq-v1-subtitle">日本語の意味に合う正しい英単語を<br>4つの選択肢から選んでください。</p>
+            <button class="ejq-v1-main-btn" data-action="start">クイズ開始</button>
         </div>
 
-        <div class="yjq-screen" data-screen="quiz">
-            <div class="yjq-question-counter" data-text="counter"></div>
-            <div class="yjq-question-text" data-text="question"></div>
-            <div class="yjq-options-container" data-container="options"></div>
-            <div class="yjq-feedback-container" data-container="feedback">
-                <h3 class="yjq-feedback-text" data-text="feedback"></h3>
-                <div class="yjq-answer-details">
-                    <div class="yjq-answer-full" data-text="answer-full"></div>
-                    <div class="yjq-answer-read" data-text="answer-read"></div>
-                    <p class="yjq-answer-mean" data-text="answer-mean"></p>
+        <div class="ejq-v1-screen" data-screen="quiz">
+            <div class="ejq-v1-question-counter" data-text="counter"></div>
+            <div class="ejq-v1-question-text" data-text="question"></div>
+            <div class="ejq-v1-options-container" data-container="options"></div>
+            
+            <button class="ejq-v1-main-btn ejq-v1-next-btn" data-action="next">次の問題へ</button>
+            <div class="ejq-v1-feedback-container" data-container="feedback">
+                <h3 class="ejq-v1-feedback-text" data-text="feedback"></h3>
+                <div class="ejq-v1-answer-details">
+                    <div class="ejq-v1-answer-pair" data-text="answer-pair"></div>
+                    <p class="ejq-v1-answer-example" data-text="answer-example"></p>
                 </div>
             </div>
-            <button class="yjq-main-btn yjq-next-btn" data-action="next">次の問題へ</button>
         </div>
 
-        <div class="yjq-screen" data-screen="score">
+        <div class="ejq-v1-screen" data-screen="score">
             <h2>お疲れ様でした！</h2>
-            <div class="yjq-score-display">
+            <div class="ejq-v1-score-display">
                 あなたのスコア:
                 <span class="score" data-text="score">10問中 8問</span>
                 正解
             </div>
-            <button class="yjq-main-btn" data-action="restart">もう一度挑戦する</button>
+            <button class="ejq-v1-main-btn" data-action="restart">もう一度挑戦する</button>
         </div>
     </div>
 
     <script>
     // 規範 1.6 (IIFE)
     (function() {
-        // [V2 修正] 獲取當前 <script> 標籤，以找到正確的 App 容器
-        // 這是為了確保 App 在 WordPress 頁面上的唯一性和獨立性
-        const currentScript = document.currentScript;
+        
+        // [V1] 核心資料庫 (20 詞)
+        const ejq_v1_quizData = [
+            { q: '犬 (いぬ)', a: 'Dog', fakes: ['Cat', 'Cow', 'Fox'], ex: 'He has a dog. (彼は犬を飼っています)' },
+            { q: '猫 (ねこ)', a: 'Cat', fakes: ['Mouse', 'Dog', 'Bird'], ex: 'The cat is sleeping. (猫が寝ています)' },
+            { q: '食べる (たべる)', a: 'Eat', fakes: ['Sleep', 'Drink', 'Read'], ex: 'I eat breakfast at 7. (7時に朝ご飯を食べます)' },
+            { q: '飲む (のむ)', a: 'Drink', fakes: ['Eat', 'Speak', 'Go'], ex: 'Please drink water. (水を飲んでください)' },
+            { q: '大きい (おおきい)', a: 'Big', fakes: ['Small', 'Hot', 'Red'], ex: 'That is a big house. (あれは大きい家です)' },
+            { q: '小さい (ちいさい)', a: 'Small', fakes: ['Big', 'Fast', 'New'], ex: 'This box is small. (この箱は小さいです)' },
+            { q: '見る (みる)', a: 'See', fakes: ['Hear', 'Say', 'Walk'], ex: 'I see a bird. (鳥が見えます)' },
+            { q: '行く (いく)', a: 'Go', fakes: ['Come', 'Stop', 'Run'], ex: 'I go to school. (学校に行きます)' },
+            { q: '来る (くる)', a: 'Come', fakes: ['Go', 'Leave', 'Wait'], ex: 'Please come here. (ここに来てください)' },
+            { q: '学校 (がっこう)', a: 'School', fakes: ['Hospital', 'Station', 'Bank'], ex: 'He is a student at this school. (彼はこの学校の生徒です)' },
+            { q: '駅 (えき)', a: 'Station', fakes: ['Airport', 'Port', 'Bus stop'], ex: 'Where is the station? (駅はどこですか)' },
+            { q: '本 (ほん)', a: 'Book', fakes: ['Pen', 'Desk', 'Note'], ex: 'I am reading a book. (本を読んでいます)' },
+            { q: '買う (かう)', a: 'Buy', fakes: ['Sell', 'Have', 'Give'], ex: 'I will buy milk. (牛乳を買います)' },
+            { q: '読む (よむ)', a: 'Read', fakes: ['Write', 'Listen', 'Speak'], ex: 'She likes to read books. (彼女は本を読むのが好きです)' },
+            { q: '書く (かく)', a: 'Write', fakes: ['Read', 'Draw', 'Type'], ex: 'He wrote a letter. (彼は手紙を書きました)' },
+            { q: '月曜日 (げつようび)', a: 'Monday', fakes: ['Sunday', 'Month', 'Moon'], ex: 'Today is Monday. (今日は月曜日です)' },
+            { q: '今日 (きょう)', a: 'Today', fakes: ['Tomorrow', 'Yesterday', 'Now'], ex: 'What will you do today? (今日は何をしますか)' },
+            { q: '明日 (あした)', a: 'Tomorrow', fakes: ['Today', 'Yesterday', 'Next Week'], ex: 'See you tomorrow. (また明日)' },
+            { q: '昨日 (きのう)', a: 'Yesterday', fakes: ['Today', 'Tomorrow', 'Last Week'], ex: 'I was busy yesterday. (昨日は忙しかった)' },
+            { q: '赤い (あかい)', a: 'Red', fakes: ['Blue', 'Green', 'Black'], ex: 'She likes red flowers. (彼女は赤い花が好きです)' }
+        ];
 
         // 規範 1.5 (DOMContentLoaded)
         document.addEventListener('DOMContentLoaded', function() {
-            // [V2 修正] 從 script 標籤往上找到最近的 App 容器
-            const app = currentScript.closest('.yjq-container-v2');
+            // [V1] 使用固定 ID 啟動
+            const app = document.getElementById('eng-jp-flashcard-quiz-v1'); 
             if (!app) {
-                // 如果找不到容器 (例如 <script> 被意外移動)，則不執行
-                console.error("YJQ V2: Container '.yjq-container-v2' not found.");
+                console.error("EJQ V1: Container #eng-jp-flashcard-quiz-v1 not found.");
                 return;
             }
-
-            // --- [V2 擴展] 核心資料庫 (50 詞) ---
-            const yjq_v2_quizData = [
-                { q: '一石□□', a: '二鳥', fakes: ['二兎', '二足', '二兆'], full: '一石二鳥', read: 'いっせきにちょう', mean: '一つのことで二つの利益を得ること。' },
-                { q: '一期□□', a: '一会', fakes: ['一期', '一合', '一絵'], full: '一期一会', read: 'いちごいちえ', mean: '一生に一度だけの機会。' },
-                { q: '以心□□', a: '伝心', fakes: ['伝信', '同心', '電信'], full: '以心伝心', read: 'いしんでんしん', mean: '言葉にしなくてもお互いの気持ちが通じ合うこと。' },
-                { q: '一長□□', a: '一短', fakes: ['一利', '一失', '一得'], full: '一長一短', read: 'いっちょういったん', mean: '良いところもあれば、悪いところもあること。' },
-                { q: '悪戦□□', a: '苦闘', fakes: ['奮闘', '苦行', '苦戦'], full: '悪戦苦闘', read: 'あくせんくとう', mean: '困難な状況で、苦しみながらも努力すること。' },
-                { q: '油断□□', a: '大敵', fakes: ['大損', '注意', '大失敗'], full: '油断大敵', read: 'ゆだんたいてき', mean: '注意を怠ると大きな失敗を招くという戒め。' },
-                { q: '我田□□', a: '引水', fakes: ['引火', '引力', '引退'], full: '我田引水', read: 'がでんいんすい', mean: '自分の都合のよいように物事を進めること。' },
-                { q: '画竜□□', a: '点睛', fakes: ['点眼', '点描', '点灯'], full: '画竜点睛', read: 'がりょうてんせい', mean: '物事の最後の仕上げ。' },
-                { q: '起承□□', a: '転結', fakes: ['転回', '転換', '転落'], full: '起承転結', read: 'きしょうてんけつ', mean: '物事の順序や組み立て。' },
-                { q: '漁夫□□', a: 'の利', fakes: ['の益', 'の得', 'の徳'], full: '漁夫の利', read: 'ぎょふのり', mean: '二者が争っている間に、第三者が利益を得ること。' },
-                { q: '九死□□', a: '一生', fakes: ['一命', '一回', '一毛'], full: '九死一生', read: 'きゅうしいっしょう', mean: 'かろうじて命が助かること。' },
-                { q: '言行□□', a: '一致', fakes: ['不同', '相反', '不一致'], full: '言行一致', read: 'げんこういっち', mean: '口で言うことと行動が同じであること。' },
-                { q: '三寒□□', a: '四温', fakes: ['四季', '四苦', '四寒'], full: '三寒四温', read: 'さんかんしおん', mean: '冬の気候が周期的に変わること。' },
-                { q: '自業□□', a: '自得', fakes: ['自爆', '自滅', '自賛'], full: '自業自得', read: 'じごうじとく', mean: '自分でした悪い行いの報いを自分で受けること。' },
-                { q: '四面□□', a: '楚歌', fakes: ['楚国', '危機', '包囲'], full: '四面楚歌', read: 'しめんそか', mean: '周りがすべて敵で、助けがない状態。' },
-                { q: '弱肉□□', a: '強食', fakes: ['強弱', '強者', '弱者'], full: '弱肉強食', read: 'じゃにくきょうしょく', mean: '弱い者が強い者のえじきになること。' },
-                { q: '十人□□', a: '十色', fakes: ['十彩', '十心', '十人'], full: '十人十色', read: 'じゅうにんといろ', mean: '人それぞれ好みや考え方が違うこと。' },
-                { q: '試行□□', a: '錯誤', fakes: ['失敗', '錯覚', '成功'], full: '試行錯誤', read: 'しこうさくご', mean: '試みと失敗を繰り返しながら、解決策を見つけていくこと。' },
-                { q: '大器□□', a: '晩成', fakes: ['晩熟', '晩年', '晩御'], full: '大器晩成', read: 'たいきばんせい', mean: '偉大な人物は、大成するのが遅いということ。' },
-                { q: '虎視□□', a: '眈々', fakes: ['耽々', '淡々', '丹々'], full: '虎視眈々', read: 'こしたんたん', mean: '機会をじっと狙っている様子。' },
-                { q: '独立□□', a: '独歩', fakes: ['独行', '独走', '獨白'], full: '独立独歩', read: 'どくりつどっぽ', mean: '他人に頼らず、自分の信じる道を進むこと。' },
-                { q: '朝三□□', a: '暮四', fakes: ['暮五', '暮二', '暮六'], full: '朝三暮四', read: 'ちょうさんぼし', mean: '目先の違いにとらわれ、結果が同じであることに気づかないこと。' },
-                { q: '天変□□', a: '地異', fakes: ['地変', '地動', '地震'], full: '天変地異', read: 'てんぺんちい', mean: '天地で起こる自然の大きな変動。' },
-                { q: '日進□□', a: '月歩', fakes: ['月進', '年歩', '日歩'], full: '日進月歩', read: 'にっしんげっぽ', mean: '技術などが絶え間なく、急速に進歩すること。' },
-                { q: '馬耳□□', a: '東風', fakes: ['西風', '南風', '北風'], full: '馬耳東風', read: 'ばじとうふう', mean: '人の意見や忠告を、全く気にかけずに聞き流すこと。' },
-                { q: '半信□□', a: '半疑', fakes: ['半解', '半知', '半信'], full: '半信半疑', read: 'はんしんはんぎ', mean: '半分信じているが、半分疑っている状態。' },
-                { q: '美人□□', a: '薄命', fakes: ['薄幸', '薄情', '薄氷'], full: '美人薄命', read: 'びじんはくめい', mean: '美しい女性は、不幸であったり短命であったりすることが多いということ。' },
-                { q: '不言□□', a: '実行', fakes: ['無言', '即時', '熟考'], full: '不言実行', read: 'ふげんじっこう', mean: 'あれこれ言わず、黙って行うこと。' },
-                { q: '粉骨□□', a: '砕身', fakes: ['砕骨', '粉身', '砕心'], full: '粉骨砕身', read: 'ふんこつさいしん', mean: '力の限り努力すること。' },
-                { q: '無我□□', a: '夢中', fakes: ['夢想', '無心', '無念'], full: '無我夢中', read: 'むがむちゅう', mean: '我を忘れるほど、一つのことに熱中すること。' },
-                { q: '三日□□', a: '坊主', fakes: ['天下', '勤勉', '怠慢'], full: '三日坊主', read: 'みっかぼうず', mean: '非常に飽きっぽく、長続きしないこと。' },
-                { q: '唯一□□', a: '無二', fakes: ['無三', '無一', '無双'], full: '唯一無二', read: 'ゆいいつむに', mean: 'この世にただ一つしかないこと。' },
-                { q: '竜頭□□', a: '蛇尾', fakes: ['蛇頭', '竜尾', '蛇身'], full: '竜頭蛇尾', read: 'りゅうとうだび', mean: '初めは勢いが良いが、終わりは振るわないこと。' },
-                { q: '和洋□□', a: '折衷', fakes: ['折半', '折衝', '折合'], full: '和洋折衷', read: 'わようせっちゅう', mean: '日本風と西洋風のスタイルを、うまく取り混ぜること。' },
-                { q: '温故□□', a: '知新', fakes: ['知故', '知古', '知今'], full: '温故知新', read: 'おんこちしん', mean: '古いことを研究し、そこから新しい知識や道理を発見すること。' },
-                { q: '暗中□□', a: '模索', fakes: ['模作', '摸索', '探索'], full: '暗中模索', read: 'あんちゅうもさく', mean: '手がかりがないまま、色々と試みること。' },
-                { q: '意気□□', a: '投合', fakes: ['消沈', '高揚', '同意'], full: '意気投合', read: 'いきとうごう', mean: '互いの気持ちや考えがぴったりと合うこと。' },
-                { q: '因果□□', a: '応報', fakes: ['応酬', '報復', '報恩'], full: '因果応報', read: 'いんがおうほう', mean: '過去の善悪の行いに応じて、報いがあること。' },
-                { q: '臥薪□□', a: '嘗胆', fakes: ['賞胆', '証胆', '常胆'], full: '臥薪嘗胆', read: 'がしんしょうたん', mean: '将来の成功のために、苦労を耐え忍ぶこと。' },
-                { q: '自画□□', a: '自賛', fakes: ['自慢', '自称', '自負'], full: '自画自賛', read: 'じがじさん', mean: '自分で自分のことを褒めること。' },
-                { q: '七転□□', a: '八起', fakes: ['八倒', '七倒', '八転'], full: '七転八起', read: 'しちてんはっき', mean: '何度失敗しても、くじけずに立ち上がること。' },
-                { q: '自問□□', a: '自答', fakes: ['自刀', '自当', '他答'], full: '自問自答', read: 'じもんじとう', mean: '自分で問いかけ、自分で答えること。' },
-                { q: '絶体□□', a: '絶命', fakes: ['絶後', '絶望', '延命'], full: '絶体絶命', read: 'ぜったいぜつめい', mean: 'どうしても逃れられない困難な状況。' },
-                { q: '傍若□□', a: '無人', fakes: ['無礼', '無頼', '無心'], full: '傍若無人', read: 'ぼうじゃくぶじん', mean: '人前をはばからず、勝手気ままにふるまうこと。' },
-                { q: '本末□□', a: '転倒', fakes: ['転換', '転落', '顛倒'], full: '本末転倒', read: 'ほんまつてんとう', mean: '根本的で重要なことと、ささいなことを取り違えること。' },
-                { q: '一網□□', a: '打尽', fakes: ['一掃', '一獲', '全滅'], full: '一網打尽', read: 'いちもうだじん', mean: '一度に悪党などをすべて捕らえること。' },
-                { q: '呉越□□', a: '同舟', fakes: ['同船', '同心', '同室'], full: '呉越同舟', read: 'ごえつどうしゅう', mean: '仲の悪い者同士が、同じ場所に居合わせること。' },
-                { q: '五里□□', a: '霧中', fakes: ['夢中', '霧散', '五中'], full: '五里霧中', read: 'ごりむちゅう', mean: 'すっかり道に迷い、どうしてよいか分からないこと。' },
-                { q: '言語□□', a: '道断', fakes: ['同断', '道壇', '動断'], full: '言語道断', read: 'ごんごどうだん', mean: '言葉で言い表せないほどひどいこと。もってのほか。' },
-                { q: '前代□□', a: '未聞', fakes: ['未見', '未曾有', '未聴'], full: '前代未聞', read: 'ぜんだいみもん', mean: '今までに一度も聞いたことがないような珍しいこと。' }
-            ];
-            // --- 資料庫結束 (共 50 詞) ---
 
             // --- 元素獲取 (使用 data-* 屬性) ---
             const screens = {
@@ -325,21 +292,21 @@
                 optionsContainer: app.querySelector('[data-container="options"]'),
                 feedbackContainer: app.querySelector('[data-container="feedback"]'),
                 feedbackText: app.querySelector('[data-text="feedback"]'),
-                answerFull: app.querySelector('[data-text="answer-full"]'),
-                answerRead: app.querySelector('[data-text="answer-read"]'),
-                answerMean: app.querySelector('[data-text="answer-mean"]'),
-                scoreDisplay: app.querySelector('[data-text="score"]')
+                answerPair: app.querySelector('[data-text="answer-pair"]'),
+                answerExample: app.querySelector('[data-text="answer-example"]')
             };
+            
+            const scoreDisplay = app.querySelector('[data-text="score"]'); 
             
             // --- 遊戲狀態 ---
             let currentQuestions = [];
             let score = 0;
             let currentQuestionIndex = 0;
-            const QUESTIONS_PER_GAME = 10;
+            const QUESTIONS_PER_GAME = 10; 
 
-            // --- [V2 修正] 函數加上 yjq_v2_ 前綴 ---
+            // --- 函數定義 (全部為 IIFE 內的局部函數) ---
             
-            function yjq_v2_shuffle(array) {
+            function ejq_v1_shuffle(array) {
                 for (let i = array.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [array[i], array[j]] = [array[j], array[i]];
@@ -347,8 +314,7 @@
                 return array;
             }
 
-            function yjq_v2_showScreen(screenName) {
-                // 確保 screens 物件中的所有元素都有效
+            function ejq_v1_showScreen(screenName) {
                 if (screens.start) screens.start.classList.remove('active');
                 if (screens.quiz) screens.quiz.classList.remove('active');
                 if (screens.score) screens.score.classList.remove('active');
@@ -358,16 +324,16 @@
                 }
             }
 
-            function yjq_v2_startGame() {
+            function ejq_v1_startGame() {
                 score = 0;
                 currentQuestionIndex = 0;
-                currentQuestions = yjq_v2_shuffle([...yjq_v2_quizData]).slice(0, QUESTIONS_PER_GAME);
+                currentQuestions = ejq_v1_shuffle([...ejq_v1_quizData]).slice(0, QUESTIONS_PER_GAME);
                 
-                yjq_v2_showScreen('quiz');
-                yjq_v2_showQuestion();
+                ejq_v1_showScreen('quiz');
+                ejq_v1_showQuestion();
             }
 
-            function yjq_v2_showQuestion() {
+            function ejq_v1_showQuestion() {
                 elements.feedbackContainer.style.display = 'none';
                 elements.nextBtn.style.display = 'none';
                 elements.optionsContainer.innerHTML = '';
@@ -375,45 +341,37 @@
                 const q = currentQuestions[currentQuestionIndex];
                 
                 elements.questionCounter.textContent = `問題 ${currentQuestionIndex + 1} / ${QUESTIONS_PER_GAME}`;
-                elements.questionText.textContent = q.q;
+                elements.questionText.textContent = q.q; // 顯示日文問題
                 
-                // 確保 fakes 至少有 3 個
-                let fakes = [...q.fakes];
-                while (fakes.length < 3) {
-                     const randomFake = yjq_v2_quizData[Math.floor(Math.random() * yjq_v2_quizData.length)].a;
-                     if (randomFake !== q.a && !fakes.includes(randomFake)) {
-                         fakes.push(randomFake);
-                     }
-                }
-
-                const options = yjq_v2_shuffle([q.a, ...fakes.slice(0, 3)]); // 始終保持 4 個選項
+                const options = ejq_v1_shuffle([q.a, ...q.fakes]);
+                
                 options.forEach(option => {
                     const btn = document.createElement('button');
-                    btn.className = 'yjq-v2-option-btn';
-                    btn.textContent = option;
+                    btn.className = 'ejq-v1-option-btn';
+                    btn.textContent = option; // 顯示英文選項
                     btn.dataset.answer = option;
                     elements.optionsContainer.appendChild(btn);
                 });
             }
 
-            function yjq_v2_checkAnswer(selectedBtn, selectedAnswer) {
-                elements.optionsContainer.querySelectorAll('.yjq-v2-option-btn').forEach(btn => {
+            function ejq_v1_checkAnswer(selectedBtn, selectedAnswer) {
+                elements.optionsContainer.querySelectorAll('.ejq-v1-option-btn').forEach(btn => {
                     btn.disabled = true;
                 });
                 
                 const q = currentQuestions[currentQuestionIndex];
-                const correctAnswer = q.a;
+                const correctAnswer = q.a; // 正確答案是英文
 
-                elements.answerFull.textContent = q.full;
-                elements.answerRead.textContent = `[${q.read}]`;
-                elements.answerMean.textContent = q.mean;
+                // 顯示解說
+                elements.answerPair.textContent = `正解： ${q.q} = ${q.a}`;
+                elements.answerExample.textContent = `例文： ${q.ex}`;
                 elements.feedbackContainer.style.display = 'block';
 
                 if (selectedAnswer === correctAnswer) {
                     score++;
                     selectedBtn.classList.add('correct');
                     elements.feedbackText.textContent = '正解！';
-                    elements.feedbackText.className = 'yjq-v2-feedback-text correct';
+                    elements.feedbackText.className = 'ejq-v1-feedback-text correct';
                 } else {
                     selectedBtn.classList.add('wrong');
                     const correctBtn = elements.optionsContainer.querySelector(`[data-answer="${correctAnswer}"]`);
@@ -421,7 +379,7 @@
                         correctBtn.classList.add('correct');
                     }
                     elements.feedbackText.textContent = '不正解...';
-                    elements.feedbackText.className = 'yjq-v2-feedback-text wrong';
+                    elements.feedbackText.className = 'ejq-v1-feedback-text wrong';
                 }
 
                 if (currentQuestionIndex < QUESTIONS_PER_GAME - 1) {
@@ -432,36 +390,36 @@
                 elements.nextBtn.style.display = 'block';
             }
             
-            function yjq_v2_nextQuestion() {
+            function ejq_v1_nextQuestion() {
                 currentQuestionIndex++;
                 if (currentQuestionIndex < QUESTIONS_PER_GAME) {
-                    yjq_v2_showQuestion();
+                    ejq_v1_showQuestion();
                 } else {
-                    yjq_v2_showScore();
+                    ejq_v1_showScore();
                 }
             }
 
-            function yjq_v2_showScore() {
-                yjq_v2_showScreen('score');
-                elements.scoreDisplay.textContent = `${QUESTIONS_PER_GAME}問中 ${score}問`;
+            function ejq_v1_showScore() {
+                ejq_v1_showScreen('score');
+                scoreDisplay.textContent = `${QUESTIONS_PER_GAME}問中 ${score}問`;
             }
 
             // --- 事件綁定 ---
             if (elements.startBtn) {
-                 elements.startBtn.addEventListener('click', yjq_v2_startGame);
+                 elements.startBtn.addEventListener('click', ejq_v1_startGame);
             }
             if (elements.restartBtn) {
-                 elements.restartBtn.addEventListener('click', yjq_v2_startGame);
+                 elements.restartBtn.addEventListener('click', ejq_v1_startGame);
             }
             if (elements.nextBtn) {
-                 elements.nextBtn.addEventListener('click', yjq_v2_nextQuestion);
+                 elements.nextBtn.addEventListener('click', ejq_v1_nextQuestion);
             }
             
             if (elements.optionsContainer) {
                 elements.optionsContainer.addEventListener('click', function(e) {
-                    const targetBtn = e.target.closest('.yjq-v2-option-btn');
+                    const targetBtn = e.target.closest('.ejq-v1-option-btn');
                     if (targetBtn && !targetBtn.disabled) {
-                        yjq_v2_checkAnswer(targetBtn, targetBtn.dataset.answer);
+                        ejq_v1_checkAnswer(targetBtn, targetBtn.dataset.answer);
                     }
                 });
             }
