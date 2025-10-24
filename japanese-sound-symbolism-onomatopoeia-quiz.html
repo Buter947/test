@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【オノマトペ クイズ】擬音語・擬態語 穴埋め＆意味当てドリル</title>
+
+    <style>
+        /* [V1] 所有 Class 均使用 onq-v1- (Onomatope Quiz V1) 前綴 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+            line-height: 1.6 !important;
+            background-color: #f8fafc !important;
+            margin: 0;
+            padding: 1rem;
+        }
+        .onq-v1-container {
+            font-family: inherit !important;
+            line-height: 1.6 !important;
+            background-color: #f9fafb !importa
+            border: 1px solid #e5e7eb !important;
+            border-radius: 0.75rem !important;
+            padding: 2rem !important;
+            margin: 2rem auto !important;
+            max-width: 650px !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+            overflow: hidden; /* 確保圓角 */
+        }
+        .onq-v1-container *, 
+        .onq-v1-container *::before, 
+        .onq-v1-container *::after {
+            box-sizing: border-box !important;
+        }
+        .onq-v1-container .onq-v1-screen {
+            display: none; 
+            animation: fadeInOnqV1 0.3s ease-in-out !important;
+        }
+        .onq-v1-container .onq-v1-screen.active {
+            display: block !important;
+        }
+         @keyframes fadeInOnqV1 {
+             from { opacity: 0; transform: translateY(10px); }
+             to { opacity: 1; transform: translateY(0); }
+         }
+        /* [V1] 顏色主題改為紫色 */
+        .onq-v1-container h2 {
+            color: #7c3aed !important; 
+            text-align: center !important;
+            font-size: 2rem !important;
+            font-weight: 700 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0.5rem !important;
+        }
+        .onq-v1-container h3 {
+            text-align: center !important;
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+            margin-top: 0 !important;
+            margin-bottom: 1.5rem !important;
+            color: #1f2937 !important;
+        }
+        .onq-v1-container .onq-v1-subtitle {
+            text-align: center !important;
+            font-size: 1.1rem !important;
+            color: #4b5563 !important;
+            margin: 0 auto 2rem auto !important;
+        }
+        .onq-v1-container .onq-v1-main-btn {
+            display: block !important;
+            width: 100% !important;
+            max-width: 300px !important;
+            margin: 2rem auto 0 auto !important;
+            padding: 1rem !important;
+            font-size: 1.25rem !important;
+            font-weight: 700 !important;
+            color: #ffffff !important;
+            background-color: #7c3aed !important; /* Purple */
+            border: none !important;
+            border-radius: 0.5rem !important;
+            cursor: pointer !important;
+            transition: background-color 0.2s, transform 0.1s !important;
+        }
+        .onq-v1-container .onq-v1-main-btn:hover { background-color: #6d28d9 !important; }
+        .onq-v1-container .onq-v1-main-btn:active { transform: scale(0.98) !important; }
+        
+        /* 分類選擇畫面 */
+        .onq-v1-container .onq-v1-category-grid {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+        }
+        .onq-v1-container .onq-v1-category-btn {
+            width: 100% !important;
+            padding: 1rem !important;
+            font-size: 1.1rem !important;
+            font-weight: 600 !important;
+            color: #374151 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.5rem !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            text-align: center;
+        }
+        .onq-v1-container .onq-v1-category-btn:hover {
+            border-color: #7c3aed !important;
+            color: #7c3aed !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        }
+
+        /* 測驗畫面 */
+        .onq-v1-container .onq-v1-header {
+             display: flex; 
+             justify-content: space-between; 
+             align-items: center; 
+             margin-bottom: 1rem; 
+             color: #4a5568; 
+             font-weight: 600;
+        }
+         .onq-v1-container .onq-v1-header-btn {
+             font-size: 0.9rem;
+             color: #7c3aed;
+             cursor: pointer;
+             background: none;
+             border: none;
+             padding: 0.25rem;
+         }
+         .onq-v1-container .onq-v1-header-btn:hover {
+             text-decoration: underline;
+         }
+        .onq-v1-container .onq-v1-question-counter {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        .onq-v1-container .onq-v1-score-counter {
+             font-size: 1rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        
+        .onq-v1-container .onq-v1-question-text {
+            font-size: 1.5rem !important; /* 題目是句子，用小一點的字體 */
+            font-weight: 600 !important;
+            color: #111827 !important;
+            text-align: center;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 2rem 1.5rem;
+            margin-bottom: 2rem;
+            min-height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .onq-v1-container .onq-v1-options-container {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 1rem !important;
+        }
+        .onq-v1-container .onq-v1-option-btn {
+            width: 100% !important;
+            padding: 1rem !important;
+            font-size: 1.25rem !important;
+            font-weight: 600 !important;
+            color: #374151 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.5rem !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            text-align: center;
+            min-height: 80px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .onq-v1-container .onq-v1-option-btn:not(:disabled):hover {
+            border-color: #7c3aed !important;
+            color: #7c3aed !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        }
+        .onq-v1-container .onq-v1-option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .onq-v1-container .onq-v1-option-btn.correct {
+            background-color: #dcfce7 !important;
+            border-color: #16a34a !important;
+            color: #15803d !important;
+            font-weight: 700 !important;
+        }
+        .onq-v1-container .onq-v1-option-btn.wrong {
+            background-color: #fee2e2 !important;
+            border-color: #dc2626 !important;
+            color: #b91c1c !important;
+            opacity: 1 !important;
+        }
+        
+        .onq-v1-container .onq-v1-feedback-container {
+            display: none;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem; 
+            text-align: center;
+            animation: fadeInOnqV1 0.3s ease-in-out !important;
+        }
+        .onq-v1-container .onq-v1-feedback-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 1rem 0;
+        }
+        .onq-v1-container .onq-v1-feedback-text.correct { color: #16a34a; }
+        .onq-v1-container .onq-v1-feedback-text.wrong { color: #dc2626; }
+        
+        .onq-v1-container .onq-v1-answer-details {
+            text-align: left;
+        }
+        .onq-v1-container .onq-v1-answer-pair {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .onq-v1-container .onq-v1-answer-example {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #4b5563;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        .onq-v1-container .onq-v1-next-btn {
+            display: none; 
+            width: 100%;
+            background-color: #0284c7; /* Next button is blue */
+            margin: 1.5rem auto 0 auto;
+            max-width: 300px;
+        }
+        .onq-v1-container .onq-v1-next-btn:hover {
+            background-color: #0369a1;
+        }
+        
+        /* 結果畫面 */
+        .onq-v1-container .onq-v1-score-display {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            text-align: center;
+        }
+         .onq-v1-container .onq-v1-score-display .score {
+             font-size: 3rem;
+             font-weight: 700;
+             color: #7c3aed; /* Purple score */
+             display: block;
+             margin: 0.5rem 0;
+         }
+         .onq-v1-container .onq-v1-score-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 300px;
+            margin: 2rem auto 0 auto;
+         }
+         .onq-v1-container .onq-v1-score-controls .onq-v1-main-btn {
+             margin-top: 0 !important;
+         }
+         .onq-v1-container .onq-v1-secondary-btn {
+             background-color: #ffffff !important;
+             color: #374151 !important;
+             border: 1px solid #d1d5db !important;
+         }
+         .onq-v1-container .onq-v1-secondary-btn:hover {
+             background-color: #f9fafb !important;
+         }
+         
+         @media (max-width: 600px) {
+            .onq-v1-container {
+                padding: 1.5rem !important;
+                margin: 1rem auto !important;
+            }
+             .onq-v1-container h2 {
+                 font-size: 1.75rem !important;
+             }
+             .onq-v1-container .onq-v1-question-text {
+                 font-size: 1.25rem !important;
+                 min-height: 100px;
+             }
+         }
+         @media (max-width: 480px) {
+             .onq-v1-container .onq-v1-options-container {
+                 grid-template-columns: 1fr !important; /* Stack options */
+             }
+         }
+    </style>
+</head>
+<body>
+
+    <div id="onomatope-quiz-app-v1" class="onq-v1-container">
+        <div class="onq-v1-card">
+            
+            <div id="onq-v1-screen-level-select" class="onq-v1-screen active">
+                <h2>オノマトペ クイズ</h2>
+                <p class="onq-v1-subtitle">挑戦するカテゴリを選んでください。</p>
+                <div class="onq-v1-category-grid">
+                    </div>
+            </div>
+
+            <div id="onq-v1-screen-quiz" class="onq-v1-screen">
+                <div class="onq-v1-header">
+                     <span id="onq-v1-question-counter" class="onq-v1-question-counter"></span>
+                     <span id="onq-v1-score-counter" class="onq-v1-score-counter"></span>
+                </div>
+                <div id="onq-v1-question-text" class="onq-v1-question-text"></div>
+                <div id="onq-v1-options-container" class="onq-v1-options-container"></div>
+                
+                <button id="onq-v1-next-btn" class="onq-v1-main-btn onq-v1-next-btn">次の問題へ</button>
+                <div id="onq-v1-feedback-container" class="onq-v1-feedback-container">
+                    <h3 id="onq-v1-feedback-text" class="onq-v1-feedback-text"></h3>
+                    <div class="onq-v1-answer-details">
+                        <div id="onq-v1-answer-pair" class="onq-v1-answer-pair"></div>
+                        <p id="onq-v1-answer-example" class="onq-v1-answer-example"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="onq-v1-screen-score" class="onq-v1-screen">
+                <h3>お疲れ様でした！</h3>
+                <div class="onq-v1-score-display">
+                    あなたのスコア:
+                    <span id="onq-v1-final-score" class="score">10問中 8問</span>
+                    正解
+                </div>
+                <div class="onq-v1-score-controls">
+                    <button id="onq-v1-restart-btn" class="onq-v1-main-btn">もう一度挑戦する</button>
+                    <button id="onq-v1-back-to-menu-score" class="onq-v1-main-btn onq-v1-secondary-btn">カテゴリ選択に戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // 規範 1.6 (IIFE)
+    (function() {
+        
+        // --- 核心資料庫 (100 詞, 5 分類 x 20 詞) ---
+        const onq_v1_quizData = {
+            'animals_people': {
+                name: '動物・人間',
+                data: [
+                    { q: '犬がほえる声', a: 'ワンワン', ex: '犬がワンワンほえている。' },
+                    { q: '猫がなく声', a: 'ニャーニャー', ex: '子猫がニャーニャー鳴く。' },
+                    { q: '牛がなく声', a: 'モーモー', ex: '牛がモーモーと鳴く。' },
+                    { q: '鶏が鳴く声', a: 'コケコッコー', ex: '朝一番に鶏が鳴いた。' },
+                    { q: 'カエルがなく声', a: 'ゲロゲロ', ex: '田んぼでカエルがゲロゲロ鳴く。' },
+                    { q: '鼠がなく声', a: 'チューチュー', ex: '天井裏で鼠がチューチュー騒いでいる。' },
+                    { q: '咳（せき）をする音', a: 'ゴホゴホ', ex: '風邪をひいてゴホゴホと咳が出る。' },
+                    { q: 'くしゃみ', a: 'ハクション', ex: 'ほこりで鼻がむずむずして、ハクション！' },
+                    { q: '大声で笑う様子', a: 'ゲラゲラ', ex: 'テレビを見てゲラゲラ笑う。' },
+                    { q: '静かに笑う様子', a: 'クスクス', ex: '授業中にクスクス笑う。' },
+                    { q: '赤ちゃんが泣く声', a: 'オギャーオギャー', ex: '生まれたばかりの赤ちゃんが泣いている。' },
+                    { q: '静かに泣く様子', a: 'シクシク', ex: '叱られてシクシク泣いている。' },
+                    { q: 'いびきをかく音', a: 'グーグー', ex: '父はグーグーといびきをかいて寝ている。' },
+                    { q: 'ぐっすり眠る様子', a: 'スヤスヤ', ex: '子供がスヤスヤと眠っている。' },
+                    { q: '小声で話す様子', a: 'ヒソヒソ', ex: '二人がヒソヒソと秘密の話をしている。' },
+                    { q: '流暢に話す様子', a: 'ペラペラ', ex: '彼は英語がペラペラだ。' },
+                    { q: '大勢が騒ぐ様子', a: 'ワイワイ', ex: 'パーティーで皆がワイワイ楽しんでいる。' },
+                    { q: 'お腹が空いた様子', a: 'ペコペコ', ex: 'もうお腹がペコペコだ。' },
+                    { q: '食べ物をよく噛む音', a: 'モグモグ', ex: '口を閉じてモグモグと食べる。' },
+                    { q: '飲み物を飲む音', a: 'ゴクゴク', ex: '水をゴクゴクと飲んだ。' }
+                ]
+            },
+            'nature_weather': {
+                name: '自然・天気',
+                data: [
+                    { q: '強い雨が降る音', a: 'ザーザー', ex: '雨がザーザー降っている。' },
+                    { q: '静かに降る雨', a: 'しとしと', ex: '春雨がしとしとと降る。' },
+                    { q: '降り始めの雨', a: 'ポツポツ', ex: '雨がポツポツと落ちてきた。' },
+                    { q: '霰（あられ）や小雨', a: 'パラパラ', ex: '雨がパラパラと降ってきた。' },
+                    { q: '強い風が吹く音', a: 'ビュービュー', ex: '風がビュービューと音を立てる。' },
+                    { q: '穏やかな風が吹く様子', a: 'そよそよ', ex: '春風がそよそよと吹く。' },
+                    { q: '雷が鳴る音', a: 'ゴロゴロ', ex: '遠くで雷がゴロゴロ鳴っている。' },
+                    { q: '雷が光る様子', a: 'ピカピカ', ex: '空がピカピカ光っている。' },
+                    { q: '太陽が強く照る様子', a: 'カンカン', ex: '太陽がカンカン照りだ。' },
+                    { q: '太陽が眩しく輝く様子', a: 'ギラギラ', ex: '夏の太陽がギラギラ輝く。' },
+                    { q: '雪が静かに降る様子', a: 'シンシン', ex: '雪がシンシンと降り積もる。' },
+                    { q: '湿気が多い様子', a: 'ジメジメ', ex: '梅雨で部屋がジメジメする。' },
+                    { q: '空気が乾燥している様子', a: 'カラカラ', ex: '空気がカラカラに乾いている。' },
+                    { q: '暖かく心地よい様子', a: 'ポカポカ', ex: '日差しがポカポカと暖かい。' },
+                    { q: '暑くて汗が出る様子', a: 'ムシムシ', ex: '今日はムシムシして暑い。' },
+                    { q: '火が勢いよく燃える様子', a: 'メラメラ', ex: '炎がメラメラと燃え上がる。' },
+                    { q: '草木が激しく燃える様子', a: 'ボーボー', ex: '枯れ草がボーボー燃えている。' },
+                    { q: '水が流れる音', a: 'サラサラ', ex: '小川がサラサラと流れる。' },
+                    { q: '水が勢いよく流れる音', a: 'ゴーゴー', ex: '台風で川がゴーゴーと流れている。' },
+                    { q: '葉が揺れる音', a: 'ザワザワ', ex: '風で木々がザワザワと音を立てる。' }
+                ]
+            },
+            'actions_sounds': {
+                name: '動作・物音',
+                data: [
+                    { q: 'ドアを軽く叩く音', a: 'トントン', ex: 'ドアをトントンとノックする。' },
+                    { q: 'ドアを強く叩く音', a: 'ドンッ', ex: '彼がドアをドンッと叩いた。' },
+                    { q: 'ドアの鍵を開ける音', a: 'ガチャッ', ex: 'ガチャッと鍵を開ける音がした。' },
+                    { q: 'ドアが閉まる音', a: 'バタン', ex: '風でドアがバタンと閉まった。' },
+                    { q: 'ベルが鳴る音', a: 'リンリン', ex: '自転車のベルがリンリンと鳴る。' },
+                    { q: 'はさみで切る音', a: 'チョキチョキ', ex: '紙をチョキチョキと切る。' },
+                    { q: '(古い)電話が鳴る音', a: 'ジリリリ', ex: '古い電話がジリリリと鳴った。' },
+                    { q: '鉛筆で書く音', a: 'サラサラ', ex: '鉛筆でサラサラとメモを取る。' },
+                    { q: '硬いもので引っ掻く音', a: 'ガリガリ', ex: '氷をガリガリと削る。' },
+                    { q: '硬いものがぶつかる音', a: 'コツコツ', ex: 'ヒールがコツコツと響く。' },
+                    { q: 'ページをめくる様子', a: 'パラパラ', ex: '本をパラパラとめくる。' },
+                    { q: '何かを踏む音', a: 'グシャッ', ex: 'トマトをグシャッと踏んでしまった。' },
+                    { q: '液体が垂れる様子', a: 'ポタポタ', ex: '蛇口から水がポタポタ垂れている。' },
+                    { q: '液体が流れ出る様子', a: 'ダラダラ', ex: '汗がダラダラ流れる。' },
+                    { q: '硬いものが割れる音', a: 'バキッ', ex: '枝がバキッと折れた。' },
+                    { q: '薄いものが割れる音', a: 'パリッ', ex: '薄い氷がパリッと割れた。' },
+                    { q: '紙を丸める音', a: 'クシャクシャ', ex: '紙をクシャクシャに丸めて捨てた。' },
+                    { q: '布や紙を破る音', a: 'ビリビリ', ex: '手紙をビリビリに破る。' },
+                    { q: '麺をすする音', a: 'ズルズル', ex: 'ラーメンをズルズルとすする。' },
+                    { q: '煮立っている音', a: 'グツグツ', ex: '鍋がグツグツと煮えている。' }
+                ]
+            },
+            'feelings_sensations': {
+                name: '感情・感覚',
+                data: [
+                    { q: '怒っている様子', a: 'イライラ', ex: '渋滞でイライラする。' },
+                    { q: '楽しみで待つ様子', a: 'ワクワク', ex: '遠足の前でワクワクする。' },
+                    { q: '嬉しくて喜ぶ様子', a: 'ウキウキ', ex: '給料日でウキウキしている。' },
+                    { q: '緊張や興奮する様子', a: 'ドキドキ', ex: '発表の前で心臓がドキドキする。' },
+                    { q: '心配で落ち着かない様子', a: 'ハラハラ', ex: '危ない場面を見てハラハラする。' },
+                    { q: '慌てる様子', a: 'オロオロ', ex: '何をすべきか分からずオロオロする。' },
+                    { q: 'がっかりする様子', a: 'ガッカリ', ex: '試験に落ちてガッカリした。' },
+                    { q: '落ち込む様子', a: 'ショボン', ex: '叱られてショボンとしている。' },
+                    { q: '安心する様子', a: 'ホッとする', ex: '無事だと聞いてホッとした。' },
+                    { q: 'すっきりした気分', a: 'スッキリ', ex: 'お風呂に入ってスッキリした。' },
+                    { q: '不機嫌な様子', a: 'ムッとする', ex: '失礼なことを言われてムッとした。' },
+                    { q: '胃が不快な様子', a: 'ムカムカ', ex: '食べ過ぎで胃がムカムカする。' },
+                    { q: '恥ずかしい様子', a: 'モジモジ', ex: '恥ずかしそうにモジモジしている。' },
+                    { q: '恐る恐るする様子', a: 'ビクビク', ex: '上司にビクビクする。' },
+                    { q: '鋭い痛みの感覚', a: 'ズキズキ', ex: '虫歯がズキズキ痛む。' },
+                    { q: '鈍い痛みの感覚', a: 'シクシク', ex: 'お腹がシクシク痛む。' },
+                    { q: '頭が割れるように痛む', a: 'ガンガン', ex: '頭がガンガン痛い。' },
+                    { q: '針で刺すような痛み', a: 'チクチク', ex: 'セーターがチクチクする。' },
+                    { q: '日焼けなどでひりつく痛み', a: 'ヒリヒリ', ex: '日焼けで背中がヒリヒリする。' },
+                    { q: '寒さで震える様子', a: 'ブルブル', ex: '寒さでブルブル震える。' }
+                ]
+            },
+            'states_conditions': {
+                name: '様子・状態',
+                data: [
+                    { q: '光り輝く様子', a: 'キラキラ', ex: '星がキラキラ輝いている。' },
+                    { q: '表面が光る様子', a: 'ピカピカ', ex: '靴をピカピカに磨いた。' },
+                    { q: '滑らかな様子', a: 'ツルツル', ex: '床がツルツル滑る。' },
+                    { q: '湿り気がない様子', a: 'サラサラ', ex: '髪がサラサラだ。' },
+                    { q: '粘り気がある様子', a: 'ベトベト', ex: '手にはちみつがついてベトベトする。' },
+                    { q: '表面が粗い様子', a: 'ザラザラ', ex: '猫の舌はザラザラしている。' },
+                    { q: '肌が滑らかな様子', a: 'スベスベ', ex: '赤ちゃんの肌はスベスベだ。' },
+                    { q: '柔らかく軽い様子', a: 'フワフワ', ex: 'フワフワのパンケーキ。' },
+                    { q: '硬い様子', a: 'カチカチ', ex: 'パンがカチカチに硬くなった。' },
+                    { q: '弾力がある柔らかさ', a: 'プニプニ', ex: '赤ちゃんのほっぺはプニプニだ。' },
+                    { q: '非常に柔らかい様子', a: 'グニャグニャ', ex: '暑さでゴムがグニャグニャになった。' },
+                    { q: '隙間なく詰まっている', a: 'ギッシリ', ex: '本棚に本がギッシリ詰まっている。' },
+                    { q: '人や物が少ない様子', a: 'ガラガラ', ex: '平日の映画館はガラガラだ。' },
+                    { q: '破裂しそうに膨らむ', a: 'パンパン', ex: 'お腹がパンパンだ。' },
+                    { q: '中身がない様子', a: 'スカスカ', ex: 'この棚はスカスカだ。' },
+                    { q: '動きが鈍い様子', a: 'ノロノロ', ex: '渋滞で車がノロノロ進む。' },
+                    { q: '元気よく歩く様子', a: 'スタスタ', ex: '彼はスタスタと歩いていった。' },
+                    { q: '目的なく歩き回る様子', a: 'ウロウロ', ex: '怪しい男がウロウロしている。' },
+                    { q: '元気がない歩き方', a: 'トボトボ', ex: '叱られてトボトボと帰る。' },
+                    { q: '秩序がない様子', a: 'バラバラ', ex: '意見がバラバラでまとまらない。' }
+                ]
+            }
+        };
+        // --- 資料庫結束 (共 100 詞) ---
+
+        // [V2.1 修正] 採用您範例中的穩定載入邏輯
+        function onq_v1_initializeQuiz() {
+            // [V3 修正] 使用 ID 啟動
+            const app = document.getElementById('onomatope-quiz-app-v1'); 
+            if (!app) {
+                console.error("ONQ V1: Container #onomatope-quiz-app-v1 not found.");
+                return;
+            }
+
+            // --- 元素獲取 (使用 ID) ---
+            const screens = {
+                levelSelect: app.querySelector('#onq-v1-screen-level-select'),
+                quiz: app.querySelector('#onq-v1-screen-quiz'),
+                score: app.querySelector('#onq-v1-screen-score')
+            };
+            
+            const elements = {
+                categoryBtnContainer: app.querySelector('.onq-v1-category-grid'),
+                restartBtn: app.querySelector('#onq-v1-restart-btn'),
+                backToMenuBtnScore: app.querySelector('#onq-v1-back-to-menu-score'),
+                nextBtn: app.querySelector('#onq-v1-next-btn'),
+                questionCounter: app.querySelector('#onq-v1-question-counter'),
+                scoreCounter: app.querySelector('#onq-v1-score-counter'),
+                questionText: app.querySelector('#onq-v1-question-text'),
+                optionsContainer: app.querySelector('#onq-v1-options-container'),
+                feedbackContainer: app.querySelector('#onq-v1-feedback-container'),
+                feedbackText: app.querySelector('#onq-v1-feedback-text'),
+                answerPair: app.querySelector('.onq-v1-answer-pair'),
+                answerExample: app.querySelector('.onq-v1-answer-example')
+            };
+            
+            const scoreDisplay = app.querySelector('#onq-v1-final-score'); 
+            
+            // --- 遊戲狀態 ---
+            let currentQuizData = []; 
+            let currentQuestions = [];
+            let score = 0;
+            let currentQuestionIndex = 0;
+            const QUESTIONS_PER_GAME = 10; 
+            let currentCategory = 'animals_people'; 
+
+            // --- 函數定義 ---
+            
+            function onq_v1_shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex != 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [
+                        array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function onq_v1_showScreen(screenId) {
+                Object.values(screens).forEach(screen => screen.classList.remove('active'));
+                const screenEl = app.querySelector(`#${screenId}`);
+                if (screenEl) screenEl.classList.add('active');
+            }
+
+            function onq_v1_populateCategories() {
+                elements.categoryBtnContainer.innerHTML = '';
+                for (const [key, value] of Object.entries(onq_v1_quizData)) {
+                    const btn = document.createElement('button');
+                    btn.className = 'onq-v1-category-btn';
+                    btn.dataset.category = key;
+                    btn.textContent = value.name;
+                    elements.categoryBtnContainer.appendChild(btn);
+                }
+            }
+
+            function onq_v1_startGame(category) {
+                if (!onq_v1_quizData[category]) {
+                     console.error(`ONQ V1: Category "${category}" not found.`);
+                     return;
+                }
+                currentCategory = category;
+                currentQuizData = onq_v1_quizData[category].data;
+                score = 0;
+                currentQuestionIndex = 0;
+                
+                currentQuestions = onq_v1_shuffle([...currentQuizData]).slice(0, QUESTIONS_PER_GAME); 
+                
+                onq_v1_showScreen('onq-v1-screen-quiz');
+                onq_v1_showQuestion();
+            }
+
+            function onq_v1_showQuestion() {
+                elements.feedbackContainer.style.display = 'none';
+                elements.nextBtn.style.display = 'none';
+                elements.optionsContainer.innerHTML = '';
+                
+                const q = currentQuestions[currentQuestionIndex];
+                
+                elements.questionCounter.textContent = `問題 ${currentQuestionIndex + 1} / ${QUESTIONS_PER_GAME}`;
+                elements.scoreCounter.textContent = `スコア: ${score}`;
+                elements.questionText.textContent = q.q; // 顯示情境
+                
+                const correctAnswer = q.a; // オノマトペ
+                const fakes = [];
+                const pool = currentQuizData.filter(word => word.a !== correctAnswer);
+                onq_v1_shuffle(pool); 
+                
+                for (let i = 0; i < 3; i++) {
+                    if (pool[i] && pool[i].a) {
+                         fakes.push(pool[i].a);
+                    } else {
+                         // 備用，從第一個分類中隨機抓
+                         const randomFake = onq_v1_quizData.animals_people.data[Math.floor(Math.random() * onq_v1_quizData.animals_people.data.length)].a;
+                         if(randomFake !== correctAnswer) fakes.push(randomFake);
+                    }
+                }
+                
+                const options = onq_v1_shuffle([correctAnswer, ...fakes]);
+                
+                options.forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.className = 'onq-v1-option-btn';
+                    btn.textContent = option; // 顯示オノマトペ選項
+                    btn.dataset.answer = option;
+                    elements.optionsContainer.appendChild(btn);
+                });
+            }
+
+            function onq_v1_checkAnswer(selectedBtn, selectedAnswer) {
+                elements.optionsContainer.querySelectorAll('.onq-v1-option-btn').forEach(btn => {
+                    btn.disabled = true;
+                });
+                
+                const q = currentQuestions[currentQuestionIndex];
+                const correctAnswer = q.a; 
+
+                elements.answerPair.textContent = `正解： ${q.a}`;
+                elements.answerExample.textContent = `例文： ${q.ex}`;
+                elements.feedbackContainer.style.display = 'block';
+
+                if (selectedAnswer === correctAnswer) {
+                    score++;
+                    selectedBtn.classList.add('correct');
+                    elements.feedbackText.textContent = '正解！';
+                    elements.feedbackText.className = 'ejq-v1-feedback-text correct';
+                } else {
+                    selectedBtn.classList.add('wrong');
+                    const correctBtn = elements.optionsContainer.querySelector(`[data-answer="${correctAnswer}"]`);
+                    if (correctBtn) {
+                        correctBtn.classList.add('correct');
+                    }
+                    elements.feedbackText.textContent = '不正解...';
+                    elements.feedbackText.className = 'ejq-v1-feedback-text wrong';
+                }
+
+                elements.scoreCounter.textContent = `スコア: ${score}`;
+
+                if (currentQuestionIndex < QUESTIONS_PER_GAME - 1) {
+                    elements.nextBtn.textContent = '次の問題へ';
+                } else {
+                    elements.nextBtn.textContent = '結果を見る';
+                }
+                elements.nextBtn.style.display = 'block'; 
+            }
+            
+            function onq_v1_nextQuestion() {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < QUESTIONS_PER_GAME) {
+                    onq_v1_showQuestion();
+                } else {
+                    onq_v1_showScore();
+                }
+            }
+
+            function onq_v1_showScore() {
+                onq_v1_showScreen('onq-v1-screen-score');
+                scoreDisplay.textContent = `${QUESTIONS_PER_GAME}問中 ${score}問`;
+            }
+
+            // --- 事件綁定 ---
+            if (elements.categoryBtnContainer) {
+                 elements.categoryBtnContainer.addEventListener('click', function(e) {
+                     const targetBtn = e.target.closest('.onq-v1-category-btn');
+                     if (targetBtn && targetBtn.dataset.category) {
+                         onq_v1_startGame(targetBtn.dataset.category);
+                     }
+                 });
+            }
+
+            if (elements.restartBtn) {
+                 elements.restartBtn.addEventListener('click', function() {
+                      onq_v1_startGame(currentCategory); 
+                 });
+            }
+            
+            if (elements.backToMenuBtnScore) {
+                 elements.backToMenuBtnScore.addEventListener('click', function() {
+                     onq_v1_showScreen('onq-v1-screen-level-select');
+                 });
+            }
+            
+            if (elements.nextBtn) {
+                 elements.nextBtn.addEventListener('click', onq_v1_nextQuestion);
+            }
+            
+            if (elements.optionsContainer) {
+                elements.optionsContainer.addEventListener('click', function(e) {
+                    const targetBtn = e.target.closest('.onq-v1-option-btn');
+                    if (targetBtn && !targetBtn.disabled) {
+                        onq_v1_checkAnswer(targetBtn, targetBtn.dataset.answer);
+                    }
+                });
+            }
+            
+            // --- 初始化 ---
+            onq_v1_populateCategories(); // 載入分類按鈕
+
+        } // --- End of onq_v1_initializeQuiz ---
+
+        // [V2.1 修正] 檢查頁面載入狀態
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', onq_v1_initializeQuiz);
+        } else {
+            // DOM 已載入，立即執行
+            onq_v1_initializeQuiz();
+        }
+
+    })();
+    </script>
+</body>
+</html>
