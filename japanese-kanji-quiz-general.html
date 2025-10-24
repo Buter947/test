@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【難読漢字クイズ】動物・魚・植物・地名（全20カテゴリ・600問）</title>
+
+    <style>
+        /* [V1] 所有 Class 均使用 kjq-v1- (Kanji Quiz V1) 前綴 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+            line-height: 1.6 !important;
+            background-color: #f8fafc !important;
+            margin: 0;
+            padding: 1rem;
+        }
+        .kjq-v1-container {
+            font-family: inherit !important;
+            line-height: 1.6 !important;
+            background-color: #f9fafb !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 0.75rem !important;
+            padding: 2rem !important;
+            margin: 2rem auto !important;
+            max-width: 700px !important; /* 寬度增加以容納 2 欄按鈕 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+            overflow: hidden; /* 確保圓角 */
+        }
+        .kjq-v1-container *, 
+        .kjq-v1-container *::before, 
+        .kjq-v1-container *::after {
+            box-sizing: border-box !important;
+        }
+        .kjq-v1-container .kjq-v1-screen {
+            display: none; 
+            animation: fadeInKjqV1 0.3s ease-in-out !important;
+        }
+        .kjq-v1-container .kjq-v1-screen.active {
+            display: block !important;
+        }
+         @keyframes fadeInKjqV1 {
+             from { opacity: 0; transform: translateY(10px); }
+             to { opacity: 1; transform: translateY(0); }
+         }
+        
+        .kjq-v1-container h2 {
+            color: #7E22CE !important; /* Purple Title */
+            text-align: center !important;
+            font-size: 2rem !important;
+            font-weight: 700 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0.5rem !important;
+        }
+        .kjq-v1-container h3 {
+            text-align: center !important;
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+            margin-top: 0 !important;
+            margin-bottom: 1.5rem !important;
+            color: #1f2937 !important;
+        }
+        .kjq-v1-container .kjq-v1-subtitle {
+            text-align: center !important;
+            font-size: 1.1rem !important;
+            color: #4b5563 !important;
+            margin: 0 auto 2rem auto !important;
+        }
+        .kjq-v1-container .kjq-v1-main-btn {
+            display: block !important;
+            width: 100% !important;
+            max-width: 300px !important;
+            margin: 2rem auto 0 auto !important;
+            padding: 1rem !important;
+            font-size: 1.25rem !important;
+            font-weight: 700 !important;
+            color: #ffffff !important;
+            background-color: #7c3aed !important; /* Purple */
+            border: none !important;
+            border-radius: 0.5rem !important;
+            cursor: pointer !important;
+            transition: background-color 0.2s, transform 0.1s !important;
+        }
+        .kjq-v1-container .kjq-v1-main-btn:hover { background-color: #6d28d9 !important; }
+        .kjq-v1-container .kjq-v1-main-btn:active { transform: scale(0.98) !important; }
+        
+        /* [V1] 分類選擇畫面 */
+        .kjq-v1-container .kjq-v1-category-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important; /* 2 欄佈局 */
+            gap: 0.75rem !important; /* 縮小間距 */
+        }
+        .kjq-v1-container .kjq-v1-category-btn {
+            width: 100% !important;
+            padding: 0.75rem 0.5rem !important; /* 調整 padding */
+            font-size: 1rem !important; /* 調整字體大小 */
+            font-weight: 600 !important;
+            color: #374151 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #e5e7eb !important; /* 更細的邊框 */
+            border-radius: 0.5rem !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            text-align: center;
+        }
+        .kjq-v1-container .kjq-v1-category-btn:hover {
+            border-color: #7c3aed !important;
+            color: #7c3aed !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        }
+
+        /* 測驗畫面 */
+        .kjq-v1-container .kjq-v1-header {
+             display: flex; 
+             justify-content: space-between; 
+             align-items: center; 
+             margin-bottom: 1rem; 
+             color: #4a5568; 
+             font-weight: 600;
+        }
+        .kjq-v1-container .kjq-v1-question-counter {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        .kjq-v1-container .kjq-v1-score-counter {
+             font-size: 1rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        
+        .kjq-v1-container .kjq-v1-question-text {
+            font-size: 3.5rem !important; /* 漢字可以非常大 */
+            font-weight: 700 !important;
+            color: #111827 !important;
+            text-align: center;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 2.5rem 1.5rem;
+            margin-bottom: 2rem;
+            min-height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .kjq-v1-container .kjq-v1-options-container {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 1rem !important;
+        }
+        .kjq-v1-container .kjq-v1-option-btn {
+            width: 100% !important;
+            padding: 1rem !important;
+            font-size: 1.25rem !important;
+            font-weight: 600 !important;
+            color: #374151 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.5rem !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            text-align: center;
+            min-height: 80px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .kjq-v1-container .kjq-v1-option-btn:not(:disabled):hover {
+            border-color: #7c3aed !important;
+            color: #7c3aed !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        }
+        .kjq-v1-container .kjq-v1-option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .kjq-v1-container .kjq-v1-option-btn.correct {
+            background-color: #dcfce7 !important;
+            border-color: #16a34a !important;
+            color: #15803d !important;
+            font-weight: 700 !important;
+        }
+        .kjq-v1-container .kjq-v1-option-btn.wrong {
+            background-color: #fee2e2 !important;
+            border-color: #dc2626 !important;
+            color: #b91c1c !important;
+            opacity: 1 !important;
+        }
+        
+        .kjq-v1-container .kjq-v1-feedback-container {
+            display: none;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem; 
+            text-align: center;
+            animation: fadeInKjqV1 0.3s ease-in-out !important;
+        }
+        .kjq-v1-container .kjq-v1-feedback-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 1rem 0;
+        }
+        .kjq-v1-container .kjq-v1-feedback-text.correct { color: #16a34a; }
+        .kjq-v1-container .kjq-v1-feedback-text.wrong { color: #dc2626; }
+        
+        .kjq-v1-container .kjq-v1-answer-pair {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .kjq-v1-container .kjq-v1-next-btn {
+            display: none; 
+            width: 100%;
+            background-color: #0284c7; /* Blue next button */
+            margin: 1.5rem auto 0 auto;
+            max-width: 300px;
+        }
+        .kjq-v1-container .kjq-v1-next-btn:hover {
+            background-color: #0369a1;
+        }
+        
+        /* 結果畫面 */
+        .kjq-v1-container .kjq-v1-score-display {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            text-align: center;
+        }
+         .kjq-v1-container .kjq-v1-score-display .score {
+             font-size: 3rem;
+             font-weight: 700;
+             color: #7c3aed; /* Purple score */
+             display: block;
+             margin: 0.5rem 0;
+         }
+         .kjq-v1-container .kjq-v1-score-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 300px;
+            margin: 2rem auto 0 auto;
+         }
+         .kjq-v1-container .kjq-v1-score-controls .kjq-v1-main-btn {
+             margin-top: 0 !important;
+         }
+         .kjq-v1-container .kjq-v1-secondary-btn {
+             background-color: #ffffff !important;
+             color: #374151 !important;
+             border: 1px solid #d1d5db !important;
+         }
+         .kjq-v1-container .kjq-v1-secondary-btn:hover {
+             background-color: #f9fafb !important;
+         }
+         
+         /* 響應式 */
+         @media (max-width: 600px) {
+            .kjq-v1-container {
+                padding: 1.5rem !important;
+                margin: 1rem auto !important;
+            }
+             .kjq-v1-container h2 {
+                 font-size: 1.75rem !important;
+             }
+             .kjq-v1-container .kjq-v1-question-text {
+                 font-size: 3rem !important;
+             }
+         }
+         @media (max-width: 480px) {
+             .kjq-v1-container .kjq-v1-options-container {
+                 grid-template-columns: 1fr !important; /* Stack options */
+             }
+             .kjq-v1-container .kjq-v1-category-grid {
+                 grid-template-columns: 1fr !important; /* Stack categories */
+             }
+         }
+    </style>
+</head>
+<body>
+
+    <div id="kanji-quiz-app-v1" class="kjq-v1-container">
+        <div class="kjq-v1-card">
+            
+            <div id="kjq-v1-screen-level-select" class="kjq-v1-screen active">
+                <h2>漢字クイズ</h2>
+                <p class="kjq-v1-subtitle">挑戦するカテゴリを選んでください。</p>
+                <div id="kjq-v1-category-grid" class="kjq-v1-category-grid"></div>
+            </div>
+
+            <div id="kjq-v1-screen-quiz" class="kjq-v1-screen">
+                <div class="kjq-v1-header">
+                     <span id="kjq-v1-question-counter" class="kjq-v1-question-counter"></span>
+                     <span id="kjq-v1-score-counter" class="kjq-v1-score-counter"></span>
+                </div>
+                <div id="kjq-v1-question-text" class="kjq-v1-question-text"></div>
+                <div id="kjq-v1-options-container" class="kjq-v1-options-container"></div>
+                
+                <button id="kjq-v1-next-btn" class="kjq-v1-main-btn kjq-v1-next-btn">次の問題へ</button>
+                <div id="kjq-v1-feedback-container" class="kjq-v1-feedback-container">
+                    <h3 id="kjq-v1-feedback-text" class="kjq-v1-feedback-text"></h3>
+                    <div id="kjq-v1-answer-pair" class="kjq-v1-answer-pair"></div>
+                </div>
+            </div>
+
+            <div id="kjq-v1-screen-score" class="kjq-v1-screen">
+                <h3>お疲れ様でした！</h3>
+                <div class="kjq-v1-score-display">
+                    あなたのスコア:
+                    <span id="kjq-v1-final-score" class="score">10問中 8問</span>
+                    正解
+                </div>
+                <div class="kjq-v1-score-controls">
+                    <button id="kjq-v1-restart-btn" class="kjq-v1-main-btn">もう一度挑戦する</button>
+                    <button id="kjq-v1-back-to-menu-score" class="kjq-v1-main-btn kjq-v1-secondary-btn">カテゴリ選択に戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // 規範 1.6 (IIFE)
+    (function() {
+        
+        // --- [V1] 核心資料庫 (20 分類 x 30 題 = 600 詞) ---
+        const kjq_v1_quizData = {
+            'animals': {
+                name: '動物の漢字',
+                data: [
+                    { q: '海豚', a: 'いるか' }, { q: '河馬', a: 'かば' }, { q: '駱駝', a: 'らくだ' }, { q: '麒麟', a: 'きりん' }, { q: '縞馬', a: 'しまうま' }, 
+                    { q: '犀', a: 'さい' }, { q: '海獺', a: 'らっこ' }, { q: '川獺', a: 'かわうそ' }, { q: '鼬', a: 'いたち' }, { q: '狸', a: 'たぬき' }, 
+                    { q: '狐', a: 'きつね' }, { q: '狼', a: 'おおかみ' }, { q: '熊', a: 'くま' }, { q: '虎', a: 'とら' }, { q: '豹', a: 'ひょう' }, 
+                    { q: '海豹', a: 'あざらし' }, { q: '海象', a: 'せいうち' }, { q: '蝙蝠', a: 'こうもり' }, { q: '蜥蜴', a: 'とかげ' }, { q: '井守', a: 'いもり' }, 
+                    { q: '家守', a: 'やもり' }, { q: '獅子', a: 'しし' }, { q: '栗鼠', a: 'りす' }, { q: '猩猩', a: 'しょうじょう' }, { q: '羚羊', a: 'かもしか' }, 
+                    { q: '鹿', a: 'しか' }, { q: '猪', a: 'いのしし' }, { q: '象', a: 'ぞう' }, { q: '倉鼠', a: 'はむすたー' }, { q: '兎', a: 'うさぎ' }
+                ]
+            },
+            'birds': {
+                name: '鳥の漢字',
+                data: [
+                    { q: '燕', a: 'つばめ' }, { q: '雀', a: 'すずめ' }, { q: '鳩', a: 'はと' }, { q: '鷗', a: 'かもめ' }, { q: '鴉', a: 'からす' }, 
+                    { q: '雉', a: 'きじ' }, { q: '鷹', a: 'たか' }, { q: '鷲', a: 'わし' }, { q: '鳶', a: 'とび' }, { q: '梟', a: 'ふくろう' }, 
+                    { q: '雲雀', a: 'ひばり' }, { q: '鶯', a: 'うぐいす' }, { q: '鶫', a: 'つぐみ' }, { q: '鶺鴒', a: 'せきれい' }, { q: '鶴', a: 'つる' }, 
+                    { q: '鷺', a: 'さぎ' }, { q: '鴻', a: 'こうのとり' }, { q: '鴨', a: 'かも' }, { q: '白鳥', a: 'はくちょう' }, { q: '家鴨', a: 'あひる' }, 
+                    { q: '鶉', a: 'うずら' }, { q: '啄木鳥', a: 'きつつき' }, { q: '鵞鳥', a: 'がちょう' }, { q: '駝鳥', a: 'だちょう' }, { q: '孔雀', a: 'くじゃく' }, 
+                    { q: '鴛鴦', a: 'おしどり' }, { q: '鸚鵡', a: 'おうむ' }, { q: '隼', a: 'はやぶさ' }, { q: '鴬', a: 'うぐいす' }, { q: '鶏', a: 'にわとり' }
+                ]
+            },
+            'fish': {
+                name: '魚の漢字',
+                data: [
+                    { q: '鰯', a: 'いわし' }, { q: '鯵', a: 'あじ' }, { q: '鯖', a: 'さば' }, { q: '秋刀魚', a: 'さんま' }, { q: '鰹', a: 'かつお' }, 
+                    { q: '鮪', a: 'まぐろ' }, { q: '鮭', a: 'さけ' }, { q: '鱒', a: 'ます' }, { q: '鮎', a: 'あゆ' }, { q: '鯉', a: 'こい' }, 
+                    { q: '鮒', a: 'ふな' }, { q: '鯛', a: 'たい' }, { q: '鱈', a: 'たら' }, { q: '鰆', a: 'さわら' }, { q: '鰻', a: 'うなぎ' }, 
+                    { q: '穴子', a: 'あなご' }, { q: '泥鰌', a: 'どじょう' }, { q: '鯰', a: 'なまず' }, { q: '河豚', a: 'ふぐ' }, { q: '鮃', a: 'ひらめ' }, 
+                    { q: '鰈', a: 'かれい' }, { q: '鮟鱇', a: 'あんこう' }, { q: '鯱', a: 'しゃち' }, { q: '鯨', a: 'くじら' }, { q: '鮫', a: 'さめ' }, 
+                    { q: '烏賊', a: 'いか' }, { q: '蛸', a: 'たこ' }, { q: '海老', a: 'えび' }, { q: '蟹', a: 'かに' }, { q: '蛤', a: 'はまぐり' }
+                ]
+            },
+            'insects': {
+                name: '昆虫の漢字',
+                data: [
+                    { q: '蜻蛉', a: 'とんぼ' }, { q: '螳螂', a: 'かまきり' }, { q: '蝗', a: 'ばった' }, { q: '蝶', a: 'ちょう' }, { q: '蛾', a: 'が' }, 
+                    { q: '蝉', a: 'せみ' }, { q: '蜂', a: 'はち' }, { q: '虻', a: 'あぶ' }, { q: '蚊', a: 'か' }, { q: '蝿', a: 'はえ' }, 
+                    { q: '蜘蛛', a: 'くも' }, { q: '蟻', a: 'あり' }, { q: '蚤', a: 'のみ' }, { q: '壁蝨', a: 'だに' }, { q: '蟋蟀', a: 'こおろぎ' }, 
+                    { q: '鈴虫', a: 'すずむし' }, { q: '螽斯', a: 'きりぎりす' }, { q: '螻蛄', a: 'けら' }, { q: '螢', a: 'ほたる' }, { q: '蝸牛', a: 'かたつむり' }, 
+                    { q: '蛞蝓', a: 'なめくじ' }, { q: '蚯蚓', a: 'みみず' }, { q: '蜈蚣', a: 'むかで' }, { q: '蚰蜒', a: 'げじげじ' }, { q: '尺取虫', a: 'しゃくとりむし' }, 
+                    { q: '毛虫', a: 'けむし' }, { q: '芋虫', a: 'いもむし' }, { q: '兜虫', a: 'かぶとむし' }, { q: '鍬形虫', a: 'くわがたむし' }, { q: '天道虫', a: 'てんとうむし' }
+                ]
+            },
+            'plants': {
+                name: '植物の漢字',
+                data: [
+                    { q: '桜', a: 'さくら' }, { q: '梅', a: 'うめ' }, { q: '桃', a: 'もも' }, { q: '杏', a: 'あんず' }, { q: '松', a: 'まつ' }, 
+                    { q: '杉', a: 'すぎ' }, { q: '檜', a: 'ひのき' }, { q: '竹', a: 'たけ' }, { q: '柳', a: 'やなぎ' }, { q: '楓', a: 'かえで' }, 
+                    { q: '桐', a: 'きり' }, { q: '楠', a: 'くすのき' }, { q: '菊', a: 'きく' }, { q: '薔薇', a: 'ばら' }, { q: '百合', a: 'ゆり' }, 
+                    { q: '紫陽花', a: 'あじさい' }, { q: '朝顔', a: 'あさがお' }, { q: '向日葵', a: 'ひまわり' }, { q: '蒲公英', a: 'たんぽぽ' }, { q: '菫', a: 'すみれ' }, 
+                    { q: '菖蒲', a: 'あやめ' }, { q: '杜若', a: 'かきつばた' }, { q: '蓮', a: 'はす' }, { q: '睡蓮', a: 'すいれん' }, { q: '彼岸花', a: 'ひがんばな' }, 
+                    { q: '水仙', a: 'すいせん' }, { q: '椿', a: 'つばき' }, { q: '山茶花', a: 'さざんか' }, { q: '牡丹', a: 'ぼたん' }, { q: '芍薬', a: 'しゃくやく' }
+                ]
+            },
+            'vegetables': {
+                name: '野菜の漢字',
+                data: [
+                    { q: '大根', a: 'だいこん' }, { q: '人参', a: 'にんじん' }, { q: '牛蒡', a: 'ごぼう' }, { q: '蕪', a: 'かぶ' }, { q: '胡瓜', a: 'きゅうり' }, 
+                    { q: '茄子', a: 'なす' }, { q: '玉葱', a: 'たまねぎ' }, { q: '葱', a: 'ねぎ' }, { q: '蒜', a: 'にんにく' }, { q: '生姜', a: 'しょうが' }, 
+                    { q: '白菜', a: 'はくさい' }, { q: '菠薐草', a: 'ほうれんそう' }, { q: '蓮根', a: 'れんこん' }, { q: '豌豆', a: 'えんどう' }, { q: '空豆', a: 'そらまめ' }, 
+                    { q: '大豆', a: 'だいず' }, { q: '小豆', a: 'あずき' }, { q: '南瓜', a: 'かぼちゃ' }, { q: '冬瓜', a: 'とうがん' }, { q: '苦瓜', a: 'にがうり' }, 
+                    { q: '薩摩芋', a: 'さつまいも' }, { q: '馬鈴薯', a: 'じゃがいも' }, { q: '里芋', a: 'さといも' }, { q: '山芋', a: 'やまいも' }, { q: '蒟蒻', a: 'こんにゃく' }, 
+                    { q: '椎茸', a: 'しいたけ' }, { q: '松茸', a: 'まつたけ' }, { q: '占地', a: 'しめじ' }, { q: '榎茸', a: 'えのき' }, { q: '大蒜', a: 'にんにく' }
+                ]
+            },
+            'fruits': {
+                name: '果物の漢字',
+                data: [
+                    { q: '林檎', a: 'りんご' }, { q: '蜜柑', a: 'みかん' }, { q: '葡萄', a: 'ぶどう' }, { q: '梨', a: 'なし' }, { q: '苺', a: 'いちご' }, 
+                    { q: '桃', a: 'もも' }, { q: '檸檬', a: 'れもん' }, { q: '柚子', a: 'ゆず' }, { q: '柿', a: 'かき' }, { q: '栗', a: 'くり' }, 
+                    { q: '枇杷', a: 'びわ' }, { q: '無花果', a: 'いちじく' }, { q: '藍苺', a: 'ぶるーべりー' }, { q: '桜桃', a: 'さくらんぼ' }, { q: '木苺', a: 'きいちご' }, 
+                    { q: '李', a: 'すもも' }, { q: '杏', a: 'あんず' }, { q: '梅', a: 'うめ' }, { q: '金柑', a: 'きんかん' }, { q: '石榴', a: 'ざくろ' }, 
+                    { q: '洋梨', a: 'ようなし' }, { q: '甘蕉', a: 'ばなな' }, { q: '鳳梨', a: 'ぱいなっぷる' }, { q: '檬果', a: 'まんごー' }, { q: '彌猴桃', a: 'きうい' }, 
+                    { q: '胡桃', a: 'くるみ' }, { q: '西瓜', a: 'すいか' }, { q: '甘瓜', a: 'めろん' }, { q: '鰐梨', a: 'あぼかど' }, { q: '蜜瓜', a: 'めろん' }
+                ]
+            },
+            'food': {
+                name: '食べ物の漢字',
+                data: [
+                    { q: '寿司', a: 'すし' }, { q: '刺身', a: 'さしみ' }, { q: '天婦羅', a: 'てんぷら' }, { q: '蕎麦', a: 'そば' }, { q: '饂飩', a: 'うどん' }, 
+                    { q: '素麺', a: 'そうめん' }, { q: '味噌', a: 'みそ' }, { q: '醤油', a: 'しょうゆ' }, { q: '山葵', a: 'わさび' }, { q: '芥子', a: 'からし' }, 
+                    { q: '海苔', a: 'のり' }, { q: '若布', a: 'わかめ' }, { q: '昆布', a: 'こんぶ' }, { q: '鹿尾菜', a: 'ひじき' }, { q: '豆腐', a: 'とうふ' }, 
+                    { q: '納豆', a: 'なっとう' }, { q: '心太', a: 'ところてん' }, { q: '寒天', a: 'かんてん' }, { q: '蒲鉾', a: 'かまぼこ' }, { q: '竹輪', a: 'ちくわ' }, 
+                    { q: '雑煮', a: 'ぞうに' }, { q: '鋤焼', a: 'すきやき' }, { q: 'おでん', a: 'おでん' }, { q: '佃煮', a: 'つくだに' }, { q: '漬物', a: 'つけもの' }, 
+                    { q: '梅干', a: 'うめぼし' }, { q: '沢庵', a: 'たくあん' }, { q: '煎餅', a: 'せんべい' }, { q: '饅頭', a: 'まんじゅう' }, { q: '羊羹', a: 'ようかん' }
+                ]
+            },
+            'sweets': {
+                name: 'お菓子の漢字',
+                data: [
+                    { q: '煎餅', a: 'せんべい' }, { q: '霰', a: 'あられ' }, { q: '御欠', a: 'おかき' }, { q: '饅頭', a: 'まんじゅう' }, { q: '団子', a: 'だんご' }, 
+                    { q: '鯛焼き', a: 'たいやき' }, { q: '銅鑼焼き', a: 'どらやき' }, { q: '羊羹', a: 'ようかん' }, { q: '外郎', a: 'ういろう' }, { q: '金鍔', a: 'きんつば' }, 
+                    { q: '善哉', a: 'ぜんざい' }, { q: '汁粉', a: 'おしるこ' }, { q: '餡', a: 'あんこ' }, { q: '餅', a: 'もち' }, { q: '黄粉', a: 'きなこ' }, 
+                    { q: '胡麻', a: 'ごま' }, { q: '飴', a: 'あめ' }, { q: '氷', a: 'こおり' }, { q: '蜜', a: 'みつ' }, { q: '蜂蜜', a: 'はちみつ' }, 
+                    { q: '葛餅', a: 'くずもち' }, { q: '蕨餅', a: 'わらびもち' }, { q: '最中', a: 'もなか' }, { q: '落雁', a: 'らくがん' }, { q: '金平糖', a: 'こんぺいとう' }, 
+                    { q: '八ッ橋', a: 'やつはし' }, { q: '豆大福', a: 'まめだいふく' }, { q: '桜餅', a: 'さくらもち' }, { q: '柏餅', a: 'かしわもち' }, { q: '麩菓子', a: 'ふがし' }
+                ]
+            },
+            'tools': {
+                name: '道具の漢字',
+                data: [
+                    { q: '鋏', a: 'はさみ' }, { q: '剃刀', a: 'かみそり' }, { q: '鋸', a: 'のこぎり' }, { q: '包丁', a: 'ほうちょう' }, { q: '俎板', a: 'まないた' }, 
+                    { q: '鍋', a: 'なべ' }, { q: '薬缶', a: 'やかん' }, { q: '急須', a: 'きゅうす' }, { q: '茶碗', a: 'ちゃわん' }, { q: '湯呑', a: 'ゆのみ' }, 
+                    { q: '皿', a: 'さら' }, { q: '箸', a: 'はし' }, { q: '匙', a: 'さじ' }, { q: '栓抜', a: 'せんぬき' }, { q: '缶切', a: 'かんきり' }, 
+                    { q: '刷毛', a: 'はけ' }, { q: '箒', a: 'ほうき' }, { q: '塵取り', a: 'ちりとり' }, { q: '雑巾', a: 'ぞうきん' }, { q: '布巾', a: 'ふきん' }, 
+                    { q: '盥', a: 'たらい' }, { q: '桶', a: 'おけ' }, { q: '鞄', a: 'かばん' }, { q: '財布', a: 'さいふ' }, { q: '鍵', a: 'かぎ' }, 
+                    { q: '錠', a: 'じょう' }, { q: '鏡', a: 'かがみ' }, { q: '眼鏡', a: 'めがね' }, { q: '梯子', a: 'はしご' }, { q: '脚立', a: 'きゃたつ' }
+                ]
+            },
+            'countries': {
+                name: '国名の漢字',
+                data: [
+                    { q: '亜米利加', a: 'あめりか' }, { q: '英国', a: 'えいこく' }, { q: '仏蘭西', a: 'ふらんす' }, { q: '独逸', a: 'どいつ' }, { q: '伊太利', a: 'いたりあ' }, 
+                    { q: '西班牙', a: 'すぺいん' }, { q: '葡萄牙', a: 'ぽるとがる' }, { q: '希臘', a: 'ぎりしゃ' }, { q: '露西亜', a: 'ろしあ' }, { q: '瑞典', a: 'すうぇーでん' }, 
+                    { q: '諾威', a: 'のるうぇー' }, { q: '芬蘭', a: 'ふぃんらんど' }, { q: '濠太剌利', a: 'おーすとらりあ' }, { q: '紐育', a: 'にゅーよーく' }, { q: '加奈陀', a: 'かなだ' }, 
+                    { q: '墨西哥', a: 'めきしこ' }, { q: '伯剌西爾', a: 'ぶらじる' }, { q: '亜爾然丁', a: 'あるぜんちん' }, { q: '智利', a: 'ちり' }, { q: '秘露', a: 'ぺるー' }, 
+                    { q: '印度', a: 'いんど' }, { q: '中国', a: 'ちゅうごく' }, { q: '韓国', a: 'かんこく' }, { q: '越南', a: 'べとなむ' }, { q: '泰', a: 'たい' }, 
+                    { q: '比律賓', a: 'ふぃりぴん' }, { q: '馬来西亜', a: 'まれーしあ' }, { q: '新嘉坡', a: 'しんがぽーる' }, { q: '印度尼西亜', a: 'いんどねしあ' }, { q: '埃及', a: 'えじぷと' }
+                ]
+            },
+            'geography': {
+                name: '地名の漢字',
+                data: [
+                    { q: '札幌', a: 'さっぽろ' }, { q: '函館', a: 'はこだて' }, { q: '小樽', a: 'おたる' }, { q: '旭川', a: 'あさひかわ' }, { q: '仙台', a: 'せんだい' }, 
+                    { q: '新潟', a: 'にいがた' }, { q: '横浜', a: 'よこはま' }, { q: '鎌倉', a: 'かまくら' }, { q: '箱根', a: 'はこね' }, { q: '日光', a: 'にっこう' }, 
+                    { q: '草津', a: 'くさつ' }, { q: '名古屋', a: 'なごや' }, { q: '金沢', a: 'かなざわ' }, { q: '京都', a: 'きょうと' }, { q: '大阪', a: 'おおさか' }, 
+                    { q: '神戸', a: 'こうべ' }, { q: '奈良', a: 'なら' }, { q: '広島', a: 'ひろしま' }, { q: '岡山', a: 'おかやま' }, { q: '博多', a: 'はかた' }, 
+                    { q: '福岡', a: 'ふくおか' }, { q: '長崎', a: 'ながさき' }, { q: '熊本', a: 'くまもと' }, { q: '鹿児島', a: 'かごしま' }, { q: '那覇', a: 'なは' }, 
+                    { q: '沖縄', a: 'おきなわ' }, { q: '岐阜', a: 'ぎふ' }, { q: '埼玉', a: 'さいたま' }, { q: '千葉', a: 'ちば' }, { q: '難波', a: 'なんば' }
+                ]
+            },
+            'human': {
+                name: '人間の漢字',
+                data: [
+                    { q: '嚏', a: 'くしゃみ' }, { q: '欠伸', a: 'あくび' }, { q: '咳', a: 'せき' }, { q: '吃逆', a: 'しゃっくり' }, { q: '踝', a: 'くるぶし' }, 
+                    { q: '踵', a: 'かかと' }, { q: '膝', a: 'ひざ' }, { q: '肘', a: 'ひじ' }, { q: '肩', a: 'かた' }, { q: '首', a: 'くび' }, 
+                    { q: '顎', a: 'あご' }, { q: '頬', a: 'ほほ' }, { q: '喉', a: 'のど' }, { q: '眉', a: 'まゆ' }, { q: '睫', a: 'まつげ' }, 
+                    { q: '瞳', a: 'ひとみ' }, { q: '髭', a: 'ひげ' }, { q: '髪', a: 'かみ' }, { q: '爪', a: 'つめ' }, { q: '指', a: 'ゆび' }, 
+                    { q: '脹脛', a: 'ふくらはぎ' }, { q: '脛', a: 'すね' }, { q: '腿', a: 'もも' }, { q: '脇', a: 'わき' }, { q: '胸', a: 'むね' }, 
+                    { q: '背中', a: 'せなか' }, { q: '腰', a: 'こし' }, { q: '臍', a: 'へそ' }, { q: '尻', a: 'しり' }, { q: '拳', a: 'こぶし' }
+                ]
+            },
+            'surnames': {
+                name: '苗字の漢字',
+                data: [
+                    { q: '小鳥遊', a: 'たかなし' }, { q: '四月一日', a: 'わたぬき' }, { q: '八月一日', a: 'ほずみ' }, { q: '御手洗', a: 'みたらい' }, { q: '五月七日', a: 'つゆり' }, 
+                    { q: '九', a: 'いちじく' }, { q: '一', a: 'にのまえ' }, { q: '十', a: 'つなし' }, { q: '勅使河原', a: 'てしがわら' }, { q: '勘解由小路', a: 'かでのこうじ' }, 
+                    { q: '五十嵐', a: 'いがらし' }, { q: '伊集院', a: 'いじゅういん' }, { q: '西園寺', a: 'さいおんじ' }, { q: '東海林', a: 'しょうじ' }, { q: '長谷川', a: 'はせがわ' }, 
+                    { q: '服部', a: 'はっとり' }, { q: '新妻', a: 'にいづま' }, { q: '東雲', a: 'しののめ' }, { q: '百目鬼', a: 'どうめき' }, { q: '鰻', a: 'うなぎ' }, 
+                    { q: '薬袋', a: 'みない' }, { q: '大道寺', a: 'だいどうじ' }, { q: '鍛冶', a: 'かじ' }, { q: '日下', a: 'くさか' }, { q: '獅子王', a: 'ししおう' }, 
+                    { q: '龍神', a: 'りゅうじん' }, { q: '神宮寺', a: 'じんぐうじ' }, { q: '月見山', a: 'つきみやま' }, { q: '春夏秋冬', a: 'ひととせ' }, { q: '寿', a: 'ことぶき' }
+                ]
+            },
+            'history': {
+                name: '歴史の漢字',
+                data: [
+                    { q: '飛鳥', a: 'あすか' }, { q: '奈良', a: 'なら' }, { q: '平安', a: 'へいあん' }, { q: '鎌倉', a: 'かまくら' }, { q: '室町', a: 'むろまち' }, 
+                    { q: '戦国', a: 'せんごく' }, { q: '安土桃山', a: 'あづちももやま' }, { q: '江戸', a: 'えど' }, { q: '明治', a: 'めいじ' }, { q: '大正', a: 'たいしょう' }, 
+                    { q: '昭和', a: 'しょうわ' }, { q: '平成', a: 'へいせい' }, { q: '令和', a: 'れいわ' }, { q: '徳川', a: 'とくがわ' }, { q: '豊臣', a: 'とよとみ' }, 
+                    { q: '織田', a: 'おだ' }, { q: '征夷大将軍', a: 'せいいたいしょうぐん' }, { q: '幕府', a: 'ばくふ' }, { q: '朝廷', a: 'ちょうてい' }, { q: '天皇', a: 'てんのう' }, 
+                    { q: '侍', a: 'さむらい' }, { q: '武士', a: 'ぶし' }, { q: '忍者', a: 'にんじゃ' }, { q: '浪人', a: 'ろうにん' }, { q: '町人', a: 'ちょうにん' }, 
+                    { q: '農民', a: 'のうみん' }, { q: '関ヶ原', a: 'せきがはら' }, { q: '桶狭間', a: 'おけはざま' }, { q: '長篠', a: 'ながしの' }, { q: '本能寺', a: 'ほんのうじ' }
+                ]
+            },
+            'age': {
+                name: '年齢の漢字',
+                data: [
+                    { q: '幼馴染', a: 'おさななじみ' }, { q: '同い年', a: 'おないどし' }, { q: '年頃', a: 'としごろ' }, { q: '弱冠', a: 'じゃっかん' }, { q: '乳飲み子', a: 'ちのみご' }, 
+                    { q: '幼児', a: 'ようじ' }, { q: '少年', a: 'しょうねん' }, { q: '少女', a: 'しょうじょ' }, { q: '青年', a: 'せいねん' }, { q: '若者', a: 'わかもの' }, 
+                    { q: '中年', a: 'ちゅうねん' }, { q: '壮年', a: 'そうねん' }, { q: '老人', a: 'ろうじん' }, { q: '高齢', a: 'こうれい' }, { q: '長寿', a: 'ちょうじゅ' }, 
+                    { q: '還暦', a: 'かんれき' }, { q: '古希', a: 'こき' }, { q: '喜寿', a: 'きじゅ' }, { q: '傘寿', a: 'さんじゅ' }, { q: '米寿', a: 'べいじゅ' }, 
+                    { q: '卒寿', a: 'そつじゅ' }, { q: '白寿', a: 'はくじゅ' }, { q: '上寿', a: 'じょうじゅ' }, { q: '天寿', a: 'てんじゅ' }, { q: '享年', a: 'きょうねん' }, 
+                    { q: '行年', a: 'ぎょうねん' }, { q: '没年', a: 'ぼつねん' }, { q: '存命', a: 'ぞんめい' }, { q: '健在', a: 'けんざい' }, { q: '安否', a: 'あんぴ' }
+                ]
+            },
+            'weather': {
+                name: '気象の漢字',
+                data: [
+                    { q: '天気', a: 'てんき' }, { q: '気候', a: 'きこう' }, { q: '気象', a: 'きしょう' }, { q: '晴天', a: 'せいてん' }, { q: '快晴', a: 'かいせい' }, 
+                    { q: '曇天', a: 'どんてん' }, { q: '雨天', a: 'うてん' }, { q: '大雨', a: 'おおあめ' }, { q: '豪雨', a: 'ごうう' }, { q: '小雨', a: 'こさめ' }, 
+                    { q: '雷雨', a: 'らいう' }, { q: '夕立', a: 'ゆうだち' }, { q: '時雨', a: 'しぐれ' }, { q: '梅雨', a: 'つゆ' }, { q: '梅雨', a: 'ばいう' }, 
+                    { q: '五月晴れ', a: 'さつきばれ' }, { q: '秋晴れ', a: 'あきばれ' }, { q: '露', a: 'つゆ' }, { q: '霜', a: 'しも' }, { q: '雪', a: 'ゆき' }, 
+                    { q: '霰', a: 'あられ' }, { q: '雹', a: 'ひょう' }, { q: '吹雪', a: 'ふぶき' }, { q: '雪崩', a: 'なだれ' }, { q: '陽炎', a: 'かげろう' }, 
+                    { q: '蜃気楼', a: 'しんきろう' }, { q: '霧', a: 'きり' }, { q: '靄', a: 'もや' }, { q: '虹', a: 'にじ' }, { q: '暈', a: 'かさ' }
+                ]
+            },
+            'gems': {
+                name: '宝石の漢字',
+                data: [
+                    { q: '翡翠', a: 'ひすい' }, { q: '紅玉', a: 'るびー' }, { q: '蒼玉', a: 'さふぁいあ' }, { q: '翠玉', a: 'えめらるど' }, { q: '金剛石', a: 'こんごうせき' }, 
+                    { q: '蛋白石', a: 'おぱーる' }, { q: '真珠', a: 'しんじゅ' }, { q: '土耳古石', a: 'とるこいし' }, { q: '虎目石', a: 'とらめいし' }, { q: '猫目石', a: 'ねこめいし' }, 
+                    { q: '月長石', a: 'げっちょうせき' }, { q: '日長石', a: 'にっちょうせき' }, { q: '水晶', a: 'すいしょう' }, { q: '石英', a: 'せきえい' }, { q: '長石', a: 'ちょうせき' }, 
+                    { q: '瑪瑙', a: 'めのう' }, { q: '琥珀', a: 'こはく' }, { q: '珊瑚', a: 'さんご' }, { q: '柘榴石', a: 'ざくろいし' }, { q: '紫水晶', a: 'あめじすと' }, 
+                    { q: '黄玉', a: 'とぱーず' }, { q: '橄欖石', a: 'かんらんせき' }, { q: '緑柱石', a: 'りょくちゅうせき' }, { q: '海藍玉', a: 'あくあまりん' }, { q: '電気石', a: 'でんきいし' }, 
+                    { q: '螢石', a: 'ほたるいし' }, { q: '黒曜石', a: 'こくようせき' }, { q: '瑠璃', a: 'るり' }, { q: '玻璃', a: 'はり' }, { q: '砡', a: 'ぎょく' }
+                ]
+            },
+            'music': {
+                name: '音楽の漢字',
+                data: [
+                    { q: '音楽', a: 'おんがく' }, { q: '楽器', a: 'がっき' }, { q: '楽曲', a: 'がっきょく' }, { q: '演奏', a: 'えんそう' }, { q: '楽譜', a: 'がくふ' }, 
+                    { q: '音符', a: 'おんぷ' }, { q: '記号', a: 'きごう' }, { q: '指揮', a: 'しき' }, { q: '合唱', a: 'がっしょう' }, { q: '独奏', a: 'どくそう' }, 
+                    { q: '協奏曲', a: 'きょうそうきょく' }, { q: '交響曲', a: 'こうきょうきょく' }, { q: '歌劇', a: 'かげき' }, { q: '弦楽器', a: 'げんがっき' }, { q: '打楽器', a: 'だがっき' }, 
+                    { q: '管楽器', a: 'かんがっき' }, { q: '鍵盤', a: 'けんばん' }, { q: '洋琴', a: 'ぴあの' }, { q: '風琴', a: 'おるがん' }, { q: '竪琴', a: 'はーぷ' }, 
+                    { q: '箏', a: 'こと' }, { q: '三味線', a: 'しゃみせん' }, { q: '琵琶', a: 'びわ' }, { q: '太鼓', a: 'たいこ' }, { q: '鼓', a: 'つづみ' }, 
+                    { q: '笛', a: 'ふえ' }, { q: '喇叭', a: 'らっぱ' }, { q: '提琴', a: 'ばいおりん' }, { q: '첼로', a: 'ちぇろ' }, { q: '歌手', a: 'かしゅ' }
+                ]
+            },
+            'sports': {
+                name: 'スポーツの漢字',
+                data: [
+                    { q: '野球', a: 'やきゅう' }, { q: '蹴球', a: 'しゅうきゅう' }, { q: '籠球', a: 'ろうきゅう' }, { q: '排球', a: 'はいきゅう' }, { q: '卓球', a: 'たっきゅう' }, 
+                    { q: '庭球', a: 'ていきゅう' }, { q: '羽球', a: 'ばどみんとん' }, { q: '水泳', a: 'すいえい' }, { q: '陸上', a: 'りくじょう' }, { q: '体操', a: 'たいそう' }, 
+                    { q: '柔道', a: 'じゅうどう' }, { q: '剣道', a: 'けんどう' }, { q: '空手', a: 'からて' }, { q: '合気道', a: 'あいきどう' }, { q: '相撲', a: 'すもう' }, 
+                    { q: '弓道', a: 'きゅうどう' }, { q: '射撃', a: 'しゃげき' }, { q: '競馬', a: 'けいば' }, { q: '競艇', a: 'きょうてい' }, { q: '競輪', a: 'けいりん' }, 
+                    { q: '鎧球', a: 'あめふと' }, { q: 'ラグビー', a: 'らぐびー' }, { q: '送球', a: 'はんどぼーる' }, { q: '氷球', a: 'あいすほっけー' }, { q: '杖球', a: 'ほっけー' }, 
+                    { q: 'ゴルフ', a: 'ごるふ' }, { q: '選手', a: 'せんしゅ' }, { q: '監督', a: 'かんとく' }, { q: '審判', a: 'しんぱん' }, { q: '試合', a: 'しあい' }
+                ]
+            }
+        };
+        // --- 資料庫結束 (共 600 詞) ---
+
+        // [V2.1 修正] 採用您範例中的穩定載入邏輯
+        function kjq_v1_initializeQuiz() {
+            const app = document.getElementById('kanji-quiz-app-v1'); 
+            if (!app) {
+                console.error("KJQ V1: Container #kanji-quiz-app-v1 not found.");
+                return;
+            }
+
+            // --- 元素獲取 (使用 ID) ---
+            const screens = {
+                levelSelect: app.querySelector('#kjq-v1-screen-level-select'),
+                quiz: app.querySelector('#kjq-v1-screen-quiz'),
+                score: app.querySelector('#kjq-v1-screen-score')
+            };
+            
+            const elements = {
+                categoryBtnContainer: app.querySelector('#kjq-v1-category-grid'),
+                restartBtn: app.querySelector('#kjq-v1-restart-btn'),
+                backToMenuBtnScore: app.querySelector('#kjq-v1-back-to-menu-score'),
+                nextBtn: app.querySelector('#kjq-v1-next-btn'),
+                questionCounter: app.querySelector('#kjq-v1-question-counter'),
+                scoreCounter: app.querySelector('#kjq-v1-score-counter'),
+                questionText: app.querySelector('#kjq-v1-question-text'),
+                optionsContainer: app.querySelector('#kjq-v1-options-container'),
+                feedbackContainer: app.querySelector('#kjq-v1-feedback-container'),
+                feedbackText: app.querySelector('#kjq-v1-feedback-text'),
+                answerPair: app.querySelector('#kjq-v1-answer-pair')
+            };
+            
+            const scoreDisplay = app.querySelector('#kjq-v1-final-score'); 
+            
+            // --- 遊戲狀態 ---
+            let currentQuizData = []; 
+            let currentQuestions = [];
+            let score = 0;
+            let currentQuestionIndex = 0;
+            const QUESTIONS_PER_GAME = 10; 
+            let currentCategory = 'animals'; 
+
+            // --- 函數定義 ---
+            
+            function kjq_v1_shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex != 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [
+                        array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function kjq_v1_showScreen(screenId) {
+                Object.values(screens).forEach(screen => screen.classList.remove('active'));
+                const screenEl = app.querySelector(`#${screenId}`);
+                if (screenEl) screenEl.classList.add('active');
+            }
+
+            // [V1] 動態生成 20 個分類按鈕
+            function kjq_v1_populateCategories() {
+                elements.categoryBtnContainer.innerHTML = '';
+                for (const [key, value] of Object.entries(kjq_v1_quizData)) {
+                    const btn = document.createElement('button');
+                    btn.className = 'kjq-v1-category-btn';
+                    btn.dataset.category = key;
+                    btn.textContent = value.name;
+                    elements.categoryBtnContainer.appendChild(btn);
+                }
+            }
+
+            function kjq_v1_startGame(category) {
+                if (!kjq_v1_quizData[category]) {
+                     console.error(`KJQ V1: Category "${category}" not found.`);
+                     return;
+                }
+                currentCategory = category;
+                currentQuizData = kjq_v1_quizData[category].data;
+                score = 0;
+                currentQuestionIndex = 0;
+                
+                currentQuestions = kjq_v1_shuffle([...currentQuizData]).slice(0, QUESTIONS_PER_GAME); 
+                
+                kjq_v1_showScreen('kjq-v1-screen-quiz');
+                kjq_v1_showQuestion();
+            }
+
+            function kjq_v1_showQuestion() {
+                elements.feedbackContainer.style.display = 'none';
+                elements.nextBtn.style.display = 'none';
+                elements.optionsContainer.innerHTML = '';
+                
+                const q = currentQuestions[currentQuestionIndex];
+                
+                elements.questionCounter.textContent = `問題 ${currentQuestionIndex + 1} / ${QUESTIONS_PER_GAME}`;
+                elements.scoreCounter.textContent = `スコア: ${score}`;
+                elements.questionText.textContent = q.q; // 顯示漢字
+                
+                const correctAnswer = q.a; // 日文讀音
+                const fakes = [];
+                // 從當前分類的題庫中過濾掉正確答案
+                const pool = currentQuizData.filter(word => word.a !== correctAnswer);
+                kjq_v1_shuffle(pool); 
+                
+                // 添加 3 個 Fakes
+                for (let i = 0; i < 3; i++) {
+                    if (pool[i] && pool[i].a) {
+                         fakes.push(pool[i].a);
+                    } else {
+                         // 備用，防止題庫太小
+                         fakes.push(`ダミー${i+1}`);
+                    }
+                }
+                
+                const options = kjq_v1_shuffle([correctAnswer, ...fakes]);
+                
+                options.forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.className = 'kjq-v1-option-btn';
+                    btn.textContent = option; // 顯示日文選項
+                    btn.dataset.answer = option;
+                    elements.optionsContainer.appendChild(btn);
+                });
+            }
+
+            function kjq_v1_checkAnswer(selectedBtn, selectedAnswer) {
+                elements.optionsContainer.querySelectorAll('.kjq-v1-option-btn').forEach(btn => {
+                    btn.disabled = true;
+                });
+                
+                const q = currentQuestions[currentQuestionIndex];
+                const correctAnswer = q.a; 
+
+                // 顯示解說
+                elements.answerPair.textContent = `正解： ${q.q} ( ${q.a} )`;
+                elements.feedbackContainer.style.display = 'block';
+
+                if (selectedAnswer === correctAnswer) {
+                    score++;
+                    selectedBtn.classList.add('correct');
+                    elements.feedbackText.textContent = '正解！';
+                    elements.feedbackText.className = 'kjq-v1-feedback-text correct';
+                } else {
+                    selectedBtn.classList.add('wrong');
+                    const correctBtn = elements.optionsContainer.querySelector(`[data-answer="${correctAnswer}"]`);
+                    if (correctBtn) {
+                        correctBtn.classList.add('correct');
+                    }
+                    elements.feedbackText.textContent = '不正解...';
+                    elements.feedbackText.className = 'kjq-v1-feedback-text wrong';
+                }
+
+                elements.scoreCounter.textContent = `スコア: ${score}`;
+
+                if (currentQuestionIndex < QUESTIONS_PER_GAME - 1) {
+                    elements.nextBtn.textContent = '次の問題へ';
+                } else {
+                    elements.nextBtn.textContent = '結果を見る';
+                }
+                elements.nextBtn.style.display = 'block'; 
+            }
+            
+            function kjq_v1_nextQuestion() {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < QUESTIONS_PER_GAME) {
+                    kjq_v1_showQuestion();
+                } else {
+                    kjq_v1_showScore();
+                }
+            }
+
+            function kjq_v1_showScore() {
+                kjq_v1_showScreen('kjq-v1-screen-score');
+                scoreDisplay.textContent = `${QUESTIONS_PER_GAME}問中 ${score}問`;
+            }
+
+            // --- 事件綁定 ---
+            if (elements.categoryBtnContainer) {
+                 elements.categoryBtnContainer.addEventListener('click', function(e) {
+                     const targetBtn = e.target.closest('.kjq-v1-category-btn');
+                     if (targetBtn && targetBtn.dataset.category) {
+                         kjq_v1_startGame(targetBtn.dataset.category);
+                     }
+                 });
+            }
+
+            if (elements.restartBtn) {
+                 elements.restartBtn.addEventListener('click', function() {
+                      kjq_v1_startGame(currentCategory); 
+                 });
+            }
+            
+            if (elements.backToMenuBtnScore) {
+                 elements.backToMenuBtnScore.addEventListener('click', function() {
+                     kjq_v1_showScreen('kjq-v1-screen-level-select');
+                 });
+            }
+            
+            if (elements.nextBtn) {
+                 elements.nextBtn.addEventListener('click', kjq_v1_nextQuestion);
+            }
+            
+            if (elements.optionsContainer) {
+                elements.optionsContainer.addEventListener('click', function(e) {
+                    const targetBtn = e.target.closest('.kjq-v1-option-btn');
+                    if (targetBtn && !targetBtn.disabled) {
+                        kjq_v1_checkAnswer(targetBtn, targetBtn.dataset.answer);
+                    }
+                });
+            }
+            
+            // --- 初始化 ---
+            kjq_v1_populateCategories(); // 載入 20 個分類按鈕
+
+        } // --- End of kjq_v1_initializeQuiz ---
+
+        // [V2.1 修正] 檢查頁面載入狀態
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', kjq_v1_initializeQuiz);
+        } else {
+            // DOM 已載入，立即執行
+            kjq_v1_initializeQuiz();
+        }
+
+    })();
+    </script>
+</body>
+</html>
