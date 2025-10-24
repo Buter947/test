@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【小学生漢字クイズ】学年別（1年〜6年）読み方テスト</title>
+
+    <style>
+        /* [V1] 所有 Class 均使用 kgq-v1- (Kanji Grade Quiz V1) 前綴 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+            line-height: 1.6 !important;
+            background-color: #f8fafc !important;
+            margin: 0;
+            padding: 1rem;
+        }
+        .kgq-v1-container {
+            font-family: inherit !important;
+            line-height: 1.6 !important;
+            background-color: #f9fafb !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 0.75rem !important;
+            padding: 2rem !important;
+            margin: 2rem auto !important;
+            max-width: 700px !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+            overflow: hidden;
+        }
+        .kgq-v1-container *, 
+        .kgq-v1-container *::before, 
+        .kgq-v1-container *::after {
+            box-sizing: border-box !important;
+        }
+        .kgq-v1-container .kgq-v1-screen {
+            display: none; 
+            animation: fadeInKjqV1 0.3s ease-in-out !important;
+        }
+        .kgq-v1-container .kgq-v1-screen.active {
+            display: block !important;
+        }
+         @keyframes fadeInKjqV1 {
+             from { opacity: 0; transform: translateY(10px); }
+             to { opacity: 1; transform: translateY(0); }
+         }
+        
+        .kgq-v1-container h2 {
+            color: #059669 !important; /* Green Title */
+            text-align: center !important;
+            font-size: 2rem !important;
+            font-weight: 700 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0.5rem !important;
+        }
+        .kgq-v1-container h3 {
+            text-align: center !important;
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+            margin-top: 0 !important;
+            margin-bottom: 1.5rem !important;
+            color: #1f2937 !important;
+        }
+        .kgq-v1-container .kgq-v1-subtitle {
+            text-align: center !important;
+            font-size: 1.1rem !important;
+            color: #4b5563 !important;
+            margin: 0 auto 2rem auto !important;
+        }
+        .kgq-v1-container .kgq-v1-main-btn {
+            display: block !important;
+            width: 100% !important;
+            max-width: 300px !important;
+            margin: 2rem auto 0 auto !important;
+            padding: 1rem !important;
+            font-size: 1.25rem !important;
+            font-weight: 700 !important;
+            color: #ffffff !important;
+            background-color: #059669 !important; /* Green */
+            border: none !important;
+            border-radius: 0.5rem !important;
+            cursor: pointer !important;
+            transition: background-color 0.2s, transform 0.1s !important;
+        }
+        .kgq-v1-container .kgq-v1-main-btn:hover { background-color: #047857 !important; }
+        .kgq-v1-container .kgq-v1-main-btn:active { transform: scale(0.98) !important; }
+        
+        /* 學年選擇畫面 */
+        .kgq-v1-container .kgq-v1-level-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr 1fr !important; /* 3 欄 */
+            gap: 1rem !important;
+        }
+        .kgq-v1-container .kgq-v1-level-btn {
+            width: 100% !important;
+            padding: 1.5rem 0.5rem !important; /* 增加垂直 padding */
+            font-size: 1.1rem !important;
+            font-weight: 600 !important;
+            color: #374151 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.5rem !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            text-align: center;
+        }
+        .kgq-v1-container .kgq-v1-level-btn:hover {
+            border-color: #059669 !important;
+            color: #059669 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        }
+
+        /* 測驗畫面 */
+        .kgq-v1-container .kgq-v1-header {
+             display: flex; 
+             justify-content: space-between; 
+             align-items: center; 
+             margin-bottom: 1rem; 
+             color: #4a5568; 
+             font-weight: 600;
+        }
+         .kgq-v1-container .kgq-v1-header-btn {
+             font-size: 0.9rem;
+             color: #059669;
+             cursor: pointer;
+             background: none;
+             border: none;
+             padding: 0.25rem;
+         }
+         .kgq-v1-container .kgq-v1-header-btn:hover {
+             text-decoration: underline;
+         }
+        .kgq-v1-container .kgq-v1-question-counter {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        .kgq-v1-container .kgq-v1-score-counter {
+             font-size: 1rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        
+        .kgq-v1-container .kgq-v1-question-text {
+            font-size: 4.5rem !important; /* 漢字可以非常大 */
+            font-weight: 700 !important;
+            color: #111827 !important;
+            text-align: center;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 2.5rem 1.5rem;
+            margin-bottom: 2rem;
+            min-height: 200px; /* 確保高度 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Kyokasho', 'Yu Mincho', 'Hiragino Mincho ProN', serif !important; /* 使用教科書體或明體 */
+        }
+        .kgq-v1-container .kgq-v1-options-container {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 1rem !important;
+        }
+        .kgq-v1-container .kgq-v1-option-btn {
+            width: 100% !important;
+            padding: 1rem !important;
+            font-size: 1.25rem !important;
+            font-weight: 600 !important;
+            color: #374151 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.5rem !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            text-align: center;
+            min-height: 80px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .kgq-v1-container .kgq-v1-option-btn:not(:disabled):hover {
+            border-color: #059669 !important;
+            color: #059669 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        }
+        .kgq-v1-container .kgq-v1-option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .kgq-v1-container .kgq-v1-option-btn.correct {
+            background-color: #dcfce7 !important;
+            border-color: #16a34a !important;
+            color: #15803d !important;
+            font-weight: 700 !important;
+        }
+        .kgq-v1-container .kgq-v1-option-btn.wrong {
+            background-color: #fee2e2 !important;
+            border-color: #dc2626 !important;
+            color: #b91c1c !important;
+            opacity: 1 !important;
+        }
+        
+        .kgq-v1-container .kgq-v1-feedback-container {
+            display: none;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem; 
+            text-align: center;
+            animation: fadeInKjqV1 0.3s ease-in-out !important;
+        }
+        .kgq-v1-container .kgq-v1-feedback-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 1rem 0;
+        }
+        .kgq-v1-container .kgq-v1-feedback-text.correct { color: #16a34a; }
+        .kgq-v1-container .kgq-v1-feedback-text.wrong { color: #dc2626; }
+        
+        .kgq-v1-container .kgq-v1-answer-pair {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .kgq-v1-container .kgq-v1-next-btn {
+            display: none; 
+            width: 100%;
+            background-color: #0284c7; /* Blue next button */
+            margin: 1.5rem auto 0 auto;
+            max-width: 300px;
+        }
+        .kgq-v1-container .kgq-v1-next-btn:hover {
+            background-color: #0369a1;
+        }
+        
+        /* 結果畫面 */
+        .kgq-v1-container .kgq-v1-score-display {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            text-align: center;
+        }
+         .kgq-v1-container .kgq-v1-score-display .score {
+             font-size: 3rem;
+             font-weight: 700;
+             color: #059669; /* Green score */
+             display: block;
+             margin: 0.5rem 0;
+         }
+         .kgq-v1-container .kgq-v1-score-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 300px;
+            margin: 2rem auto 0 auto;
+         }
+         .kgq-v1-container .kgq-v1-score-controls .kgq-v1-main-btn {
+             margin-top: 0 !important;
+             background-color: #059669 !important; /* Green */
+         }
+          .kgq-v1-container .kgq-v1-score-controls .kgq-v1-main-btn:hover {
+             background-color: #047857 !important;
+         }
+         .kgq-v1-container .kgq-v1-secondary-btn {
+             background-color: #ffffff !important;
+             color: #374151 !important;
+             border: 1px solid #d1d5db !important;
+         }
+         .kgq-v1-container .kgq-v1-secondary-btn:hover {
+             background-color: #f9fafb !important;
+         }
+         
+         /* 響應式 */
+         @media (max-width: 600px) {
+            .kgq-v1-container {
+                padding: 1.5rem !important;
+                margin: 1rem auto !important;
+            }
+             .kgq-v1-container h2 {
+                 font-size: 1.75rem !important;
+             }
+             .kgq-v1-container .kgq-v1-question-text {
+                 font-size: 3.5rem !important;
+             }
+         }
+         @media (max-width: 480px) {
+             .kgq-v1-container .kgq-v1-options-container {
+                 grid-template-columns: 1fr !important; /* Stack options */
+             }
+             .kgq-v1-container .kgq-v1-level-grid {
+                 grid-template-columns: 1fr 1fr !important; /* 2 欄 */
+             }
+         }
+    </style>
+</head>
+<body>
+
+    <div id="kanji-grade-quiz-v1" class="kgq-v1-container">
+        <div class="kgq-v1-card">
+            
+            <div id="kgq-v1-screen-level-select" class="kgq-v1-screen active">
+                <h2>小学生漢字クイズ</h2>
+                <p class="kgq-v1-subtitle">挑戦する学年を選んでください。</p>
+                <div id="kgq-v1-level-grid" class="kgq-v1-level-grid"></div>
+            </div>
+
+            <div id="kgq-v1-screen-quiz" class="kgq-v1-screen">
+                <div class="kgq-v1-header">
+                     <span id="kgq-v1-question-counter" class="kgq-v1-question-counter"></span>
+                     <span id="kgq-v1-score-counter" class="kgq-v1-score-counter"></span>
+                </div>
+                <div id="kgq-v1-question-text" class="kgq-v1-question-text"></div>
+                <div id="kgq-v1-options-container" class="kgq-v1-options-container"></div>
+                
+                <button id="kgq-v1-next-btn" class="kgq-v1-main-btn kgq-v1-next-btn">次の問題へ</button>
+                <div id="kgq-v1-feedback-container" class="kgq-v1-feedback-container">
+                    <h3 id="kgq-v1-feedback-text" class="kgq-v1-feedback-text"></h3>
+                    <div id="kgq-v1-answer-pair" class="kgq-v1-answer-pair"></div>
+                </div>
+            </div>
+
+            <div id="kgq-v1-screen-score" class="kgq-v1-screen">
+                <h3>お疲れ様でした！</h3>
+                <div class="kgq-v1-score-display">
+                    あなたのスコア:
+                    <span id="kgq-v1-final-score" class="score">10問中 8問</span>
+                    正解
+                </div>
+                <div class="kgq-v1-score-controls">
+                    <button id="kgq-v1-restart-btn" class="kgq-v1-main-btn">もう一度挑戦する</button>
+                    <button id="kgq-v1-back-to-menu-score" class="kgq-v1-main-btn kgq-v1-secondary-btn">学年選択に戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // 規範 1.6 (IIFE)
+    (function() {
+        
+        // --- 核心資料庫 (6 分類 x 30 題 = 180 詞) ---
+        const kgq_v1_quizData = {
+            'g1': {
+                name: '小学1年生',
+                data: [
+                    { q: '犬', a: 'いぬ' }, { q: '花', a: 'はな' }, { q: '山', a: 'やま' }, { q: '川', a: 'かわ' }, { q: '雨', a: 'あめ' }, { q: '日', a: 'ひ' }, { q: '月', a: 'つき' }, { q: '火', a: 'ひ' }, { q: '水', a: 'みず' }, { q: '木', a: 'き' }, { q: '金', a: 'かね' }, { q: '土', a: 'つち' }, { q: '石', a: 'いし' }, { q: '貝', a: 'かい' }, { q: '虫', a: 'むし' }, { q: '人', a: 'ひと' }, { q: '目', a: 'め' }, { q: '耳', a: 'みみ' }, { q: '口', a: 'くち' }, { q: '手', a: 'て' }, { q: '足', a: 'あし' }, { q: '上', a: 'うえ' }, { q: '下', a: 'した' }, { q: '左', a: 'ひだり' }, { q: '右', a: 'みぎ' }, { q: '大', a: 'おおきい' }, { q: '小', a: 'ちいさい' }, { q: '赤', a: 'あか' }, { q: '青', a: 'あお' }, { q: '白', a: 'しろ' }
+                ]
+            },
+            'g2': {
+                name: '小学2年生',
+                data: [
+                    { q: '魚', a: 'さかな' }, { q: '兄', a: 'あに' }, { q: '弟', a: 'おとうと' }, { q: '姉', a: 'あね' }, { q: '妹', a: 'いもうと' }, { q: '春', a: 'はる' }, { q: '夏', a: 'なつ' }, { q: '秋', a: 'あき' }, { q: '冬', a: 'ふゆ' }, { q: '朝', a: 'あさ' }, { q: '昼', a: 'ひる' }, { q: '夕', a: 'ゆう' }, { q: '夜', a: 'よる' }, { q: '雲', a: 'くも' }, { q: '遠', a: 'とおい' }, { q: '近', a: 'ちかい' }, { q: '歌', a: 'うた' }, { q: '声', a: 'こえ' }, { q: '音', a: 'おと' }, { q: '話', a: 'はなし' }, { q: '読', a: 'よむ' }, { q: '書', a: 'かく' }, { q: '聞', a: 'きく' }, { q: '言', a: 'いう' }, { q: '何', a: 'なに' }, { q: '家', a: 'いえ' }, { q: '色', a: 'いろ' }, { q: '強', a: 'つよい' }, { q: '弱', a: 'よわい' }, { q: '京', a: 'きょう' }
+                ]
+            },
+            'g3': {
+                name: '小学3年生',
+                data: [
+                    { q: '悪', a: 'わるい' }, { q: '暗', a: 'くらい' }, { q: '医', a: 'い' }, { q: '意', a: 'い' }, { q: '育', a: 'そだてる' }, { q: '飲', a: 'のむ' }, { q: '運', a: 'はこぶ' }, { q: '駅', a: 'えき' }, { q: '温', a: 'あたたかい' }, { q: '寒', a: 'さむい' }, { q: '感', a: 'かん' }, { q: '客', a: 'きゃく' }, { q: '究', a: 'きわめる' }, { q: '急', a: 'いそぐ' }, { q: '級', a: 'きゅう' }, { q: '球', a: 'たま' }, { q: '去', a: 'さる' }, { q: '局', a: 'きょく' }, { q: '銀', a: 'ぎん' }, { q: '区', a: 'く' }, { q: '苦', a: 'くるしい' }, { q: '軽', a: 'かるい' }, { q: '重', a: 'おもい' }, { q: '血', a: 'ち' }, { q: '決', a: 'きめる' }, { q: '研', a: 'とぐ' }, { q: '庫', a: 'くら' }, { q: '湖', a: 'みずうみ' }, { q: '幸', a: 'しあわせ' }, { q: '港', a: 'みなと' }
+                ]
+            },
+            'g4': {
+                name: '小学4年生',
+                data: [
+                    { q: '愛', a: 'あい' }, { q: '案', a: 'あん' }, { q: '衣', a: 'ころも' }, { q: '囲', a: 'かこむ' }, { q: '塩', a: 'しお' }, { q: '億', a: 'おく' }, { q: '果', a: 'くだもの' }, { q: '課', a: 'か' }, { q: '芽', a: 'め' }, { q: '改', a: 'あらためる' }, { q: '械', a: 'かい' }, { q: '害', a: 'がい' }, { q: '覚', a: 'おぼえる' }, { q: '完', a: 'かん' }, { q: '官', a: 'かん' }, { q: '管', a: 'くだ' }, { q: '観', a: 'みる' }, { q: '願', a: 'ねがう' }, { q: '希', a: 'まれ' }, { q: '季', a: 'き' }, { q: '紀', a: 'き' }, { q: '議', a: 'ぎ' }, { q: '喜', a: 'よろこぶ' }, { q: '旗', a: 'はた' }, { q: '器', a: 'うつわ' }, { q: '機', a: 'はた' }, { q: '挙', a: 'あげる' }, { q: '協', a: 'きょう' }, { q: '鏡', a: 'かがみ' }, { q: '競', a: 'きそう' }
+                ]
+            },
+            'g5': {
+                name: '小学5年生',
+                data: [
+                    { q: '厚', a: 'あつい' }, { q: '圧', a: 'あつ' }, { q: '移', a: 'うつる' }, { q: '因', a: 'ちなむ' }, { q: '永', a: 'ながい' }, { q: '営', a: 'いとなむ' }, { q: '衛', a: 'まもる' }, { q: '易', a: 'やさしい' }, { q: '益', a: 'えき' }, { q: '液', a: 'えき' }, { q: '演', a: 'えん' }, { q: '応', a: 'こたえる' }, { q: '往', a: 'いく' }, { q: '恩', a: 'おん' }, { q: '価', a: 'あたい' }, { q: '過', a: 'すぎる' }, { q: '賀', a: 'が' }, { q: '解', a: 'とく' }, { q: '快', a: 'こころよい' }, { q: '格', a: 'かく' }, { q: '確', a: 'たしか' }, { q: '額', a: 'ひたい' }, { q: '刊', a: 'かん' }, { q: '幹', a: 'みき' }, { q: '眼', a: 'まなこ' }, { q: '群', a: 'むれ' }, { q: '潔', a: 'いさぎよい' }, { q: '件', a: 'けん' }, { q: '券', a: 'けん' }, { q: '険', a: 'けわしい' }
+                ]
+            },
+            'g6': {
+                name: '小学6年生',
+                data: [
+                    { q: '異', a: 'こと' }, { q: '遺', a: 'のこす' }, { q: '域', a: 'いき' }, { q: '宇', a: 'う' }, { q: '栄', a: 'さかえる' }, { q: '沿', a: 'そう' }, { q: '厳', a: 'きびしい' }, { q: '我', a: 'われ' }, { q: '危', a: 'あぶない' }, { q: '机', a: 'つくえ' }, { q: '貴', a: 'たっとい' }, { q: '疑', a: 'うたがう' }, { q: '吸', a: 'すう' }, { q: '供', a: 'そなえる' }, { q: '胸', a: 'むね' }, { q: '郷', a: 'きょう' }, { q: '勤', a: 'つとめる' }, { q: '筋', a: 'すじ' }, { q: '系', a: 'けい' }, { q: '敬', a: 'うやまう' }, { q: '警', a: 'けい' }, { q: '劇', a: 'げき' }, { q: '穀', a: 'こく' }, { q: '骨', a: 'ほね' }, { q: '困', a: 'こまる' }, { q: '砂', a: 'すな' }, { q: '座', a: 'すわる' }, { q: '済', a: 'すむ' }, { q: '裁', a: 'さばく' }, { q: '策', a: 'さく' }
+                ]
+            }
+        };
+        // --- 資料庫結束 (共 180 詞) ---
+
+        // 穩定啟動邏輯
+        function kgq_v1_initializeQuiz() {
+            const app = document.getElementById('kanji-grade-quiz-v1'); 
+            if (!app) {
+                console.error("KGQ V1: Container #kanji-grade-quiz-v1 not found.");
+                return;
+            }
+
+            // --- 元素獲取 (使用 ID) ---
+            const screens = {
+                levelSelect: app.querySelector('#kgq-v1-screen-level-select'),
+                quiz: app.querySelector('#kgq-v1-screen-quiz'),
+                score: app.querySelector('#kgq-v1-screen-score')
+            };
+            
+            const elements = {
+                categoryBtnContainer: app.querySelector('#kgq-v1-level-grid'),
+                restartBtn: app.querySelector('#kgq-v1-restart-btn'),
+                backToMenuBtnScore: app.querySelector('#kgq-v1-back-to-menu-score'),
+                nextBtn: app.querySelector('#kgq-v1-next-btn'),
+                questionCounter: app.querySelector('#kgq-v1-question-counter'),
+                scoreCounter: app.querySelector('#kgq-v1-score-counter'),
+                questionText: app.querySelector('#kgq-v1-question-text'),
+                optionsContainer: app.querySelector('#kgq-v1-options-container'),
+                feedbackContainer: app.querySelector('#kgq-v1-feedback-container'),
+                feedbackText: app.querySelector('#kgq-v1-feedback-text'),
+                answerPair: app.querySelector('#kgq-v1-answer-pair')
+            };
+            
+            const scoreDisplay = app.querySelector('#kgq-v1-final-score'); 
+            
+            // --- 遊戲狀態 ---
+            let currentQuizData = []; 
+            let currentQuestions = [];
+            let score = 0;
+            let currentQuestionIndex = 0;
+            const QUESTIONS_PER_GAME = 10; 
+            let currentCategory = 'g1'; 
+
+            // --- 函數定義 ---
+            
+            function kgq_v1_shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex != 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [
+                        array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function kgq_v1_showScreen(screenId) {
+                Object.values(screens).forEach(screen => screen.classList.remove('active'));
+                const screenEl = app.querySelector(`#${screenId}`);
+                if (screenEl) screenEl.classList.add('active');
+            }
+
+            // 動態生成 6 個學年按鈕
+            function kgq_v1_populateCategories() {
+                elements.categoryBtnContainer.innerHTML = '';
+                for (const [key, value] of Object.entries(kgq_v1_quizData)) {
+                    const btn = document.createElement('button');
+                    btn.className = 'kgq-v1-level-btn';
+                    btn.dataset.category = key;
+                    btn.textContent = value.name;
+                    elements.categoryBtnContainer.appendChild(btn);
+                }
+            }
+
+            function kgq_v1_startGame(category) {
+                if (!kgq_v1_quizData[category]) {
+                     console.error(`KGQ V1: Category "${category}" not found.`);
+                     return;
+                }
+                currentCategory = category;
+                currentQuizData = kgq_v1_quizData[category].data;
+                score = 0;
+                currentQuestionIndex = 0;
+                
+                currentQuestions = kgq_v1_shuffle([...currentQuizData]).slice(0, QUESTIONS_PER_GAME); 
+                
+                kgq_v1_showScreen('kgq-v1-screen-quiz');
+                kgq_v1_showQuestion();
+            }
+
+            function kgq_v1_showQuestion() {
+                elements.feedbackContainer.style.display = 'none';
+                elements.nextBtn.style.display = 'none';
+                elements.optionsContainer.innerHTML = '';
+                
+                const q = currentQuestions[currentQuestionIndex];
+                
+                elements.questionCounter.textContent = `問題 ${currentQuestionIndex + 1} / ${QUESTIONS_PER_GAME}`;
+                elements.scoreCounter.textContent = `スコア: ${score}`;
+                elements.questionText.textContent = q.q; // 顯示漢字
+                
+                const correctAnswer = q.a; // 日文讀音
+                const fakes = [];
+                // 從當前分類的題庫中過濾掉正確答案
+                const pool = currentQuizData.filter(word => word.a !== correctAnswer);
+                kgq_v1_shuffle(pool); 
+                
+                // 添加 3 個 Fakes
+                for (let i = 0; i < 3; i++) {
+                    if (pool[i] && pool[i].a) {
+                         fakes.push(pool[i].a);
+                    } else {
+                         // 備用，防止題庫太小
+                         const randomFake = kgq_v1_quizData.g1.data[Math.floor(Math.random() * kgq_v1_quizData.g1.data.length)].a;
+                         if(randomFake !== correctAnswer) fakes.push(randomFake);
+                    }
+                }
+                
+                const options = kgq_v1_shuffle([correctAnswer, ...fakes]);
+                
+                options.forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.className = 'kgq-v1-option-btn';
+                    btn.textContent = option; // 顯示日文選項
+                    btn.dataset.answer = option;
+                    elements.optionsContainer.appendChild(btn);
+                });
+            }
+
+            function kgq_v1_checkAnswer(selectedBtn, selectedAnswer) {
+                elements.optionsContainer.querySelectorAll('.kgq-v1-option-btn').forEach(btn => {
+                    btn.disabled = true;
+                });
+                
+                const q = currentQuestions[currentQuestionIndex];
+                const correctAnswer = q.a; 
+
+                // 顯示解說
+                elements.answerPair.textContent = `正解： ${q.q} ( ${q.a} )`;
+                elements.feedbackContainer.style.display = 'block';
+
+                if (selectedAnswer === correctAnswer) {
+                    score++;
+                    selectedBtn.classList.add('correct');
+                    elements.feedbackText.textContent = '正解！';
+                    elements.feedbackText.className = 'kjq-v1-feedback-text correct';
+                } else {
+                    selectedBtn.classList.add('wrong');
+                    const correctBtn = elements.optionsContainer.querySelector(`[data-answer="${correctAnswer}"]`);
+                    if (correctBtn) {
+                        correctBtn.classList.add('correct');
+                    }
+                    elements.feedbackText.textContent = '不正解...';
+                    elements.feedbackText.className = 'kjq-v1-feedback-text wrong';
+                }
+
+                elements.scoreCounter.textContent = `スコア: ${score}`;
+
+                if (currentQuestionIndex < QUESTIONS_PER_GAME - 1) {
+                    elements.nextBtn.textContent = '次の問題へ';
+                } else {
+                    elements.nextBtn.textContent = '結果を見る';
+                }
+                elements.nextBtn.style.display = 'block'; 
+            }
+            
+            function kgq_v1_nextQuestion() {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < QUESTIONS_PER_GAME) {
+                    kgq_v1_showQuestion();
+                } else {
+                    kgq_v1_showScore();
+                }
+            }
+
+            function kgq_v1_showScore() {
+                kgq_v1_showScreen('kgq-v1-screen-score');
+                scoreDisplay.textContent = `${QUESTIONS_PER_GAME}問中 ${score}問`;
+            }
+
+            // --- 事件綁定 ---
+            if (elements.categoryBtnContainer) {
+                 elements.categoryBtnContainer.addEventListener('click', function(e) {
+                     const targetBtn = e.target.closest('.kgq-v1-level-btn');
+                     if (targetBtn && targetBtn.dataset.category) {
+                         kgq_v1_startGame(targetBtn.dataset.category);
+                     }
+                 });
+            }
+
+            if (elements.restartBtn) {
+                 elements.restartBtn.addEventListener('click', function() {
+                      kgq_v1_startGame(currentCategory); 
+                 });
+            }
+            
+            if (elements.backToMenuBtnScore) {
+                 elements.backToMenuBtnScore.addEventListener('click', function() {
+                     kgq_v1_showScreen('kgq-v1-screen-level-select');
+                 });
+            }
+            
+            if (elements.nextBtn) {
+                 elements.nextBtn.addEventListener('click', kgq_v1_nextQuestion);
+            }
+            
+            if (elements.optionsContainer) {
+                elements.optionsContainer.addEventListener('click', function(e) {
+                    const targetBtn = e.target.closest('.kgq-v1-option-btn');
+                    if (targetBtn && !targetBtn.disabled) {
+                        kgq_v1_checkAnswer(targetBtn, targetBtn.dataset.answer);
+                    }
+                });
+            }
+            
+            // --- 初始化 ---
+            kgq_v1_populateCategories(); // 載入 6 個學年按鈕
+
+        } // --- End of kgq_v1_initializeQuiz ---
+
+        // [V2.1 修正] 檢查頁面載入狀態
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', kgq_v1_initializeQuiz);
+        } else {
+            // DOM 已載入，立即執行
+            kgq_v1_initializeQuiz();
+        }
+
+    })();
+    </script>
+</body>
+</html>
