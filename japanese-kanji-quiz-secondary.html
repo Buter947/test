@@ -323,8 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
     (function() {
 
         /**
-         * JhsKanjiQuiz (中学生漢字クイズ)
-         * 重新撰寫的物件導向結構
+         * JhsKanjiQuiz (中学生漢字クイズ) V1
          */
         const JhsKanjiQuiz = {
             // --- 1. 數據庫 (每個年級 20 題) ---
@@ -387,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         quiz: app.querySelector('#jhs-kq-screen-quiz'),
                         end: app.querySelector('#jhs-kq-screen-end')
                     },
-                    levelGrid: app.querySelector('#jhs-kq-level-grid'),
+                    levelGrid: app.querySelector('#jhs-kq-level-grid'), // 需要確保這個元素存在
                     questionCounter: app.querySelector('#jhs-kq-question-counter'),
                     scoreCounter: app.querySelector('#jhs-kq-score-counter'),
                     questionDisplay: app.querySelector('#jhs-kq-question-display'),
@@ -401,52 +400,80 @@ document.addEventListener('DOMContentLoaded', function() {
                     menuBtn: app.querySelector('#jhs-kq-menu-btn')
                 };
 
-                // 檢查關鍵元素是否都存在
-                if (!this.elements.levelGrid || !this.elements.screens.quiz || !this.elements.questionDisplay) {
-                     console.error("JHS-KQ V1: 核心 UI 元素缺失，無法啟動。");
-                     app.innerHTML = '<p style="color: red; text-align: center;">エラー: UIコンポーネントの読み込みに失敗しました。</p>';
+                // [V3.3 修正]：放寬初始檢查，只檢查 levelGrid
+                // 確保學年按鈕的容器存在
+                if (!this.elements.levelGrid) {
+                     console.error("JHS-KQ V1: 學年按鈕容器 #jhs-kq-level-grid 未找到，無法啟動。");
+                     // 在容器內顯示錯誤，而不是替換整個 app HTML
+                     if (app) {
+                         app.innerHTML = '<p style="color: red; text-align: center;">エラー: UIコンポーネントの読み込みに失敗しました (level grid missing)。</p>';
+                     }
                      return;
                 }
+                
+                // [V3.3 修正] 其他元素可以在用到時再檢查，或假設它們存在
+                // 如果需要更健壯的錯誤處理，可以在 startGame 或 displayQuestion 中添加檢查
 
                 this.bindEvents();
-                this.populateGradeButtons();
+                this.populateGradeButtons(); // 現在這個函數一定會被調用
             },
 
             // --- 5. 事件綁定 ---
             bindEvents: function() {
-                this.elements.levelGrid.addEventListener('click', (e) => {
-                    const levelBtn = e.target.closest('.jhs-kq-level-btn');
-                    if (levelBtn && levelBtn.dataset.grade) {
-                        this.startGame(levelBtn.dataset.grade);
-                    }
-                });
+                // 確保元素存在才綁定
+                if (this.elements.levelGrid) {
+                    this.elements.levelGrid.addEventListener('click', (e) => {
+                        const levelBtn = e.target.closest('.jhs-kq-level-btn');
+                        if (levelBtn && levelBtn.dataset.grade) {
+                            this.startGame(levelBtn.dataset.grade);
+                        }
+                    });
+                }
 
-                this.elements.optionsGrid.addEventListener('click', (e) => {
-                    const optionBtn = e.target.closest('.jhs-kq-option-btn');
-                    if (optionBtn && !optionBtn.disabled) {
-                        this.checkAnswer(optionBtn);
-                    }
-                });
+                if (this.elements.optionsGrid) {
+                    this.elements.optionsGrid.addEventListener('click', (e) => {
+                        const optionBtn = e.target.closest('.jhs-kq-option-btn');
+                        if (optionBtn && !optionBtn.disabled) {
+                            this.checkAnswer(optionBtn);
+                        }
+                    });
+                }
 
-                this.elements.nextBtn.addEventListener('click', () => this.nextQuestion());
-                this.elements.restartBtn.addEventListener('click', () => this.startGame(this.state.currentGradeId));
-                this.elements.menuBtn.addEventListener('click', () => this.showScreen('start'));
+                if (this.elements.nextBtn) {
+                    this.elements.nextBtn.addEventListener('click', () => this.nextQuestion());
+                }
+                if (this.elements.restartBtn) {
+                    this.elements.restartBtn.addEventListener('click', () => this.startGame(this.state.currentGradeId));
+                }
+                if (this.elements.menuBtn) {
+                    this.elements.menuBtn.addEventListener('click', () => this.showScreen('start'));
+                }
             },
 
             // --- 6. 核心功能 ---
 
             // 顯示畫面
             showScreen: function(screenName) {
+                // 確保 screens 物件和目標 screen 存在
+                if (!this.elements.screens || !this.elements.screens[screenName]) {
+                    console.error(`JHS-KQ V1: 嘗試顯示不存在的畫面: ${screenName}`);
+                    return;
+                }
                 for (let key in this.elements.screens) {
-                    this.elements.screens[key].classList.remove('active');
+                    if (this.elements.screens[key]) { // 檢查每個 screen 是否存在
+                        this.elements.screens[key].classList.remove('active');
+                    }
                 }
-                if (this.elements.screens[screenName]) {
-                    this.elements.screens[screenName].classList.add('active');
-                }
+                this.elements.screens[screenName].classList.add('active');
             },
 
             // 生成學年按鈕
             populateGradeButtons: function() {
+                // 再次確認 levelGrid 存在
+                if (!this.elements.levelGrid) {
+                    console.error("JHS-KQ V1: populateGradeButtons - levelGrid 元素不存在。");
+                    return;
+                }
                 this.elements.levelGrid.innerHTML = '';
                 for (const [gradeId, gradeInfo] of Object.entries(this.quizData)) {
                     const btn = document.createElement('button');
@@ -475,6 +502,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.error(`JHS-KQ V1: 找不到 ${gradeId} 的數據。`);
                     return;
                 }
+                // 確保測驗畫面所需元素存在
+                 if (!this.elements.screens.quiz || !this.elements.questionDisplay || !this.elements.optionsGrid) {
+                     console.error("JHS-KQ V1: 測驗畫面元素不完整，無法開始遊戲。");
+                     // 可以選擇顯示錯誤訊息或返回開始畫面
+                     this.showScreen('start'); // 返回開始畫面
+                     // 或者顯示錯誤訊息：
+                     // this.elements.app.innerHTML = '<p style="color: red; text-align: center;">エラー: クイズ画面の読み込みに失敗しました。</p>';
+                     return;
+                 }
+
 
                 // 重置狀態
                 this.state.currentGradeId = gradeId;
@@ -491,6 +528,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // 顯示問題
             displayQuestion: function() {
+                // 確保相關元素存在
+                if (!this.elements.feedbackBox || !this.elements.nextBtn || !this.elements.questionCounter || !this.elements.scoreCounter || !this.elements.questionDisplay || !this.elements.optionsGrid) {
+                     console.error("JHS-KQ V1: displayQuestion - 缺少必要的 UI 元素。");
+                     return;
+                 }
+
                 // 隱藏反饋
                 this.elements.feedbackBox.style.display = 'none';
                 this.elements.nextBtn.style.display = 'none';
@@ -513,6 +556,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.shuffleArray(fakePool);
                 fakes = fakePool.slice(0, 3).map(item => item.a);
 
+                 // 如果 fake 不足 3 個 (例如數據庫本身很小或有重複答案)，補充一些
+                 const defaultFakeSource = this.quizData['g7'].data.filter(item => item.a !== correctAnswer); // 從 g7 拿
+                 this.shuffleArray(defaultFakeSource);
+                 let fakeIndex = 0;
+                 while(fakes.length < 3 && fakeIndex < defaultFakeSource.length){
+                     if(!fakes.includes(defaultFakeSource[fakeIndex].a)){
+                         fakes.push(defaultFakeSource[fakeIndex].a);
+                     }
+                     fakeIndex++;
+                 }
+                 // 極端情況下，如果還是不足3個，允許重複
+                 while(fakes.length < 3){
+                      fakes.push(defaultFakeSource[0]?.a || 'ダミー'); // 添加一個備用假答案
+                 }
+
+
                 const options = this.shuffleArray([correctAnswer, ...fakes]);
 
                 // 渲染選項按鈕
@@ -528,6 +587,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // 檢查答案
             checkAnswer: function(selectedBtn) {
+                 // 確保相關元素存在
+                 if (!this.elements.optionsGrid || !this.elements.answerReveal || !this.elements.feedbackBox || !this.elements.feedbackText || !this.elements.scoreCounter || !this.elements.nextBtn) {
+                     console.error("JHS-KQ V1: checkAnswer - 缺少必要的 UI 元素。");
+                     return;
+                 }
                 // 禁用所有按鈕
                 this.elements.optionsGrid.querySelectorAll('.jhs-kq-option-btn').forEach(btn => {
                     btn.disabled = true;
@@ -581,6 +645,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // 顯示最終結果
             showEndScreen: function() {
+                 // 確保相關元素存在
+                 if (!this.elements.finalScore || !this.elements.screens.end) {
+                     console.error("JHS-KQ V1: showEndScreen - 缺少必要的 UI 元素。");
+                     return;
+                 }
                 this.elements.finalScore.textContent = `${this.state.QUESTIONS_PER_GAME}問中 ${this.state.score}問`;
                 this.showScreen('end');
             }
