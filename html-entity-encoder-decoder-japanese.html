@@ -1,166 +1,165 @@
 <div id="html-entity-tool-app">
     <script>
-        // [這是您上一段提供的數據庫腳本]
         (function() {
-            // ... (省略龐大的 charToEntityMap 和 entityToCharMap 定義) ...
-             const charToEntityMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;', ' ': '&nbsp;', /* ... 數百個其他實體 ... */ '✓': '&check;', '✗': '&cross;' };
-             const entityToCharMap = {};
-             for (const char in charToEntityMap) { if (Object.prototype.hasOwnProperty.call(charToEntityMap, char)) { entityToCharMap[charToEntityMap[char]] = char; } }
-             window.htmlEntityMaps = { encodeMap: charToEntityMap, decodeMap: entityToCharMap };
-            console.log('[HTMLEntityApp V2 Data] Entity maps ready.'); 
+            console.log('[HTMLEntityApp V2.1] Preparing entity maps from user database...');
+
+            // --- 用戶提供的數據庫 ---
+            const entityDatabase = [
+                { char: '<', name: '&lt;', num: '&#60;' }, { char: '>', name: '&gt;', num: '&#62;' },
+                { char: '&', name: '&amp;', num: '&#38;' }, { char: '"', name: '&quot;', num: '&#34;' },
+                { char: "'", name: '&apos;', num: '&#39;' }, { char: ' ', name: '&nbsp;', num: '&#160;' },
+                { char: '¡', name: '&iexcl;', num: '&#161;' }, { char: '¿', name: '&iquest;', num: '&#191;' },
+                { char: '–', name: '&ndash;', num: '&#8211;' }, { char: '—', name: '&mdash;', num: '&#8212;' },
+                { char: '‘', name: '&lsquo;', num: '&#8216;' }, { char: '’', name: '&rsquo;', num: '&#8217;' },
+                { char: '‚', name: '&sbquo;', num: '&#8218;' }, { char: '“', name: '&ldquo;', num: '&#8220;' },
+                { char: '”', name: '&rdquo;', num: '&#8221;' }, { char: '„', name: '&bdquo;', num: '&#8222;' },
+                { char: '«', name: '&laquo;', num: '&#171;' }, { char: '»', name: '&raquo;', num: '&#187;' },
+                { char: '‹', name: '&lsaquo;', num: '&#8249;' }, { char: '›', name: '&rsaquo;', num: '&#8250;' },
+                { char: '…', name: '&hellip;', num: '&#8230;' }, { char: '•', name: '&bull;', num: '&#8226;' },
+                { char: '§', name: '&sect;', num: '&#167;' }, { char: '¶', name: '&para;', num: '&#182;' },
+                { char: '©', name: '&copy;', num: '&#169;' }, { char: '®', name: '&reg;', num: '&#174;' },
+                { char: '™', name: '&trade;', num: '&#8482;' }, { char: '€', name: '&euro;', num: '&#8364;' },
+                { char: '£', name: '&pound;', num: '&#163;' }, { char: '¥', name: '&yen;', num: '&#165;' },
+                { char: '¢', name: '&cent;', num: '&#162;' }, { char: '¤', name: '&curren;', num: '&#164;' },
+                { char: '¦', name: '&brvbar;', num: '&#166;' }, { char: '°', name: '&deg;', num: '&#176;' },
+                { char: '±', name: '&plusmn;', num: '&#177;' }, { char: '×', name: '&times;', num: '&#215;' },
+                { char: '÷', name: '&divide;', num: '&#247;' }, { char: 'µ', name: '&micro;', num: '&#181;' },
+                { char: '¹', name: '&sup1;', num: '&#185;' }, { char: '²', name: '&sup2;', num: '&#178;' },
+                { char: '³', name: '&sup3;', num: '&#179;' }, { char: '¼', name: '&frac14;', num: '&#188;' },
+                { char: '½', name: '&frac12;', num: '&#189;' }, { char: '¾', name: '&frac34;', num: '&#190;' },
+                { char: 'ƒ', name: '&fnof;', num: '&#402;' }, { char: '≈', name: '&asymp;', num: '&#8776;' },
+                { char: '≠', name: '&ne;', num: '&#8800;' }, { char: '≤', name: '&le;', num: '&#8804;' },
+                { char: '≥', name: '&ge;', num: '&#8805;' }, { char: '√', name: '&radic;', num: '&#8730;' },
+                { char: '∞', name: '&infin;', num: '&#8734;' }, { char: '∫', name: '&int;', num: '&#8747;' },
+                { char: '∑', name: '&sum;', num: '&#8721;' }, { char: '∏', name: '&prod;', num: '&#8719;' },
+                { char: '∂', name: '&part;', num: '&#8706;' }, { char: '∀', name: '&forall;', num: '&#8704;' },
+                { char: '∃', name: '&exist;', num: '&#8707;' }, { char: '∅', name: '&empty;', num: '&#8709;' },
+                { char: '∇', name: '&nabla;', num: '&#8711;' }, { char: '∈', name: '&isin;', num: '&#8712;' },
+                { char: '∉', name: '&notin;', num: '&#8713;' }, { char: '∋', name: '&ni;', num: '&#8715;' },
+                { char: '∠', name: '&ang;', num: '&#8736;' }, { char: '←', name: '&larr;', num: '&#8592;' },
+                { char: '↑', name: '&uarr;', num: '&#8593;' }, { char: '→', name: '&rarr;', num: '&#8594;' },
+                { char: '↓', name: '&darr;', num: '&#8595;' }, { char: '↔', name: '&harr;', num: '&#8596;' },
+                { char: '⇐', name: '&lArr;', num: '&#8656;' }, { char: '⇑', name: '&uArr;', num: '&#8657;' },
+                { char: '⇒', name: '&rArr;', num: '&#8658;' }, { char: '⇓', name: '&dArr;', num: '&#8659;' },
+                { char: '⇔', name: '&hArr;', num: '&#8660;' }, { char: '♠', name: '&spades;', num: '&#9824;' },
+                { char: '♣', name: '&clubs;', num: '&#9827;' }, { char: '♥', name: '&hearts;', num: '&#9829;' },
+                { char: '♦', name: '&diams;', num: '&#9830;' }, { char: '\u2002', name: '&ensp;', num: '&#8194;' }, // En space
+                { char: '\u2003', name: '&emsp;', num: '&#8195;' }, // Em space
+                { char: '\u2009', name: '&thinsp;', num: '&#8201;' }, // Thin space
+                { char: '\u200C', name: '&zwnj;', num: '&#8204;' }, // Zero width non-joiner
+                { char: '\u200D', name: '&zwj;', num: '&#8205;' }, // Zero width joiner
+                { char: '\u200E', name: '&lrm;', num: '&#8206;' }, // Left-to-right mark
+                { char: '\u200F', name: '&rlm;', num: '&#8207;' }, // Right-to-left mark
+                { char: 'Α', name: '&Alpha;', num: '&#913;' }, { char: 'Β', name: '&Beta;', num: '&#914;' },
+                { char: 'Γ', name: '&Gamma;', num: '&#915;' }, { char: 'Δ', name: '&Delta;', num: '&#916;' },
+                { char: 'Ε', name: '&Epsilon;', num: '&#917;' }, { char: 'Ζ', name: '&Zeta;', num: '&#918;' },
+                { char: 'Η', name: '&Eta;', num: '&#919;' }, { char: 'Θ', name: '&Theta;', num: '&#920;' },
+                { char: 'Ι', name: '&Iota;', num: '&#921;' }, { char: 'Κ', name: '&Kappa;', num: '&#922;' },
+                { char: 'Λ', name: '&Lambda;', num: '&#923;' }, { char: 'Μ', name: '&Mu;', num: '&#924;' },
+                { char: 'Ν', name: '&Nu;', num: '&#925;' }, { char: 'Ξ', name: '&Xi;', num: '&#926;' },
+                { char: 'Ο', name: '&Omicron;', num: '&#927;' }, { char: 'Π', name: '&Pi;', num: '&#928;' },
+                { char: 'Ρ', name: '&Rho;', num: '&#929;' }, { char: 'Σ', name: '&Sigma;', num: '&#931;' },
+                { char: 'Τ', name: '&Tau;', num: '&#932;' }, { char: 'Υ', name: '&Upsilon;', num: '&#933;' },
+                { char: 'Φ', name: '&Phi;', num: '&#934;' }, { char: 'Χ', name: '&Chi;', num: '&#935;' },
+                { char: 'Ψ', name: '&Psi;', num: '&#936;' }, { char: 'Ω', name: '&Omega;', num: '&#937;' },
+                { char: 'α', name: '&alpha;', num: '&#945;' }, { char: 'β', name: '&beta;', num: '&#946;' },
+                { char: 'γ', name: '&gamma;', num: '&#947;' }, { char: 'δ', name: '&delta;', num: '&#948;' },
+                { char: 'ε', name: '&epsilon;', num: '&#949;' }, { char: 'ζ', name: '&zeta;', num: '&#950;' },
+                { char: 'η', name: '&eta;', num: '&#951;' }, { char: 'θ', name: '&theta;', num: '&#952;' },
+                { char: 'ι', name: '&iota;', num: '&#953;' }, { char: 'κ', name: '&kappa;', num: '&#954;' },
+                { char: 'λ', name: '&lambda;', num: '&#955;' }, { char: 'μ', name: '&mu;', num: '&#956;' },
+                { char: 'ν', name: '&nu;', num: '&#957;' }, { char: 'ξ', name: '&xi;', num: '&#958;' },
+                { char: 'ο', name: '&omicron;', num: '&#959;' }, { char: 'π', name: '&pi;', num: '&#960;' },
+                { char: 'ρ', name: '&rho;', num: '&#961;' }, { char: 'ς', name: '&sigmaf;', num: '&#962;' },
+                { char: 'σ', name: '&sigma;', num: '&#963;' }, { char: 'τ', name: '&tau;', num: '&#964;' },
+                { char: 'υ', name: '&upsilon;', num: '&#965;' }, { char: 'φ', name: '&phi;', num: '&#966;' },
+                { char: 'χ', name: '&chi;', num: '&#967;' }, { char: 'ψ', name: '&psi;', num: '&#968;' },
+                { char: 'ω', name: '&omega;', num: '&#969;' }, { char: '¨', name: '&uml;', num: '&#168;' },
+                { char: 'ª', name: '&ordf;', num: '&#170;' }, { char: '¬', name: '&not;', num: '&#172;' },
+                { char: '­', name: '&shy;', num: '&#173;' }, { char: '¯', name: '&macr;', num: '&#175;' },
+                { char: '´', name: '&acute;', num: '&#180;' }, { char: '·', name: '&middot;', num: '&#183;' },
+                { char: '¸', name: '&cedil;', num: '&#184;' }, { char: 'º', name: '&ordm;', num: '&#186;' },
+                { char: 'À', name: '&Agrave;', num: '&#192;' }, { char: 'Á', name: '&Aacute;', num: '&#193;' },
+                { char: 'Â', name: '&Acirc;', num: '&#194;' }, { char: 'Ã', name: '&Atilde;', num: '&#195;' },
+                { char: 'Ä', name: '&Auml;', num: '&#196;' }, { char: 'Å', name: '&Aring;', num: '&#197;' },
+                { char: 'Æ', name: '&AElig;', num: '&#198;' }, { char: 'Ç', name: '&Ccedil;', num: '&#199;' },
+                { char: 'È', name: '&Egrave;', num: '&#200;' }, { char: 'É', name: '&Eacute;', num: '&#201;' },
+                { char: 'Ê', name: '&Ecirc;', num: '&#202;' }, { char: 'Ë', name: '&Euml;', num: '&#203;' },
+                { char: 'Ì', name: '&Igrave;', num: '&#204;' }, { char: 'Í', name: '&Iacute;', num: '&#205;' },
+                { char: 'Î', name: '&Icirc;', num: '&#206;' }, { char: 'Ï', name: '&Iuml;', num: '&#207;' },
+                { char: 'Ð', name: '&ETH;', num: '&#208;' }, { char: 'Ñ', name: '&Ntilde;', num: '&#209;' },
+                { char: 'Ò', name: '&Ograve;', num: '&#210;' }, { char: 'Ó', name: '&Oacute;', num: '&#211;' },
+                { char: 'Ô', name: '&Ocirc;', num: '&#212;' }, { char: 'Õ', name: '&Otilde;', num: '&#213;' },
+                { char: 'Ö', name: '&Ouml;', num: '&#214;' }, { char: 'Ø', name: '&Oslash;', num: '&#216;' },
+                { char: 'Ù', name: '&Ugrave;', num: '&#217;' }, { char: 'Ú', name: '&Uacute;', num: '&#218;' },
+                { char: 'Û', name: '&Ucirc;', num: '&#219;' }, { char: 'Ü', name: '&Uuml;', num: '&#220;' },
+                { char: 'Ý', name: '&Yacute;', num: '&#221;' }, { char: 'Þ', name: '&THORN;', num: '&#222;' },
+                { char: 'ß', name: '&szlig;', num: '&#223;' }, { char: 'à', name: '&agrave;', num: '&#224;' },
+                { char: 'á', name: '&aacute;', num: '&#225;' }, { char: 'â', name: '&acirc;', num: '&#226;' },
+                { char: 'ã', name: '&atilde;', num: '&#227;' }, { char: 'ä', name: '&auml;', num: '&#228;' },
+                { char: 'å', name: '&aring;', num: '&#229;' }, { char: 'æ', name: '&aelig;', num: '&#230;' },
+                { char: 'ç', name: '&ccedil;', num: '&#231;' }, { char: 'è', name: '&egrave;', num: '&#232;' },
+                { char: 'é', name: '&eacute;', num: '&#233;' }, { char: 'ê', name: '&ecirc;', num: '&#234;' },
+                { char: 'ë', name: '&euml;', num: '&#235;' }, { char: 'ì', name: '&igrave;', num: '&#236;' },
+                { char: 'í', name: '&iacute;', num: '&#237;' }, { char: 'î', name: '&icirc;', num: '&#238;' },
+                { char: 'ï', name: '&iuml;', num: '&#239;' }, { char: 'ð', name: '&eth;', num: '&#240;' },
+                { char: 'ñ', name: '&ntilde;', num: '&#241;' }, { char: 'ò', name: '&ograve;', num: '&#242;' },
+                { char: 'ó', name: '&oacute;', num: '&#243;' }, { char: 'ô', name: '&ocirc;', num: '&#244;' },
+                { char: 'õ', name: '&otilde;', num: '&#245;' }, { char: 'ö', name: '&ouml;', num: '&#246;' },
+                { char: 'ø', name: '&oslash;', num: '&#248;' }, { char: 'ù', name: '&ugrave;', num: '&#249;' },
+                { char: 'ú', name: '&uacute;', num: '&#250;' }, { char: 'û', name: '&ucirc;', num: '&#251;' },
+                { char: 'ü', name: '&uuml;', num: '&#252;' }, { char: 'ý', name: '&yacute;', num: '&#253;' },
+                { char: 'þ', name: '&thorn;', num: '&#254;' }, { char: 'ÿ', name: '&yuml;', num: '&#255;' }
+                // --- 更多 HTML5 實體可以按需添加 ---
+            ];
+
+            // --- 動態生成映射表 ---
+            const charToEntityMap = {};
+            const entityToCharMap = {};
+            entityDatabase.forEach(item => {
+                if (item.char && item.name) {
+                    charToEntityMap[item.char] = item.name;
+                    entityToCharMap[item.name] = item.char;
+                }
+            });
+
+            // 附加到 window 對象
+            window.htmlEntityMaps = {
+                encodeMap: charToEntityMap,
+                decodeMap: entityToCharMap
+            };
+
+            console.log('[HTMLEntityApp V2.1] Entity maps from user DB ready on window.htmlEntityMaps.'); 
         })(); 
     </script>
 
     <style>
-        /* --- 核心重置與隔離 (使用 .het- 前綴) --- */
-        #html-entity-tool-app {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
-            line-height: 1.6 !important;
-            background-color: #ffffff !important; 
-            border: 1px solid #e5e7eb !important;
-            border-radius: 0.75rem !important;
-            padding: 2rem !important;
-            margin: 2rem auto !important;
-            max-width: 800px !important; /* 寬一點以容納兩個文本區 */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
-        }
-        #html-entity-tool-app *, 
-        #html-entity-tool-app *::before, 
-        #html-entity-tool-app *::after {
-            box-sizing: border-box !important;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* --- 標題 --- */
-        #html-entity-tool-app h2 {
-            color: #B45309 !important; 
-            text-align: center !important;
-            font-size: 1.75rem !important;
-            font-weight: 700 !important;
-            margin-bottom: 1.5rem !important; /* 增加底部間距 */
-        }
-       
-        /* --- 文本區域 --- */
-        #html-entity-tool-app .het-textarea-group {
-            margin-bottom: 1rem !important;
-        }
-        #html-entity-tool-app .het-textarea-group label {
-            display: block !important;
-            font-weight: 600 !important;
-            color: #374151 !important;
-            margin-bottom: 0.5rem !important;
-            font-size: 0.9rem !important;
-        }
-        #html-entity-tool-app .het-textarea {
-            width: 100% !important;
-            min-height: 150px !important; /* 設定最小高度 */
-            padding: 0.75rem 1rem !important;
-            border: 1px solid #d1d5db !important;
-            border-radius: 0.5rem !important;
-            font-size: 0.95rem !important; /* 稍微減小字體以容納更多內容 */
-            line-height: 1.6 !important;
-            background-color: #fff !important;
-            color: #1f2937 !important;
-            resize: vertical !important; /* 允許垂直調整大小 */
-            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace !important; /* 等寬字體 */
-        }
-        #html-entity-tool-app #het-output {
-             background-color: #f9fafb !important; /* 輸出區域用淺灰色背景 */
-        }
-
-        /* --- 按鈕區域 --- */
-        #html-entity-tool-app .het-controls {
-             display: flex !important;
-             flex-wrap: wrap !important; /* 換行 */
-             justify-content: center !important;
-             gap: 0.75rem !important;
-             margin-bottom: 1rem !important;
-        }
-        #html-entity-tool-app .het-button {
-            padding: 0.6rem 1.2rem !important;
-            font-size: 0.95rem !important;
-            font-weight: 600 !important;
-            border: none !important;
-            border-radius: 0.375rem !important;
-            cursor: pointer !important;
-            transition: background-color 0.2s, transform 0.1s !important;
-        }
+        /* --- CSS (與 V2 相同) --- */
+        #html-entity-tool-app { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important; line-height: 1.6 !important; background-color: #ffffff !important; border: 1px solid #e5e7eb !important; border-radius: 0.75rem !important; padding: 2rem !important; margin: 2rem auto !important; max-width: 800px !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important; }
+        #html-entity-tool-app *, #html-entity-tool-app *::before, #html-entity-tool-app *::after { box-sizing: border-box !important; margin: 0; padding: 0; }
+        #html-entity-tool-app h2 { color: #B45309 !important; text-align: center !important; font-size: 1.75rem !important; font-weight: 700 !important; margin-bottom: 1.5rem !important; }
+        #html-entity-tool-app .het-textarea-group { margin-bottom: 1rem !important; }
+        #html-entity-tool-app .het-textarea-group label { display: block !important; font-weight: 600 !important; color: #374151 !important; margin-bottom: 0.5rem !important; font-size: 0.9rem !important; }
+        #html-entity-tool-app .het-textarea { width: 100% !important; min-height: 150px !important; padding: 0.75rem 1rem !important; border: 1px solid #d1d5db !important; border-radius: 0.5rem !important; font-size: 0.95rem !important; line-height: 1.6 !important; background-color: #fff !important; color: #1f2937 !important; resize: vertical !important; font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace !important; }
+        #html-entity-tool-app #het-output { background-color: #f9fafb !important; }
+        #html-entity-tool-app .het-controls { display: flex !important; flex-wrap: wrap !important; justify-content: center !important; gap: 0.75rem !important; margin-bottom: 1rem !important; }
+        #html-entity-tool-app .het-button { padding: 0.6rem 1.2rem !important; font-size: 0.95rem !important; font-weight: 600 !important; border: none !important; border-radius: 0.375rem !important; cursor: pointer !important; transition: background-color 0.2s, transform 0.1s !important; }
         #html-entity-tool-app .het-button:active { transform: scale(0.97) !important; }
-
-        #html-entity-tool-app .het-button-primary { /* Encode/Decode */
-            background-color: #B45309 !important; 
-            color: #ffffff !important;
-        }
+        #html-entity-tool-app .het-button-primary { background-color: #B45309 !important; color: #ffffff !important; }
         #html-entity-tool-app .het-button-primary:hover { background-color: #92400e !important; }
-
-        #html-entity-tool-app .het-button-secondary { /* Clear/Copy */
-             background-color: #e5e7eb !important;
-             color: #374151 !important;
-             border: 1px solid #d1d5db !important;
-        }
-         #html-entity-tool-app .het-button-secondary:hover { background-color: #d1d5db !important; }
-         
-         /* --- 按鈕組（用於清除/複製） --- */
-         #html-entity-tool-app .het-sub-controls {
-              display: flex !important;
-              justify-content: flex-end !important; /* 靠右對齊 */
-              gap: 0.5rem !important;
-              margin-top: 0.5rem !important; /* 與文本區有點間距 */
-         }
-          #html-entity-tool-app .het-sub-controls .het-button-secondary {
-              padding: 0.4rem 0.8rem !important; /* 小按鈕 */
-              font-size: 0.85rem !important;
-          }
-
-        /* --- 錯誤訊息 --- */
-         #html-entity-tool-app .het-error-message {
-             color: #b91c1c !important; 
-             background-color: #fee2e2 !important; 
-             border: 1px solid #f87171 !important; 
-             padding: 0.8rem 1rem !important; 
-             border-radius: 0.375rem !important; 
-             text-align: center !important; 
-             margin-top: 1rem !important;
-             font-size: 0.9rem !important;
-             display: none; /* 預設隱藏 */
-              animation: fadeInWarikanFxV1 0.3s ease-out !important; /* Reuse animation */
-         }
-         
-         /* --- 響應式 --- */
-         @media (max-width: 600px) {
-              #html-entity-tool-app { padding: 1.5rem !important; }
-              #html-entity-tool-app h2 { font-size: 1.5rem !important; }
-              #html-entity-tool-app .het-textarea { min-height: 120px !important; font-size: 0.9rem !important;}
-              #html-entity-tool-app .het-controls { justify-content: space-around !important; } /* 分散按鈕 */
-         }
-
+        #html-entity-tool-app .het-button-secondary { background-color: #e5e7eb !important; color: #374151 !important; border: 1px solid #d1d5db !important; }
+        #html-entity-tool-app .het-button-secondary:hover { background-color: #d1d5db !important; }
+        #html-entity-tool-app .het-sub-controls { display: flex !important; justify-content: flex-end !important; gap: 0.5rem !important; margin-top: 0.5rem !important; }
+        #html-entity-tool-app .het-sub-controls .het-button-secondary { padding: 0.4rem 0.8rem !important; font-size: 0.85rem !important; }
+        #html-entity-tool-app .het-error-message { color: #b91c1c !important; background-color: #fee2e2 !important; border: 1px solid #f87171 !important; padding: 0.8rem 1rem !important; border-radius: 0.375rem !important; text-align: center !important; margin-top: 1rem !important; font-size: 0.9rem !important; display: none; animation: fadeInWarikanFxV1 0.3s ease-out !important; }
+        @keyframes fadeInWarikanFxV1 { from { opacity: 0; } to { opacity: 1; } }
+        @media (max-width: 600px) { #html-entity-tool-app { padding: 1.5rem !important; } #html-entity-tool-app h2 { font-size: 1.5rem !important; } #html-entity-tool-app .het-textarea { min-height: 120px !important; font-size: 0.9rem !important;} #html-entity-tool-app .het-controls { justify-content: space-around !important; } }
     </style>
 
-    <h2>HTMLエンティティ 変換</h2>
-
-    <div class="het-textarea-group">
-        <label for="het-input">入力テキスト:</label>
-        <textarea id="het-input" class="het-textarea" placeholder="ここにテキストを入力... 例: <p class='test'>© & €</p>" spellcheck="false"></textarea>
-         <div class="het-sub-controls">
-             <button id="het-clear-input-btn" class="het-button het-button-secondary">クリア</button>
-         </div>
-    </div>
-
-    <div class="het-controls">
-        <button id="het-encode-btn" class="het-button het-button-primary">エンコード &raquo;</button>
-        <button id="het-decode-btn" class="het-button het-button-primary">&laquo; デコード</button>
-    </div>
-
-    <div class="het-textarea-group">
-        <label for="het-output">出力結果:</label>
-        <textarea id="het-output" class="het-textarea" readonly placeholder="変換結果がここに表示されます..."></textarea>
-         <div class="het-sub-controls">
-             <button id="het-copy-output-btn" class="het-button het-button-secondary">コピー</button>
-             <button id="het-clear-output-btn" class="het-button het-button-secondary">クリア</button>
-         </div>
-    </div>
-    
+    <h2>HTMLエンティティ 変換 (V2.1)</h2>
+    <div class="het-textarea-group"> <label for="het-input">入力テキスト:</label> <textarea id="het-input" class="het-textarea" placeholder="ここにテキストを入力... 例: <p class='test'>© & €</p>" spellcheck="false"></textarea> <div class="het-sub-controls"> <button id="het-clear-input-btn" class="het-button het-button-secondary">クリア</button> </div> </div>
+    <div class="het-controls"> <button id="het-encode-btn" class="het-button het-button-primary">エンコード &raquo;</button> <button id="het-decode-btn" class="het-button het-button-primary">&laquo; デコード</button> </div>
+    <div class="het-textarea-group"> <label for="het-output">出力結果:</label> <textarea id="het-output" class="het-textarea" readonly placeholder="変換結果がここに表示されます..."></textarea> <div class="het-sub-controls"> <button id="het-copy-output-btn" class="het-button het-button-secondary">コピー</button> <button id="het-clear-output-btn" class="het-button het-button-secondary">クリア</button> </div> </div>
     <div id="het-error-message" class="het-error-message"></div>
 
 </div>
@@ -168,183 +167,99 @@
 <script>
 // 規範 1.3 & 1.6：使用 DOMContentLoaded 和 IIFE
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('[HTMLEntityApp V1] DOMContentLoaded fired.');
+    console.log('[HTMLEntityApp V2.1] DOMContentLoaded fired.');
 
     (function() {
-        console.log('[HTMLEntityApp V1] IIFE executed.');
+        console.log('[HTMLEntityApp V2.1] IIFE executed.');
 
         const appId = 'html-entity-tool-app'; 
         const app = document.getElementById(appId); 
         if (!app) { 
-            console.error(`[HTMLEntityApp V1] Fatal: Container #${appId} not found.`); 
+            console.error(`[HTMLEntityApp V2.1] Fatal: Container #${appId} not found.`); 
             return; 
         }
 
-        // --- 元素查找 ---
-        // 將元素查找放在 IIFE 頂部，因為這些元素結構固定且必須存在
-        const inputTextArea = app.querySelector('#het-input');
-        const outputTextArea = app.querySelector('#het-output');
+        // --- 數據庫檢查 ---
+        if (typeof window.htmlEntityMaps === 'undefined' || !window.htmlEntityMaps.encodeMap || !window.htmlEntityMaps.decodeMap) {
+             console.error("[HTMLEntityApp V2.1] Fatal: HTML Entity Maps not found or incomplete. Ensure data script loaded first.");
+             app.innerHTML = '<p style="color: red; text-align: center;">エラー：エンティティデータの読み込みに失敗しました。</p>';
+             return;
+        }
+        console.log('[HTMLEntityApp V2.1] Entity maps found.');
+        const encodeMap = window.htmlEntityMaps.encodeMap;
+        const decodeMap = window.htmlEntityMaps.decodeMap;
+
+        // --- 查找核心按鈕 ---
         const encodeBtn = app.querySelector('#het-encode-btn');
         const decodeBtn = app.querySelector('#het-decode-btn');
         const clearInputBtn = app.querySelector('#het-clear-input-btn');
         const clearOutputBtn = app.querySelector('#het-clear-output-btn');
         const copyOutputBtn = app.querySelector('#het-copy-output-btn');
-        const errorMessage = app.querySelector('#het-error-message');
 
-        // --- 健壯性檢查：確保所有按鈕和文本區存在 ---
-        if (!inputTextArea || !outputTextArea || !encodeBtn || !decodeBtn || !clearInputBtn || !clearOutputBtn || !copyOutputBtn || !errorMessage) {
-            console.error("[HTMLEntityApp V1] Fatal: One or more essential UI elements not found during init.");
-            app.innerHTML = '<p style="color: red; text-align: center;">エラー: UI要素の読み込みに失敗しました。</p>';
+        // --- 健壯性檢查 (只檢查按鈕) ---
+        if (!encodeBtn || !decodeBtn || !clearInputBtn || !clearOutputBtn || !copyOutputBtn) {
+            console.error("[HTMLEntityApp V2.1] Fatal: One or more buttons not found during init.");
+             app.innerHTML = '<p style="color: red; text-align: center;">エラー: ボタン要素の読み込みに失敗しました。</p>';
             return;
         }
-        console.log('[HTMLEntityApp V1] All essential elements found.');
+        console.log('[HTMLEntityApp V2.1] All buttons found. Attaching listeners.');
 
-        // --- 數據庫檢查 ---
-        if (typeof window.htmlEntityMaps === 'undefined' || !window.htmlEntityMaps.encodeMap || !window.htmlEntityMaps.decodeMap) {
-             console.error("[HTMLEntityApp V1] Fatal: HTML Entity Maps (window.htmlEntityMaps) not found or incomplete. Make sure the data script is loaded first.");
-            showError("エラー：エンティティデータの読み込みに失敗しました。");
-             return;
-        }
-        console.log('[HTMLEntityApp V1] Entity maps found.');
-        const encodeMap = window.htmlEntityMaps.encodeMap;
-        const decodeMap = window.htmlEntityMaps.decodeMap;
-
-        // --- 輔助函數 ---
-        const showError = (message) => {
-            errorMessage.textContent = message;
-            errorMessage.style.display = 'block';
-            console.warn('[HTMLEntityApp V1] Error displayed:', message);
+        // --- 輔助函數：顯示/清除錯誤 ---
+        const showError = (message) => { /* ... (與 V2 相同) ... */ 
+             const errorMessage = app.querySelector('#het-error-message'); 
+             if (errorMessage) { errorMessage.textContent = message; errorMessage.style.display = 'block'; console.warn('[HTMLEntityApp V2.1] Error displayed:', message); } 
+             else { console.error("[HTMLEntityApp V2.1] Error element missing:", message); }
         };
-        const clearError = () => {
-            errorMessage.style.display = 'none';
+        const clearError = () => { /* ... (與 V2 相同) ... */ 
+             const errorMessage = app.querySelector('#het-error-message'); 
+             if (errorMessage) { errorMessage.style.display = 'none'; }
         };
 
-        // --- 核心功能函數 ---
-        const encodeEntities = () => {
-            clearError();
-            const inputText = inputTextArea.value;
-            let outputText = '';
+        // --- 事件監聽器：Encode ---
+        encodeBtn.addEventListener('click', function() { /* ... (與 V2 相同) ... */ 
+            console.log('[HTMLEntityApp V2.1] Encode clicked.'); clearError();
+            const inputTextArea = app.querySelector('#het-input'); const outputTextArea = app.querySelector('#het-output');
+            if (!inputTextArea || !outputTextArea) { showError("エラー：テキストエリアが見つかりません。"); return; }
+            const inputText = inputTextArea.value; let outputText = '';
             try {
-                for (let i = 0; i < inputText.length; i++) {
-                    const char = inputText[i];
-                    // 優先使用命名實體
-                    if (encodeMap.hasOwnProperty(char)) {
-                        outputText += encodeMap[char];
-                    } else {
-                        // V1 版本：不在 map 中的字符保持原樣
-                        outputText += char;
-                        // --- [未來擴展點] ---
-                        // 如果需要將非 ASCII 字符強制轉為數字實體:
-                        // const code = char.codePointAt(0); // 使用 codePointAt 支持 > 0xFFFF 的字符
-                        // if (code > 127) { // 僅轉換非 ASCII
-                        //     outputText += `&#${code};`;
-                        // } else {
-                        //     outputText += char; // ASCII 範圍內且不在 map 中的保持原樣
-                        // }
-                        // --- [擴展點結束] ---
-                    }
-                }
-                outputTextArea.value = outputText;
-                console.log('[HTMLEntityApp V1] Encoding complete.');
-            } catch (error) {
-                 console.error("[HTMLEntityApp V1] Error during encoding:", error);
-                 showError("エンコード中にエラーが発生しました。");
-            }
-        };
+                for (let i = 0; i < inputText.length; i++) { const char = inputText[i]; if (encodeMap.hasOwnProperty(char)) { outputText += encodeMap[char]; } else { outputText += char; } }
+                outputTextArea.value = outputText; console.log('[HTMLEntityApp V2.1] Encoding complete.');
+            } catch (error) { console.error("[HTMLEntityApp V2.1] Encode error:", error); showError("エンコード中にエラー。"); }
+        });
 
-        const decodeEntities = () => {
-            clearError();
+        // --- 事件監聽器：Decode ---
+        decodeBtn.addEventListener('click', function() { /* ... (與 V2 相同) ... */ 
+            console.log('[HTMLEntityApp V2.1] Decode clicked.'); clearError();
+            const inputTextArea = app.querySelector('#het-input'); const outputTextArea = app.querySelector('#het-output');
+            if (!inputTextArea || !outputTextArea) { showError("エラー：テキストエリアが見つかりません。"); return; }
             const inputText = inputTextArea.value;
             try {
-                const decodedText = inputText.replace(/&(#?[\w\d]+);/g, (match, entityBody) => {
-                    if (entityBody.startsWith('#')) {
-                        // 數字實體
-                        const isHex = entityBody.startsWith('#x') || entityBody.startsWith('#X');
-                        const codeStr = isHex ? entityBody.substring(2) : entityBody.substring(1);
-                        const radix = isHex ? 16 : 10;
-                        const code = parseInt(codeStr, radix);
-                        
-                        if (!isNaN(code)) {
-                             // 使用 fromCodePoint 支持更廣泛的 Unicode
-                            try {
-                                return String.fromCodePoint(code);
-                            } catch (e) {
-                                // 如果 codePoint 無效 (例如超出範圍)
-                                console.warn(`[HTMLEntityApp V1] Invalid code point in numeric entity: ${match}`);
-                                return match; // 返回原始實體
-                            }
-                        } else {
-                            console.warn(`[HTMLEntityApp V1] Failed to parse numeric entity: ${match}`);
-                            return match; // 解析失敗，返回原始實體
-                        }
-                    } else {
-                        // 命名實體
-                        if (decodeMap.hasOwnProperty(match)) { // 直接用 match (&...;) 作為 key
-                            return decodeMap[match];
-                        } else {
-                            console.warn(`[HTMLEntityApp V1] Unknown named entity: ${match}`);
-                            return match; // 未知實體，返回原始字符串
-                        }
-                    }
-                });
-                outputTextArea.value = decodedText;
-                console.log('[HTMLEntityApp V1] Decoding complete.');
-            } catch (error) {
-                console.error("[HTMLEntityApp V1] Error during decoding:", error);
-                showError("デコード中にエラーが発生しました。");
-            }
-        };
+                const tempDiv = document.createElement('div'); tempDiv.innerHTML = inputText;
+                const decodedText = tempDiv.textContent || tempDiv.innerText || "";
+                outputTextArea.value = decodedText; console.log('[HTMLEntityApp V2.1] Decoding complete.');
+            } catch (error) { console.error("[HTMLEntityApp V2.1] Decode error:", error); showError("デコード中にエラー。"); }
+        });
 
-        const clearInput = () => {
-             inputTextArea.value = '';
-             clearError();
-             console.log('[HTMLEntityApp V1] Input cleared.');
-        };
+        // --- 事件監聽器：Clear Input ---
+        clearInputBtn.addEventListener('click', function(){ /* ... (與 V2 相同) ... */ 
+            const inputTextArea = app.querySelector('#het-input'); if (inputTextArea) { inputTextArea.value = ''; clearError(); console.log('[HTMLEntityApp V2.1] Input cleared.'); } 
+            else { showError("エラー：入力エリアが見つかりません。"); }
+        });
+
+        // --- 事件監聽器：Clear Output ---
+        clearOutputBtn.addEventListener('click', function(){ /* ... (與 V2 相同) ... */ 
+             const outputTextArea = app.querySelector('#het-output'); if (outputTextArea) { outputTextArea.value = ''; clearError(); console.log('[HTMLEntityApp V2.1] Output cleared.'); } 
+             else { showError("エラー：出力エリアが見つかりません。"); }
+        });
         
-        const clearOutput = () => {
-             outputTextArea.value = '';
-             clearError();
-             console.log('[HTMLEntityApp V1] Output cleared.');
-        };
+        // --- 事件監聽器：Copy Output ---
+        copyOutputBtn.addEventListener('click', function(){ /* ... (與 V2 相同) ... */ 
+             const outputTextArea = app.querySelector('#het-output'); if (!outputTextArea) { showError("エラー：出力エリアが見つかりません。"); return; }
+            if (!navigator.clipboard) { showError("クリップボード機能非対応です。"); return; } if (outputTextArea.value === '') { return; }
+            navigator.clipboard.writeText(outputTextArea.value).then(() => { const originalText = copyOutputBtn.textContent; copyOutputBtn.textContent = 'コピー!'; setTimeout(() => { copyOutputBtn.textContent = originalText; }, 1500); console.log('[HTMLEntityApp V2.1] Output copied.'); }) .catch(err => { console.error('[HTMLEntityApp V2.1] Copy failed: ', err); showError("コピーに失敗しました。"); });
+        });
 
-        const copyOutput = () => {
-            if (!navigator.clipboard) {
-                 showError("お使いのブラウザはクリップボード機能に対応していません。");
-                 return;
-            }
-             if (outputTextArea.value === '') {
-                 // 如果沒有內容，可以給個提示，或者不做任何事
-                 // showError("コピーする内容がありません。"); 
-                 return; 
-             }
-            navigator.clipboard.writeText(outputTextArea.value)
-                .then(() => {
-                    // 可選：顯示一個短暫的成功提示
-                    const originalText = copyOutputBtn.textContent;
-                    copyOutputBtn.textContent = 'コピーしました！';
-                    setTimeout(() => {
-                        copyOutputBtn.textContent = originalText;
-                    }, 1500);
-                    console.log('[HTMLEntityApp V1] Output copied to clipboard.');
-                })
-                .catch(err => {
-                    console.error('[HTMLEntityApp V1] Failed to copy text: ', err);
-                    showError("クリップボードへのコピーに失敗しました。");
-                });
-        };
-
-        // --- 事件綁定 ---
-        encodeBtn.addEventListener('click', encodeEntities);
-        decodeBtn.addEventListener('click', decodeEntities);
-        clearInputBtn.addEventListener('click', clearInput);
-        clearOutputBtn.addEventListener('click', clearOutput);
-        copyOutputBtn.addEventListener('click', copyOutput);
-
-        console.log('[HTMLEntityApp V1] Event listeners attached.'); // 診斷
-
-        // --- 輸入時清除錯誤 ---
-        inputTextArea.addEventListener('input', clearError);
-
+        console.log('[HTMLEntityApp V2.1] All listeners attached.'); // 診斷
 
     })(); // 結束 IIFE
 }); // 結束 DOMContentLoaded
