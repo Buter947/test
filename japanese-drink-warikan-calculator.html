@@ -1,10 +1,8 @@
-<div id="warikan-fixed-app-jp"> <style>
-        /* --- CSS (與 V2.4 相同) --- */
+<div id="warikan-fixed-app-jp"> 
+    <style>
+        /* --- CSS (與 V10 相同) --- */
         #warikan-fixed-app-jp { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important; line-height: 1.6 !important; background-color: #ffffff !important; border: 1px solid #e5e7eb !important; border-radius: 0.75rem !important; padding: 2rem !important; margin: 2rem auto !important; max-width: 700px !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important; overflow: hidden; }
         #warikan-fixed-app-jp *, #warikan-fixed-app-jp *::before, #warikan-fixed-app-jp *::after { box-sizing: border-box !important; margin: 0; padding: 0; }
-        #warikan-fixed-app-jp .warikan-fx-screen { display: none; animation: fadeInWarikanFxV1 0.3s ease-in-out !important; } 
-        #warikan-fixed-app-jp .warikan-fx-screen.active { display: block !important; }
-        @keyframes fadeInWarikanFxV1 { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
         #warikan-fixed-app-jp h2 { color: #B45309 !important; text-align: center !important; font-size: 1.75rem !important; font-weight: 700 !important; margin-bottom: 0.5rem !important; }
         #warikan-fixed-app-jp .warikan-fx-subtitle { text-align: center !important; font-size: 1rem !important; color: #4b5563 !important; margin-bottom: 2rem !important; }
         #warikan-fixed-app-jp .warikan-fx-input-group label { display: block !important; font-weight: 600 !important; color: #374151 !important; margin-bottom: 0.5rem !important; font-size: 0.9rem !important; }
@@ -21,8 +19,9 @@
         #warikan-fixed-app-jp .warikan-fx-calculate-btn { display: block !important; width: 100% !important; max-width: 300px !important; margin: 2.5rem auto 0 auto !important; padding: 1rem !important; font-size: 1.25rem !important; font-weight: 700 !important; color: #ffffff !important; background-color: #B45309 !important; border: none !important; border-radius: 0.5rem !important; cursor: pointer !important; transition: background-color 0.2s, transform 0.1s !important; }
         #warikan-fixed-app-jp .warikan-fx-calculate-btn:hover { background-color: #92400e !important; }
         #warikan-fixed-app-jp .warikan-fx-calculate-btn:active { transform: scale(0.98) !important; }
-        #warikan-fixed-app-jp .warikan-fx-error-message { color: #b91c1c !important; background-color: #fee2e2 !important; border: 1px solid #f87171 !important; padding: 1rem !important; border-radius: 0.5rem !important; text-align: center !important; margin-top: 1.5rem !important; display: none; }
+        #warikan-fixed-app-jp .warikan-fx-error-message { color: #b91c1c !important; background-color: #fee2e2 !important; border: 1px solid #f87171 !important; padding: 1rem !important; border-radius: 0.5rem !important; text-align: center !important; margin-top: 1.5rem !important; display: none; animation: fadeInWarikanFxV1 0.3s ease-out !important; }
         #warikan-fixed-app-jp .warikan-fx-results-area { margin-top: 2.5rem !important; padding-top: 2rem !important; border-top: 2px solid #B45309 !important; display: none; animation: fadeInWarikanFxV1 0.3s ease-out !important; } 
+        @keyframes fadeInWarikanFxV1 { from { opacity: 0; } to { opacity: 1; } }
         #warikan-fixed-app-jp .warikan-fx-results-area h3 { text-align: center !important; margin-bottom: 1.5rem !important; }
         #warikan-fixed-app-jp .warikan-fx-result-group { background-color: #f9fafb !important; border: 1px solid #e5e7eb !important; border-radius: 0.5rem !important; padding: 1.5rem !important; margin-bottom: 1rem !important; }
         #warikan-fixed-app-jp .warikan-fx-result-group-header { font-weight: 600 !important; color: #111827 !important; margin-bottom: 0.75rem !important; font-size: 1.1rem !important; }
@@ -36,7 +35,7 @@
         @media (max-width: 420px) { #warikan-fixed-app-jp .warikan-fx-group-row { grid-template-columns: 1fr 55px 55px !important; } #warikan-fixed-app-jp .warikan-fx-group-people, #warikan-fixed-app-jp .warikan-fx-group-ratio { padding: 0.5rem 0.4rem !important; } }
     </style>
 
-    <h2>飲み会 割り勘 計算機 <span style="font-size: 1rem; color: #6b7280;">(固定グループ版 V10)</span></h2>
+    <h2>飲み会 割り勘 計算機 <span style="font-size: 1rem; color: #6b7280;">(固定グループ版 V11)</span></h2>
     <p class="warikan-fx-subtitle">人数と比率を調整して公平な割り勘計算を！</p>
     <div class="warikan-fx-input-group" style="margin-bottom: 2rem;"> <label for="warikan-fx-total-amount">支払総額 (円)</label> <input type="number" id="warikan-fx-total-amount" class="warikan-fx-input" placeholder="例: 30000" min="0" step="1"> </div>
     <h3>グループ分けと比率設定</h3>
@@ -45,7 +44,8 @@
         <div class="warikan-fx-group-row"> <input type="text" id="group-name-1" class="warikan-fx-input warikan-fx-group-name" value="先輩" readonly> <input type="number" id="group-people-1" class="warikan-fx-input warikan-fx-group-people" placeholder="0" value="0" min="0" step="1"> <input type="number" id="group-ratio-1" class="warikan-fx-input warikan-fx-group-ratio" value="1.2" step="0.1" min="0"> </div>
         <div class="warikan-fx-group-row"> <input type="text" id="group-name-2" class="warikan-fx-input warikan-fx-group-name" value="一般" readonly> <input type="number" id="group-people-2" class="warikan-fx-input warikan-fx-group-people" placeholder="人数" value="1" min="0" step="1"> <input type="number" id="group-ratio-2" class="warikan-fx-input warikan-fx-group-ratio" value="1.0" step="0.1" min="0"> </div>
         <div class="warikan-fx-group-row"> <input type="text" id="group-name-3" class="warikan-fx-input warikan-fx-group-name" value="後輩" readonly> <input type="number" id="group-people-3" class="warikan-fx-input warikan-fx-group-people" placeholder="0" value="0" min="0" step="1"> <input type="number" id="group-ratio-3" class="warikan-fx-input warikan-fx-group-ratio" value="0.8" step="0.1" min="0"> </div>
-        <div class="warikan-fx-group-row"> <input type="text" id="group-name-4" class="warikan-fx-input warikan-fx-group-name" value="飲まない人" readonly> <input type="number" id="group-people-4" class="warikan-fx-input warikan-fx-group-people" placeholder="0" value="0" min="0" step="1"> <input type="number" id="group-ratio-4" class="warikan-fx-input warikan-fx-group-ratio" value="0.5" step="0.1" min="0"> </div>
+         <div class="warikan-fx-group-row"> <input type="text" id="group-name-5" class="warikan-fx-input warikan-fx-group-name" value="すごく飲む人" readonly> <input type="number" id="group-people-5" class="warikan-fx-input warikan-fx-group-people" placeholder="0" value="0" min="0" step="1"> <input type="number" id="group-ratio-5" class="warikan-fx-input warikan-fx-group-ratio" value="1.8" step="0.1" min="0"> </div>
+         <div class="warikan-fx-group-row"> <input type="text" id="group-name-4" class="warikan-fx-input warikan-fx-group-name" value="飲まない人" readonly> <input type="number" id="group-people-4" class="warikan-fx-input warikan-fx-group-people" placeholder="0" value="0" min="0" step="1"> <input type="number" id="group-ratio-4" class="warikan-fx-input warikan-fx-group-ratio" value="0.5" step="0.1" min="0"> </div>
     </div>
     <div id="warikan-fx-people-summary" class="warikan-fx-people-summary">グループ合計人数: <span>1</span> 人</div>
     <div class="warikan-fx-input-group" style="margin-top: 2rem;"> <label for="warikan-fx-rounding-unit">一人あたりの金額を切り上げる単位</label> <select id="warikan-fx-rounding-unit" class="warikan-fx-select"> <option value="1">1円単位 (そのまま)</option> <option value="10">10円単位</option> <option value="100" selected>100円単位</option> <option value="1000">1000円単位</option> </select> </div>
@@ -58,68 +58,98 @@
 <script>
 // 規範 1.3 & 1.6：使用 DOMContentLoaded 和 IIFE
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('[Warikan V10] DOMContentLoaded fired.'); // **診斷**
+    console.log('[Warikan V11] DOMContentLoaded fired.'); // **診斷**
 
     (function() {
-        console.log('[Warikan V10] IIFE executed.'); // **診斷**
+        console.log('[Warikan V11] IIFE executed.'); // **診斷**
 
         const appId = 'warikan-fixed-app-jp'; 
         const app = document.getElementById(appId); 
         if (!app) { 
-            console.error(`[Warikan V10] Fatal: Container #${appId} not found.`); 
+            console.error(`[Warikan V11] Fatal: Container #${appId} not found.`); 
             return; 
         }
         
         const calculateBtn = app.querySelector('#warikan-fx-calculate-btn');
         if (!calculateBtn) {
-            console.error("[Warikan V10] Fatal: Calculate button #warikan-fx-calculate-btn not found during init.");
+            console.error("[Warikan V11] Fatal: Calculate button #warikan-fx-calculate-btn not found during init.");
             app.innerHTML = '<p style="color: red; text-align: center;">エラー: 計算ボタンの読み込みに失敗しました。</p>';
             return;
         }
 
-        console.log('[Warikan V10] Calculate button found. Adding the calculation logic directly.'); // **診斷**
+        console.log('[Warikan V11] Calculate button found. Adding event listener.'); // **診斷**
 
-        // --- 將所有邏輯直接放入事件監聽器 ---
+        // --- 顯示錯誤訊息 (輔助函數) ---
+        const showError = (message) => {
+            const errorMessage = app.querySelector('#warikan-fx-error-message');
+            const resultsArea = app.querySelector('#warikan-fx-results-area');
+            if (errorMessage) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                console.warn('[Warikan V11] Error displayed -', message); 
+            } else {
+                 console.error("[Warikan V11] Error message element missing when trying to show:", message);
+            }
+             if (resultsArea) { 
+                 resultsArea.style.display = 'none'; 
+             }
+        };
+        
+        // --- 更新總人數顯示 (輔助函數) ---
+         const updatePeopleSummary = () => {
+             let groupPeopleSum = 0;
+             const groupsContainer = app.querySelector('#warikan-fx-groups-container');
+             const peopleSummarySpan = app.querySelector('#warikan-fx-people-summary span');
+             
+             if (groupsContainer) {
+                 groupsContainer.querySelectorAll('.warikan-fx-group-people').forEach(input => {
+                     groupPeopleSum += parseInt(input.value, 10) || 0; 
+                 });
+             } else {
+                  console.error("[Warikan V11] Groups container not found for summary update.");
+             }
+
+             if (peopleSummarySpan) { 
+                  peopleSummarySpan.textContent = groupPeopleSum;
+             } else {
+                  console.error("[Warikan V11] People summary span not found for summary update.");
+             }
+             return groupPeopleSum; // 返回計算出的總數
+         };
+
+
+        // --- 核心計算與顯示邏輯 (放在事件監聽器內部) ---
         calculateBtn.addEventListener('click', function() {
-            console.log('[Warikan V10] Calculate button clicked!'); // **診斷**
+            console.log('[Warikan V11] Calculate button clicked!'); // **診斷**
 
             // --- 在此處查找所有元素 ---
             const totalAmountInput = app.querySelector('#warikan-fx-total-amount');
             const groupsContainer = app.querySelector('#warikan-fx-groups-container');
             const roundingUnitSelect = app.querySelector('#warikan-fx-rounding-unit');
-            const errorMessage = app.querySelector('#warikan-fx-error-message');
+            const errorMessage = app.querySelector('#warikan-fx-error-message'); 
             const resultsArea = app.querySelector('#warikan-fx-results-area');
             const resultsList = app.querySelector('#warikan-fx-results-list');
             const resultsSummary = app.querySelector('#warikan-fx-results-summary');
-            const peopleSummarySpan = app.querySelector('#warikan-fx-people-summary span'); // **診斷** 添加人數匯總span的查找
+            // 人數匯總 span 在 showError 和 updatePeopleSummary 內部查找
 
             // --- 健壯性檢查 ---
-            if (!totalAmountInput || !groupsContainer || !roundingUnitSelect || !errorMessage || !resultsArea || !resultsList || !resultsSummary || !peopleSummarySpan ) { // **診斷** 檢查 peopleSummarySpan
-                console.error("[Warikan V10] Critical elements not found inside click handler. Aborting calculation.");
-                if (errorMessage) {
-                    errorMessage.textContent = "エラー：画面要素の読み込みに失敗しました。";
-                    errorMessage.style.display = 'block';
-                } else {
-                     console.error("[Warikan V10] Error message display itself is missing!");
-                }
+            // 減少檢查，只檢查最關鍵的
+            if (!totalAmountInput || !groupsContainer || !roundingUnitSelect || !resultsArea || !resultsList || !resultsSummary) { 
+                console.error("[Warikan V11] Critical elements not found inside click handler. Aborting calculation.");
+                showError("エラー：画面要素が見つかりません。"); 
                 return; 
             }
-             console.log('[Warikan V10] All necessary elements found inside click handler.'); // **診斷**
+             console.log('[Warikan V11] All necessary calculation/display elements found.'); // **診斷**
 
             // 隱藏舊錯誤和結果
-            errorMessage.style.display = 'none';
-            resultsArea.style.display = 'none';
+            if (errorMessage) errorMessage.style.display = 'none'; // 檢查 errorMessage 是否存在
+            resultsArea.style.display = 'none'; // 先隱藏結果區
 
             // --- 獲取值並驗證 ---
             const totalAmount = parseFloat(totalAmountInput.value);
             const roundingUnit = parseInt(roundingUnitSelect.value, 10);
             
-            if (isNaN(totalAmount) || totalAmount < 0) { 
-                errorMessage.textContent = '支払総額を正しく入力してください（0以上）。';
-                errorMessage.style.display = 'block';
-                console.warn('[Warikan V10] Invalid total amount.');
-                return; 
-            }
+            if (isNaN(totalAmount) || totalAmount < 0) { showError('支払総額を正しく入力してください（0以上）。'); return; }
 
             const groups = [];
             let totalWeightedUnits = 0;
@@ -133,9 +163,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if(!nameInput || !peopleInput || !ratioInput || !validGroups) { 
                     if(validGroups) { 
-                       console.error(`[Warikan V10] Row ${index} elements missing.`);
-                       errorMessage.textContent = `グループ ${index + 1} の入力欄が見つかりません。`;
-                       errorMessage.style.display = 'block';
+                       console.error(`[Warikan V11] Row ${index} elements missing.`);
+                       showError(`グループ ${index + 1} の入力欄が見つかりません。`);
                        validGroups = false; 
                     }
                     return; 
@@ -145,98 +174,60 @@ document.addEventListener('DOMContentLoaded', function() {
                 const people = parseInt(peopleInput.value, 10) || 0; 
                 const ratio = parseFloat(ratioInput.value) || 0; 
 
-                if (people < 0) { 
-                     errorMessage.textContent = `「${name}」の人数は0以上で入力してください。`;
-                     errorMessage.style.display = 'block';
-                     validGroups = false;
-                     return; 
-                }
-                if (ratio < 0) {
-                    errorMessage.textContent = `「${name}」の比率は0以上で入力してください。`;
-                    errorMessage.style.display = 'block';
-                    validGroups = false;
-                    return; 
-                }
+                if (people < 0) { showError(`「${name}」の人数は0以上で入力してください。`); validGroups = false; return; }
+                if (ratio < 0) { showError(`「${name}」の比率は0以上で入力してください。`); validGroups = false; return; }
                 
                 groups.push({ name, people, ratio });
-                if (people > 0) { 
-                     totalWeightedUnits += people * ratio;
-                }
+                if (people > 0) { totalWeightedUnits += people * ratio; }
                 totalPeopleInGroups += people; 
             });
 
-            if (!validGroups) {
-                 console.warn('[Warikan V10] Invalid group data detected.');
-                 return; // 如果組數據無效則退出
-            }
+            if (!validGroups) { console.warn('[Warikan V11] Invalid group data.'); return; }
 
-            // 更新總人數顯示
-            peopleSummarySpan.textContent = totalPeopleInGroups;
-            console.log('[Warikan V10] People summary updated:', totalPeopleInGroups); // **診斷**
-
+            // 更新總人數顯示 (現在可以安全調用)
+            updatePeopleSummary(); 
+            
              // 驗證總人數
-             if (totalPeopleInGroups <= 0 && totalAmount > 0) { 
-                 errorMessage.textContent = '参加人数が0人です。各グループの人数を入力してください。';
-                 errorMessage.style.display = 'block';
-                 console.warn('[Warikan V10] Total people zero but amount > 0.');
-                 return;
-             }
-              // 如果總金額和總人數都為0，結果為0
-              if (totalPeopleInGroups <= 0 && totalAmount === 0) {
-                   console.log('[Warikan V10] Zero amount and zero people.');
-                   resultsList.innerHTML = ''; // 清空列表
-                   resultsSummary.innerHTML = `
-                        <div>支払総額: 0 円</div>
-                        <div class="total-collected">集金合計: 0 円</div>
-                        <div class="difference">差額: 0 円</div>
-                   `;
+             if (totalPeopleInGroups <= 0 && totalAmount > 0) { showError('参加人数が0人です。各グループの人数を入力してください。'); return; }
+             if (totalPeopleInGroups <= 0 && totalAmount === 0) {
+                   console.log('[Warikan V11] Zero amount and zero people.');
+                   resultsList.innerHTML = ''; 
+                   resultsSummary.innerHTML = `<div>支払総額: 0 円</div><div class="total-collected">集金合計: 0 円</div><div class="difference">差額: 0 円</div>`;
                    resultsArea.style.display = 'block';
                    return;
               }
              // 驗證總權重
-             if (totalWeightedUnits <= 0 && totalAmount > 0) {
-                 errorMessage.textContent = '支払い比率の合計が0以下か、参加者の比率が全て0です。比率を正しく設定してください。';
-                 errorMessage.style.display = 'block';
-                 console.warn('[Warikan V10] Weighted units zero but amount > 0.');
-                 return;
-             }
+             if (totalWeightedUnits <= 0 && totalAmount > 0) { showError('支払い比率の合計が0以下か、参加者の比率が全て0です。比率を正しく設定してください。'); return; }
              
-             console.log(`[Warikan V10] Inputs validated: Amount=${totalAmount}, People=${totalPeopleInGroups}, Units=${totalWeightedUnits}, Round=${roundingUnit}`); 
+             console.log(`[Warikan V11] Inputs validated: Amount=${totalAmount}, People=${totalPeopleInGroups}, Units=${totalWeightedUnits}, Round=${roundingUnit}`); 
 
             // --- 計算 ---
             let results = [];
             let totalCollected = 0;
             const costPerUnit = (totalWeightedUnits > 0) ? totalAmount / totalWeightedUnits : 0; 
-             console.log(`[Warikan V10] Cost per unit: ${costPerUnit}`); // **診斷**
+             console.log(`[Warikan V11] Cost per unit: ${costPerUnit}`); 
 
             groups.forEach(group => {
                 let perPersonIdeal = 0;
                 let perPersonActual = 0;
                 let groupTotal = 0;
-                
                 if (group.people > 0 && costPerUnit >= 0) { 
                      perPersonIdeal = costPerUnit * group.ratio;
-                     perPersonActual = (perPersonIdeal > 0 && roundingUnit > 0) 
-                                       ? Math.ceil(perPersonIdeal / roundingUnit) * roundingUnit 
-                                       : Math.round(perPersonIdeal); // 四捨五入處理 0 或負數 (雖然不太可能)
+                     perPersonActual = (perPersonIdeal > 0 && roundingUnit > 0) ? Math.ceil(perPersonIdeal / roundingUnit) * roundingUnit : Math.round(perPersonIdeal);
                      groupTotal = perPersonActual * group.people;
                      totalCollected += groupTotal;
                 } 
-
-                results.push({
-                    name: group.name, people: group.people, ratio: group.ratio,
-                    perPersonAmount: perPersonActual, groupTotalAmount: groupTotal
-                });
+                results.push({ name: group.name, people: group.people, ratio: group.ratio, perPersonAmount: perPersonActual, groupTotalAmount: groupTotal });
             });
 
             totalCollected = Math.round(totalCollected); 
             const difference = totalCollected - totalAmount;
-             console.log(`[Warikan V10] Calculation done: Collected=${totalCollected}, Difference=${difference}`); // **診斷**
+             console.log(`[Warikan V11] Calculation done: Collected=${totalCollected}, Difference=${difference}`); 
 
             // --- 顯示結果 ---
-            resultsList.innerHTML = ''; // 清空舊結果
+            resultsList.innerHTML = ''; 
             results.forEach(group => {
-                if (group.people > 0) { // 只顯示有人數的組
+                if (group.people > 0) { 
                     const groupDiv = document.createElement('div');
                     groupDiv.className = 'warikan-fx-result-group'; 
                     const header = document.createElement('div');
@@ -265,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="difference">差額 (集金 - 支払い): ${difference.toLocaleString()} 円</div>
             `;
             resultsArea.style.display = 'block'; 
-            console.log('[Warikan V10] Results displayed.'); // **診斷**
+            console.log('[Warikan V11] Results displayed.'); 
 
         }); // --- calculateBtn listener 結束 ---
 
@@ -289,11 +280,10 @@ document.addEventListener('DOMContentLoaded', function() {
                  initialSum += parseInt(input.value, 10) || 0;
              });
              initialPeopleSummarySpan.textContent = initialSum;
-             console.log('[Warikan V10] Initial people summary updated:', initialSum); // **診斷**
+             console.log('[Warikan V11] Initial people summary updated:', initialSum); 
          } else {
-              console.warn('[Warikan V10] Initial people summary span not found.'); // **診斷**
+              console.warn('[Warikan V11] Initial people summary span not found during initial update.'); 
          }
-
 
     })(); // 結束 IIFE
 }); // 結束 DOMContentLoaded
