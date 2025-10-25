@@ -1,98 +1,569 @@
-<!-- wp:heading -->
-<h2 class="wp-block-heading">What Are HTML Entities? A Simple Guide & Converter</h2>
-<!-- /wp:heading -->
+<!-- HTML Entity Encoder/Decoder App V1 - Start -->
+<div id="html-entity-converter-app-v1">
+    <style>
+        #html-entity-converter-app-v1 {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+            line-height: 1.6 !important;
+            color: #333 !important;
+        }
+        #html-entity-converter-app-v1 .hec-card {
+            background-color: #ffffff !important;
+            padding: 1.5rem 2rem !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1) !important;
+            border: 1px solid #e5e7eb !important;
+            max-width: 700px; /* Wider card */
+            margin: 2rem auto !important;
+        }
+        #html-entity-converter-app-v1 h2 {
+            color: #B45309 !important;
+            font-size: 1.75rem !important;
+            font-weight: 700 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0.5rem !important;
+            text-align: center !important;
+        }
+        #html-entity-converter-app-v1 .hec-subtitle {
+            text-align: center !important;
+            color: #4b5563 !important;
+            margin-bottom: 2rem !important;
+        }
+        #html-entity-converter-app-v1 .hec-converter-body {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            align-items: center;
+        }
+         @media (min-width: 640px) {
+             #html-entity-converter-app-v1 .hec-converter-body {
+                 /* 2 columns for textareas, 1 for buttons */
+                 grid-template-columns: 1fr auto 1fr; 
+                 gap: 0.5rem;
+             }
+         }
+        
+        #html-entity-converter-app-v1 .hec-textarea-group label {
+            display: block !important;
+            margin-bottom: 0.5rem !important;
+            font-weight: 600 !important;
+            color: #374151 !important;
+            font-size: 0.9rem !important;
+        }
+        #html-entity-converter-app-v1 textarea {
+            width: 100% !important;
+            min-height: 180px !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.5rem !important;
+            padding: 0.75rem 1rem !important;
+            font-family: "Courier New", Courier, monospace !important;
+            font-size: 0.9rem !important;
+            line-height: 1.5 !important;
+            resize: vertical !important;
+            box-sizing: border-box !important;
+        }
+        #html-entity-converter-app-v1 textarea:focus {
+            outline: none !important;
+            border-color: #0284c7 !important;
+            box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2) !important;
+        }
 
-<!-- wp:paragraph -->
-<p>Ever tried to display code on your website, like <code>&lt;p&gt;This is a paragraph&lt;/p&gt;</code>, only to have the browser render it as an actual paragraph instead of showing the code? Or have you ever copied text from a website and found it pasted with strange codes like <code>it&rsquo;s</code> or <code>&nbsp;</code>?</p>
-<!-- /wp:paragraph -->
+        #html-entity-converter-app-v1 .hec-button-group {
+            display: flex;
+            flex-direction: row;
+            gap: 0.75rem !important;
+            justify-content: center;
+            align-items: center;
+            margin: 0.5rem 0;
+        }
+         @media (min-width: 640px) {
+             #html-entity-converter-app-v1 .hec-button-group {
+                 flex-direction: column; /* Stack buttons vertically on desktop */
+             }
+         }
+        
+        #html-entity-converter-app-v1 .hec-button-group button {
+            padding: 0.6rem 1rem !important;
+            border-radius: 0.5rem !important;
+            font-size: 0.9rem !important;
+            font-weight: 600 !important;
+            border: none !important;
+            cursor: pointer !important;
+            transition: background-color 0.2s, transform 0.1s !important;
+            background-color: #0284c7 !important; /* Blue */
+            color: #ffffff !important;
+            min-width: 110px;
+        }
+        #html-entity-converter-app-v1 .hec-button-group button:hover { background-color: #0369a1 !important; }
+        #html-entity-converter-app-v1 .hec-button-group button:active { transform: scale(0.98) !important; }
 
-<!-- wp:paragraph -->
-<p>These codes are called **HTML Entities**. They are a fundamental part of how web pages work. This tool will help you both encode (create) and decode (revert) these entities, and includes a searchable reference to find the exact code you need.</p>
-<!-- /wp:paragraph -->
+        #html-entity-converter-app-v1 .hec-utility-buttons {
+             display: flex;
+             gap: 0.75rem;
+             margin-top: 1rem;
+             justify-content: space-between;
+        }
+        #html-entity-converter-app-v1 .hec-utility-buttons button {
+             padding: 0.5rem 1rem !important;
+             font-size: 0.85rem !important;
+             background-color: #6b7280 !important; /* Gray */
+             color: #ffffff !important;
+             border: none;
+             border-radius: 0.5rem;
+             cursor: pointer;
+        }
+         #html-entity-converter-app-v1 .hec-utility-buttons button:hover { background-color: #4b5563 !important; }
 
-<!-- wp:separator -->
-<hr class="wp-block-separator has-alpha-channel-opacity"/>
-<!-- /wp:separator -->
+        #hec-message-area {
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+            min-height: 1.5em;
+            margin-top: 0.5rem;
+            color: #16a34a; /* Default success color */
+        }
+        #hec-message-area.error { color: #ef4444 !important; }
+        
+        /* Reference Section */
+        #html-entity-converter-app-v1 .hec-reference-section {
+             margin-top: 2rem;
+             padding-top: 1.5rem;
+             border-top: 1px solid #eee;
+        }
+        #html-entity-converter-app-v1 .hec-reference-section h3 {
+             font-size: 1.2rem; color: #1e293b; margin-top: 0; margin-bottom: 1rem; text-align: center;
+        }
+        #html-entity-converter-app-v1 #hec-search-bar {
+             width: 100%;
+             padding: 0.75rem 1rem !important;
+             border: 1px solid #d1d5db !important;
+             border-radius: 0.5rem !important;
+             font-size: 1rem !important;
+             margin-bottom: 1rem;
+             box-sizing: border-box;
+        }
+        #html-entity-converter-app-v1 .hec-table-container {
+             max-height: 400px;
+             overflow-y: auto;
+             border: 1px solid #e5e7eb;
+             border-radius: 0.5rem;
+        }
+        #html-entity-converter-app-v1 table {
+             width: 100% !important;
+             border-collapse: collapse !important;
+             font-size: 0.9rem;
+        }
+        #html-entity-converter-app-v1 th, 
+        #html-entity-converter-app-v1 td {
+             border-bottom: 1px solid #e5e7eb !important;
+             padding: 0.75rem !important;
+             text-align: left !important;
+             line-height: 1.4 !important;
+        }
+        #html-entity-converter-app-v1 th {
+             background-color: #f9fafb !important;
+             font-weight: 600 !important;
+             color: #374151 !important;
+             position: sticky; /* Make header sticky */
+             top: 0;
+             z-index: 1;
+        }
+        #html-entity-converter-app-v1 td:nth-child(1) { text-align: center !important; font-size: 1.2rem; }
+        #html-entity-converter-app-v1 td:nth-child(2),
+        #html-entity-converter-app-v1 td:nth-child(3) {
+             font-family: "Courier New", Courier, monospace !important;
+             color: #B45309; /* Brown color for entities */
+             font-weight: 600;
+             word-break: break-all;
+        }
+    </style>
 
-<!-- wp:heading {"level":3} -->
-<h3 class="wp-block-heading">Why Do HTML Entities Exist?</h3>
-<!-- /wp:paragraph -->
+    <div class="hec-card">
+        <h2>HTML Entity Encoder & Decoder</h2>
+        <p class="hec-subtitle">Easily encode text to HTML entities or decode entities back to plain text.</p>
 
-<!-- wp:paragraph -->
-<p>HTML entities serve two main purposes:</p>
-<!-- /wp:list -->
+        <div class="hec-converter-body">
+            <!-- Left Side: Plain Text -->
+            <div class="hec-textarea-group">
+                <label for="hec-input-text">Plain Text (Decoded)</label>
+                <textarea id="hec-input-text" placeholder="Paste your text or code here... e.g., <p>Hello</p>"></textarea>
+            </div>
+            
+            <!-- Middle: Buttons -->
+            <div class="hec-button-group">
+                <button id="hec-encode-btn" title="Encode Plain Text to Entities">Encode &gt;</button>
+                <button id="hec-decode-btn" title="Decode Entities to Plain Text">&lt; Decode</button>
+            </div>
 
-<!-- wp:list -->
-<ul class="wp-block-list"><!-- wp:list-item -->
-<li><strong>To Display Reserved Characters:</strong> Characters like <code><</code> and <code>></code> are reserved by HTML to define tags. If you want to show these characters as literal text, you must "encode" them. For example, to display the text <code><p></code> on your page, you must write <code>&amp;lt;p&amp;gt;</code> in your HTML code.</li><!-- /wp:list-item -->
+            <!-- Right Side: Encoded -->
+            <div class="hec-textarea-group">
+                 <label for="hec-output-entities">HTML Entities (Encoded)</label>
+                 <textarea id="hec-output-entities" placeholder="Encoded result... e.g., &lt;p&gt;Hello&lt;/p&gt;" readonly></textarea>
+            </div>
+        </div>
 
-<!-- wp:list-item -->
-<li><strong>To Display Special Characters:</strong> To display symbols that aren't on a standard keyboard (like the Copyright symbol ©, a registered trademark ®, or a currency symbol like the Euro €), you use their specific entity codes (<code>&amp;copy;</code>, <code>&amp;reg;</code>, <code>&amp;euro;</code>).</li><!-- /wp:list-item --></ul>
-<!-- /wp:list -->
+        <div class="hec-utility-buttons">
+             <button id="hec-clear-btn" title="Clear both text boxes">Clear All</button>
+             <button id="hec-copy-btn" title="Copy encoded output to clipboard" style="margin-left: auto;">Copy Output</button>
+        </div>
 
-<!-- wp:heading {"level":3} -->
-<h3 class="wp-block-heading">How to Use the Encoder & Decoder Tool</h3>
-<!-- /wp:paragraph -->
+        <div id="hec-message-area"></div>
 
-<!-- wp:list -->
-<ul class="wp-block-list"><!-- wp:list-item -->
-<li><strong>To Encode:</strong> Type or paste your plain text (e.g., <code>"Hello" <br></code>) into the left "Plain Text" box. Click the <strong>Encode ></strong> button. The tool will convert all special characters into their named HTML entities (e.g., <code>&quot;Hello&quot; &lt;br&gt;</code>) in the right box, ready to be safely pasted into your HTML code.</li><!-- /wp:list-item -->
+        <!-- Reference Section -->
+        <div class="hec-reference-section">
+             <h3>Quick Entity Reference</h3>
+             <input type="text" id="hec-search-bar" placeholder="Search by character, name, or code (e.g., 'copy' or '&lt;')">
+             <div class="hec-table-container">
+                 <table id="hec-reference-table">
+                     <thead>
+                         <tr>
+                             <th>Character</th>
+                             <th>Named Entity</th>
+                             <th>Numeric Code</th>
+                         </tr>
+                     </thead>
+                     <tbody id="hec-table-body">
+                         <!-- Table body populated by JS -->
+                     </tbody>
+                 </table>
+             </div>
+        </div>
 
-<!-- wp:list-item -->
-<li><strong>To Decode:</strong> Paste your encoded HTML (e.g., <code>it&rsquo;s a beautiful day&nbsp;&copy; 2025</code>) into the right "HTML Entities" box. Click the <strong>&lt; Decode</strong> button. The tool will convert all named, numeric, and hex entities back into their plain text characters (e.g., <code>it’s a beautiful day © 2025</code>) in the left box.</li><!-- /wp:list-item --></ul>
-<!-- /wp:list -->
+    </div>
+</div>
 
-<!-- wp:html -->
-<p>[Insert the HTML Entity Encoder/Decoder V1 HTML Code Block Here]</p>
-<!-- /wp:html -->
+<script>
+console.log("HEC V1: Script starting.");
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("HEC V1: DOMContentLoaded.");
+    
+    // V1: Add slight delay for stability
+    setTimeout(initializeConverter, 150); 
 
-<!-- wp:heading {"level":3} -->
-<h3 class="wp-block-heading">Common Use Cases</h3>
-<!-- /wp:heading -->
+    function initializeConverter() {
+        console.log("HEC V1: Initializing app...");
+        const container = document.getElementById('html-entity-converter-app-v1');
+        if (!container) { console.error("HEC V1: Container not found."); return; }
 
-<!-- wp:list -->
-<ul class="wp-block-list"><!-- wp:list-item -->
-<li><strong>For Web Developers & Bloggers:</strong> The perfect tool for writing technical tutorials. Encode your HTML, CSS, or JavaScript code snippets before pasting them inside <code>&lt;code&gt;</code> or <code>&lt;pre&gt;</code> tags to ensure they display as text instead of being rendered by the browser.</li><!-- /wp:list-item -->
+        // --- Elements ---
+        const inputArea = container.querySelector('#hec-input-text');
+        const outputArea = container.querySelector('#hec-output-entities');
+        const encodeBtn = container.querySelector('#hec-encode-btn');
+        const decodeBtn = container.querySelector('#hec-decode-btn');
+        const copyBtn = container.querySelector('#hec-copy-btn');
+        const clearBtn = container.querySelector('#hec-clear-btn');
+        const searchBar = container.querySelector('#hec-search-bar');
+        const tableBody = container.querySelector('#hec-table-body');
+        const messageArea = container.querySelector('#hec-message-area');
 
-<!-- wp:list-item -->
-<li><strong>For Content Creators & Editors:</strong> When you copy text from applications like Microsoft Word or Google Docs, they often insert "smart quotes" (<code>&rsquo;</code>) or em dashes (<code>&mdash;</code>). Use the Decoder to clean up this text and convert them back to standard characters.</li><!-- /wp:list-item -->
+        if (!inputArea || !outputArea || !encodeBtn || !decodeBtn || !copyBtn || !clearBtn || !searchBar || !tableBody || !messageArea) {
+             console.error("HEC V1: One or more UI elements are missing!");
+             container.innerHTML = "<p style='color:red; text-align:center;'>Error: Failed to load UI components.</p>";
+             return;
+        }
+        console.log("HEC V1: All UI elements found.");
 
-<!-- wp:list-item -->
-<li><strong>For Everyone:</strong> Ever copied text from a webpage and pasted it into an email, only to find strange gaps? Use the Decoder to find and replace unwanted non-breaking spaces (<code>&amp;nbsp;</code>).</li><!-- /wp:list-item --></ul>
-<!-- /wp:list -->
+        // --- The Database ---
+        const entityDatabase = [
+            { char: '<', name: '&lt;', num: '&#60;' }, { char: '>', name: '&gt;', num: '&#62;' },
+            { char: '&', name: '&amp;', num: '&#38;' }, { char: '"', name: '&quot;', num: '&#34;' },
+            { char: "'", name: '&apos;', num: '&#39;' }, { char: ' ', name: '&nbsp;', num: '&#160;' },
+            { char: '¡', name: '&iexcl;', num: '&#161;' }, { char: '¿', name: '&iquest;', num: '&#191;' },
+            { char: '–', name: '&ndash;', num: '&#8211;' }, { char: '—', name: '&mdash;', num: '&#8212;' },
+            { char: '‘', name: '&lsquo;', num: '&#8216;' }, { char: '’', name: '&rsquo;', num: '&#8217;' },
+            { char: '‚', name: '&sbquo;', num: '&#8218;' }, { char: '“', name: '&ldquo;', num: '&#8220;' },
+            { char: '”', name: '&rdquo;', num: '&#8221;' }, { char: '„', name: '&bdquo;', num: '&#8222;' },
+            { char: '«', name: '&laquo;', num: '&#171;' }, { char: '»', name: '&raquo;', num: '&#187;' },
+            { char: '‹', name: '&lsaquo;', num: '&#8249;' }, { char: '›', name: '&rsaquo;', num: '&#8250;' },
+            { char: '…', name: '&hellip;', num: '&#8230;' }, { char: '•', name: '&bull;', num: '&#8226;' },
+            { char: '§', name: '&sect;', num: '&#167;' }, { char: '¶', name: '&para;', num: '&#182;' },
+            { char: '©', name: '&copy;', num: '&#169;' }, { char: '®', name: '&reg;', num: '&#174;' },
+            { char: '™', name: '&trade;', num: '&#8482;' }, { char: '€', name: '&euro;', num: '&#8364;' },
+            { char: '£', name: '&pound;', num: '&#163;' }, { char: '¥', name: '&yen;', num: '&#165;' },
+            { char: '¢', name: '&cent;', num: '&#162;' }, { char: '¤', name: '&curren;', num: '&#164;' },
+            { char: '¦', name: '&brvbar;', num: '&#166;' }, { char: '°', name: '&deg;', num: '&#176;' },
+            { char: '±', name: '&plusmn;', num: '&#177;' }, { char: '×', name: '&times;', num: '&#215;' },
+            { char: '÷', name: '&divide;', num: '&#247;' }, { char: 'µ', name: '&micro;', num: '&#181;' },
+            { char: '¹', name: '&sup1;', num: '&#185;' }, { char: '²', name: '&sup2;', num: '&#178;' },
+            { char: '³', name: '&sup3;', num: '&#179;' }, { char: '¼', name: '&frac14;', num: '&#188;' },
+            { char: '½', name: '&frac12;', num: '&#189;' }, { char: '¾', name: '&frac34;', num: '&#190;' },
+            { char: 'ƒ', name: '&fnof;', num: '&#402;' }, { char: '≈', name: '&asymp;', num: '&#8776;' },
+            { char: '≠', name: '&ne;', num: '&#8800;' }, { char: '≤', name: '&le;', num: '&#8804;' },
+            { char: '≥', name: '&ge;', num: '&#8805;' }, { char: '√', name: '&radic;', num: '&#8730;' },
+            { char: '∞', name: '&infin;', num: '&#8734;' }, { char: '∫', name: '&int;', num: '&#8747;' },
+            { char: '∑', name: '&sum;', num: '&#8721;' }, { char: '∏', name: '&prod;', num: '&#8719;' },
+            { char: '∂', name: '&part;', num: '&#8706;' }, { char: '∀', name: '&forall;', num: '&#8704;' },
+            { char: '∃', name: '&exist;', num: '&#8707;' }, { char: '∅', name: '&empty;', num: '&#8709;' },
+            { char: '∇', name: '&nabla;', num: '&#8711;' }, { char: '∈', name: '&isin;', num: '&#8712;' },
+            { char: '∉', name: '&notin;', num: '&#8713;' }, { char: '∋', name: '&ni;', num: '&#8715;' },
+            { char: '∠', name: '&ang;', num: '&#8736;' }, { char: '←', name: '&larr;', num: '&#8592;' },
+            { char: '↑', name: '&uarr;', num: '&#8593;' }, { char: '→', name: '&rarr;', num: '&#8594;' },
+            { char: '↓', name: '&darr;', num: '&#8595;' }, { char: '↔', name: '&harr;', num: '&#8596;' },
+            { char: '⇐', name: '&lArr;', num: '&#8656;' }, { char: '⇑', name: '&uArr;', num: '&#8657;' },
+            { char: '⇒', name: '&rArr;', num: '&#8658;' }, { char: '⇓', name: '&dArr;', num: '&#8659;' },
+            { char: '⇔', name: '&hArr;', num: '&#8660;' }, { char: '♠', name: '&spades;', num: '&#9824;' },
+            { char: '♣', name: '&clubs;', num: '&#9827;' }, { char: '♥', name: '&hearts;', num: '&#9829;' },
+            { char: '♦', name: '&diams;', num: '&#9830;' }, { char: '\u2002', name: '&ensp;', num: '&#8194;' },
+            { char: '\u2003', name: '&emsp;', num: '&#8195;' }, { char: '\u2009', name: '&thinsp;', num: '&#8201;' },
+            { char: '\u200C', name: '&zwnj;', num: '&#8204;' }, { char: '\u200D', name: '&zwj;', num: '&#8205;' },
+            { char: '\u200E', name: '&lrm;', num: '&#8206;' }, { char: '\u200F', name: '&rlm;', num: '&#8207;' },
+            { char: 'Α', name: '&Alpha;', num: '&#913;' }, { char: 'Β', name: '&Beta;', num: '&#914;' },
+            { char: 'Γ', name: '&Gamma;', num: '&#915;' }, { char: 'Δ', name: '&Delta;', num: '&#916;' },
+            { char: 'Ε', name: '&Epsilon;', num: '&#917;' }, { char: 'Ζ', name: '&Zeta;', num: '&#918;' },
+            { char: 'Η', name: '&Eta;', num: '&#919;' }, { char: 'Θ', name: '&Theta;', num: '&#920;' },
+            { char: 'Ι', name: '&Iota;', num: '&#921;' }, { char: 'Κ', name: '&Kappa;', num: '&#922;' },
+            { char: 'Λ', name: '&Lambda;', num: '&#923;' }, { char: 'Μ', name: '&Mu;', num: '&#924;' },
+            { char: 'Ν', name: '&Nu;', num: '&#925;' }, { char: 'Ξ', name: '&Xi;', num: '&#926;' },
+            { char: 'Ο', name: '&Omicron;', num: '&#927;' }, { char: 'Π', name: '&Pi;', num: '&#928;' },
+            { char: 'Ρ', name: '&Rho;', num: '&#929;' }, { char: 'Σ', name: '&Sigma;', num: '&#931;' },
+            { char: 'Τ', name: '&Tau;', num: '&#932;' }, { char: 'Υ', name: '&Upsilon;', num: '&#933;' },
+            { char: 'Φ', name: '&Phi;', num: '&#934;' }, { char: 'Χ', name: '&Chi;', num: '&#935;' },
+            { char: 'Ψ', name: '&Psi;', num: '&#936;' }, { char: 'Ω', name: '&Omega;', num: '&#937;' },
+            { char: 'α', name: '&alpha;', num: '&#945;' }, { char: 'β', name: '&beta;', num: '&#946;' },
+            { char: 'γ', name: '&gamma;', num: '&#947;' }, { char: 'δ', name: '&delta;', num: '&#948;' },
+            { char: 'ε', name: '&epsilon;', num: '&#949;' }, { char: 'ζ', name: '&zeta;', num: '&#950;' },
+            { char: 'η', name: '&eta;', num: '&#951;' }, { char: 'θ', name: '&theta;', num: '&#952;' },
+            { char: 'ι', name: '&iota;', num: '&#953;' }, { char: 'κ', name: '&kappa;', num: '&#954;' },
+            { char: 'λ', name: '&lambda;', num: '&#955;' }, { char: 'μ', name: '&mu;', num: '&#956;' },
+            { char: 'ν', name: '&nu;', num: '&#957;' }, { char: 'ξ', name: '&xi;', num: '&#958;' },
+            { char: 'ο', name: '&omicron;', num: '&#959;' }, { char: 'π', name: '&pi;', num: '&#960;' },
+            { char: 'ρ', name: '&rho;', num: '&#961;' }, { char: 'ς', name: '&sigmaf;', num: '&#962;' },
+            { char: 'σ', name: '&sigma;', num: '&#963;' }, { char: 'τ', name: '&tau;', num: '&#964;' },
+            { char: 'υ', name: '&upsilon;', num: '&#965;' }, { char: 'φ', name: '&phi;', num: '&#966;' },
+            { char: 'χ', name: '&chi;', num: '&#967;' }, { char: 'ψ', name: '&psi;', num: '&#968;' },
+            { char: 'ω', name: '&omega;', num: '&#969;' }, { char: '¨', name: '&uml;', num: '&#168;' },
+            { char: 'ª', name: '&ordf;', num: '&#170;' }, { char: '¬', name: '&not;', num: '&#172;' },
+            { char: '­', name: '&shy;', num: '&#173;' }, { char: '¯', name: '&macr;', num: '&#175;' },
+            { char: '´', name: '&acute;', num: '&#180;' }, { char: '·', name: '&middot;', num: '&#183;' },
+            { char: '¸', name: '&cedil;', num: '&#184;' }, { char: 'º', name: '&ordm;', num: '&#186;' },
+            { char: 'À', name: '&Agrave;', num: '&#192;' }, { char: 'Á', name: '&Aacute;', num: '&#193;' },
+            { char: 'Â', name: '&Acirc;', num: '&#194;' }, { char: 'Ã', name: '&Atilde;', num: '&#195;' },
+            { char: 'Ä', name: '&Auml;', num: '&#196;' }, { char: 'Å', name: '&Aring;', num: '&#197;' },
+            { char: 'Æ', name: '&AElig;', num: '&#198;' }, { char: 'Ç', name: '&Ccedil;', num: '&#199;' },
+            { char: 'È', name: '&Egrave;', num: '&#200;' }, { char: 'É', name: '&Eacute;', num: '&#201;' },
+            { char: 'Ê', name: '&Ecirc;', num: '&#202;' }, { char: 'Ë', name: '&Euml;', num: '&#203;' },
+            { char: 'Ì', name: '&Igrave;', num: '&#204;' }, { char: 'Í', name: '&Iacute;', num: '&#205;' },
+            { char: 'Î', name: '&Icirc;', num: '&#206;' }, { char: 'Ï', name: '&Iuml;', num: '&#207;' },
+            { char: 'Ð', name: '&ETH;', num: '&#208;' }, { char: 'Ñ', name: '&Ntilde;', num: '&#209;' },
+            { char: 'Ò', name: '&Ograve;', num: '&#210;' }, { char: 'Ó', name: '&Oacute;', num: '&#211;' },
+            { char: 'Ô', name: '&Ocirc;', num: '&#212;' }, { char: 'Õ', name: '&Otilde;', num: '&#213;' },
+            { char: 'Ö', name: '&Ouml;', num: '&#214;' }, { char: 'Ø', name: '&Oslash;', num: '&#216;' },
+            { char: 'Ù', name: '&Ugrave;', num: '&#217;' }, { char: 'Ú', name: '&Uacute;', num: '&#218;' },
+            { char: 'Û', name: '&Ucirc;', num: '&#219;' }, { char: 'Ü', name: '&Uuml;', num: '&#220;' },
+            { char: 'Ý', name: '&Yacute;', num: '&#221;' }, { char: 'Þ', name: '&THORN;', num: '&#222;' },
+            { char: 'ß', name: '&szlig;', num: '&#223;' }, { char: 'à', name: '&agrave;', num: '&#224;' },
+            { char: 'á', name: '&aacute;', num: '&#225;' }, { char: 'â', name: '&acirc;', num: '&#226;' },
+            { char: 'ã', name: '&atilde;', num: '&#227;' }, { char: 'ä', name: '&auml;', num: '&#228;' },
+            { char: 'å', name: '&aring;', num: '&#229;' }, { char: 'æ', name: '&aelig;', num: '&#230;' },
+            { char: 'ç', name: '&ccedil;', num: '&#231;' }, { char: 'è', name: '&egrave;', num: '&#232;' },
+            { char: 'é', name: '&eacute;', num: '&#233;' }, { char: 'ê', name: '&ecirc;', num: '&#234;' },
+            { char: 'ë', name: '&euml;', num: '&#235;' }, { char: 'ì', name: '&igrave;', num: '&#236;' },
+            { char: 'í', name: '&iacute;', num: '&#237;' }, { char: 'î', name: '&icirc;', num: '&#238;' },
+            { char: 'ï', name: '&iuml;', num: '&#239;' }, { char: 'ð', name: '&eth;', num: '&#240;' },
+            { char: 'ñ', name: '&ntilde;', num: '&#241;' }, { char: 'ò', name: '&ograve;', num: '&#242;' },
+            { char: 'ó', name: '&oacute;', num: '&#243;' }, { char: 'ô', name: '&ocirc;', num: '&#244;' },
+            { char: 'õ', name: '&otilde;', num: '&#245;' }, { char: 'ö', name: '&ouml;', num: '&#246;' },
+            { char: 'ø', name: '&oslash;', num: '&#248;' }, { char: 'ù', name: '&ugrave;', num: '&#249;' },
+            { char: 'ú', name: '&uacute;', num: '&#250;' }, { char: 'û', name: '&ucirc;', num: '&#251;' },
+            { char: 'ü', name: '&uuml;', num: '&#252;' }, { char: 'ý', name: '&yacute;', num: '&#253;' },
+            { char: 'þ', name: '&thorn;', num: '&#254;' }, { char: 'ÿ', name: '&yuml;', num: '&#255;' }
+            // Note: Some chars share a name, e.g. &mu; is in math and ISO. This is fine.
+        ];
 
-<!-- wp:heading -->
-<h2 class="wp-block-heading">Frequently Asked Questions (FAQ)</h2>
-<!-- /wp:heading -->
+        // --- Create Lookup Maps ---
+        let encodeMap = {}; // char -> name
+        let decodeMap = {}; // name -> char
+        try {
+            entityDatabase.forEach(entity => {
+                // Prioritize core HTML entities first, then others
+                if (entity.char && (!encodeMap[entity.char] || ['&lt;', '&gt;', '&amp;', '&quot;', '&apos;'].includes(entity.name))) {
+                    encodeMap[entity.char] = entity.name;
+                }
+                if (entity.name && !decodeMap[entity.name]) {
+                    decodeMap[entity.name] = entity.char;
+                }
+            });
+            console.log("HEC V1: Encode/Decode maps built.");
+        } catch (e) {
+             console.error("HEC V1: Failed to build lookup maps:", e);
+             showError("Critical error building entity maps.", true);
+             return;
+        }
 
-<!-- wp:paragraph -->
-<p><strong>Q1: What's the difference between Named, Numeric, and Hex entities?</strong></p>
-<!-- /wp:paragraph -->
+        // Build a regex from all characters in the encode map
+        // Escape special regex characters in the keys
+        const encodeRegex = new RegExp(
+             Object.keys(encodeMap).map(c => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 
+            'g'
+        );
+        console.log("HEC V1: Encode regex created.");
 
-<!-- wp:paragraph -->
-<p>A: They all achieve the same result. <strong>Named</strong> entities are readable (e.g., <code>&amp;copy;</code>). <strong>Numeric</strong> entities use the character's decimal code (e.g., <code>&amp;#169;</code>). <strong>Hexadecimal</strong> entities use the character's hex code (e.g., <code>&amp;#xA9;</code>). While named entities are easier to remember, numeric/hex entities are universally recognized for all characters, even those without names.</p>
-<!-- /wp:paragraph -->
 
-<!-- wp:paragraph -->
-<p><strong>Q2: My apostrophe ' became <code>&rsquo;</code>. Why?</strong></p>
-<!-- /wp:paragraph -->
+        // --- Functions ---
+        
+        function showMessage(message, isError = false, duration = 2500) {
+            messageArea.textContent = message;
+            messageArea.className = isError ? 'hec-message error' : 'hec-message';
+            // Clear previous timeout if one exists
+            if (messageArea.timeoutId) {
+                clearTimeout(messageArea.timeoutId);
+            }
+            // Set new timeout to clear the message
+            messageArea.timeoutId = setTimeout(() => {
+                messageArea.textContent = '';
+                messageArea.className = 'hec-message';
+            }, duration);
+        }
 
-<!-- wp:paragraph -->
-<p>A: You're seeing the difference between a "straight quote" (<code>'</code>) and a "smart quote" or "typographer's quote" (<code>’</code>). Many text editors automatically convert your straight quotes to smart quotes (<code>&lsquo;</code> and <code>&rsquo;</code>). Our tool includes these common smart quotes in its database to help you encode and decode them properly.</p>
-<!-- /wp:paragraph -->
+        function populateReferenceTable(filter = '') {
+            console.log("HEC V1: Populating table. Filter:", filter);
+            try {
+                tableBody.innerHTML = ''; // Clear existing rows
+                const lowerFilter = filter.toLowerCase();
+                let rowsAdded = 0;
+                
+                const filteredData = entityDatabase.filter(entity => 
+                    filter === '' ||
+                    entity.char.toLowerCase().includes(lowerFilter) ||
+                    entity.name.toLowerCase().includes(lowerFilter) ||
+                    entity.num.toLowerCase().includes(lowerFilter) ||
+                    // Also check description-like words
+                    (entity.name === '&copy;' && 'copyright'.includes(lowerFilter)) ||
+                    (entity.name === '&reg;' && 'registered'.includes(lowerFilter)) ||
+                    (entity.name === '&trade;' && 'trademark'.includes(lowerFilter)) ||
+                    (entity.name === '&lt;' && 'less than'.includes(lowerFilter)) ||
+                    (entity.name === '&gt;' && 'greater than'.includes(lowerFilter)) ||
+                    (entity.name === '&amp;' && 'ampersand'.includes(lowerFilter)) ||
+                    (entity.name.includes('arr') && 'arrow'.includes(lowerFilter))
+                );
 
-<!-- wp:paragraph -->
-<p><strong>Q3: Why did you use <code>&apos;</code> (or <code>&#39;</code>) for the apostrophe?</strong></p>
-<!-- /wp:paragraph -->
+                if (filteredData.length === 0) {
+                    const row = tableBody.insertRow();
+                    const cell = row.insertCell(0);
+                    cell.colSpan = 3;
+                    cell.textContent = "No entities found matching your search.";
+                    cell.style.textAlign = 'center';
+                    cell.style.color = '#6b7280';
+                } else {
+                    filteredData.forEach(entity => {
+                        const row = tableBody.insertRow();
+                        row.insertCell(0).textContent = entity.char;
+                        row.insertCell(1).textContent = entity.name;
+                        row.insertCell(2).textContent = entity.num;
+                    });
+                    rowsAdded = filteredData.length;
+                }
+                console.log(`HEC V1: Table populated with ${rowsAdded} rows.`);
+            } catch (e) {
+                 console.error("HEC V1: Error populating table:", e);
+                 showError("Error displaying reference list.", true);
+            }
+        }
 
-<!-- wp:paragraph -->
-<p>A: While <code>&apos;</code> is valid in HTML5, the numeric code <code>&#39;</code> is more universally compatible, especially with older XML and XHTML standards. This tool's database uses <code>&apos;</code> but the decoder will recognize all forms.</p>
-<!-- /wp:paragraph -->
+        function encodeText() {
+            console.log("HEC V1: Encode clicked.");
+            try {
+                const text = inputArea.value;
+                if (text === "") {
+                    outputArea.value = "";
+                    showMessage("Encoded (empty).");
+                    return;
+                }
+                
+                // Use the regex built from the encodeMap
+                const encoded = text.replace(encodeRegex, (match) => encodeMap[match]);
+                
+                outputArea.value = encoded;
+                showMessage("Text successfully encoded!");
+            } catch (e) {
+                 console.error("HEC V1: Error during encode:", e);
+                 showMessage("An error occurred during encoding.", true);
+            }
+        }
 
-<!-- wp:paragraph -->
-<p><strong>Q4: Why does my text have <code>&amp;nbsp;</code> everywhere?</strong></p>
-<!-- /wp:paragraph -->
+        function decodeText() {
+            console.log("HEC V1: Decode clicked.");
+            try {
+                let text = outputArea.value;
+                if (text === "") {
+                    inputArea.value = "";
+                    showMessage("Decoded (empty).");
+                    return;
+                }
+                
+                // 1. Decode Named Entities (using the generated decodeMap)
+                text = text.replace(/&([a-zA-Z0-9]+);/g, (match, entityName) => {
+                     const fullEntity = `&${entityName};`;
+                     return decodeMap[fullEntity] || match; // If in map, replace, else keep original
+                });
 
-<!-- wp:paragraph -->
-<p>A: <code>&amp;nbsp;</code> is a Non-Breaking Space. It's an HTML entity used to create a space that a browser is not allowed to break into a new line. They are often inserted by web editors (like WordPress!) or when copying text from web pages. Use our decoder to convert them back to standard spaces if you don't need them.</p>
-<!-- /wp:paragraph -->
+                // 2. Decode Numeric Entities (e.g., &#169;)
+                text = text.replace(/&#(\d+);/g, (match, num) => {
+                     try {
+                         return String.fromCharCode(parseInt(num, 10));
+                     } catch(e) { return match; } // Fallback
+                });
+
+                // 3. Decode Hexadecimal Entities (e.g., &#x20AC;)
+                text = text.replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => {
+                     try {
+                        return String.fromCharCode(parseInt(hex, 16));
+                     } catch(e) { return match; } // Fallback
+                });
+
+                inputArea.value = text;
+                showMessage("Entities successfully decoded!");
+            } catch (e) {
+                 console.error("HEC V1: Error during decode:", e);
+                 showMessage("An error occurred during decoding.", true);
+            }
+        }
+
+        function copyOutput() {
+            console.log("HEC V1: Copy clicked.");
+            if (outputArea.value === "") {
+                 showMessage("Nothing to copy.", true);
+                 return;
+            }
+            try {
+                // Use execCommand for broader compatibility in iframes
+                outputArea.select();
+                document.execCommand('copy');
+                showMessage("Copied to clipboard!");
+            } catch (e) {
+                 console.error("HEC V1: Copy failed:", e);
+                 showMessage("Copy failed. Please copy manually.", true);
+            }
+             // Deselect text
+             window.getSelection().removeAllRanges();
+        }
+
+        function clearAll() {
+            console.log("HEC V1: Clear clicked.");
+            inputArea.value = "";
+            outputArea.value = "";
+            showMessage(""); // Clear message
+        }
+
+        // --- Initialization ---
+        try {
+            populateReferenceTable(); // Initial population of the table
+
+            // Attach listeners
+            encodeBtn.addEventListener('click', encodeText);
+            decodeBtn.addEventListener('click', decodeText);
+            copyBtn.addEventListener('click', copyOutput);
+            clearBtn.addEventListener('click', clearAll);
+            searchBar.addEventListener('input', (e) => {
+                populateReferenceTable(e.target.value);
+            });
+            console.log("HEC V1: Listeners attached.");
+        } catch (e) {
+             console.error("HEC V1: Error during init listeners:", e);
+             showError("Failed to attach controls.", true);
+        }
+        
+        console.log("HEC V1: Initialization complete.");
+    }
+}); // End DOMContentLoaded
+</script>
+<!-- HTML Entity Encoder/Decoder App V1 - End -->
