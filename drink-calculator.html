@@ -1,0 +1,180 @@
+<div id="warikan-sp-plus-app-jp"> <style>
+        /* --- CSS (與 V8 相同) --- */
+        #warikan-sp-plus-app-jp { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important; line-height: 1.6 !important; background-color: #ffffff !important; border: 1px solid #e5e7eb !important; border-radius: 0.75rem !important; padding: 1.5rem !important; margin: 2rem auto !important; max-width: 480px !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important; }
+        #warikan-sp-plus-app-jp *, #warikan-sp-plus-app-jp *::before, #warikan-sp-plus-app-jp *::after { box-sizing: border-box !important; margin: 0; padding: 0; }
+        #warikan-sp-plus-app-jp h2 { color: #B45309 !important; text-align: center !important; font-size: 1.5rem !important; font-weight: 700 !important; margin-bottom: 1.5rem !important; }
+        #warikan-sp-plus-app-jp .warikan-spp-input-group { margin-bottom: 1.2rem !important; } 
+        #warikan-sp-plus-app-jp .warikan-spp-input-group label { display: block !important; font-weight: 600 !important; color: #374151 !important; margin-bottom: 0.4rem !important; font-size: 0.9rem !important; }
+        #warikan-sp-plus-app-jp .warikan-spp-input, #warikan-sp-plus-app-jp .warikan-spp-select { width: 100% !important; padding: 0.7rem 0.9rem !important; border: 1px solid #d1d5db !important; border-radius: 0.375rem !important; font-size: 1rem !important; line-height: 1.5 !important; background-color: #fff !important; color: #1f2937 !important; -webkit-appearance: none !important; appearance: none !important; }
+        #warikan-sp-plus-app-jp .warikan-spp-select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important; background-position: right 0.5rem center !important; background-repeat: no-repeat !important; background-size: 1.5em 1.5em !important; padding-right: 2.5rem !important; }
+        #warikan-sp-plus-app-jp .warikan-spp-ratio-text { font-size: 0.85rem; color: #6b7280; margin-left: 0.5rem; font-weight: normal !important; }
+        #warikan-sp-plus-app-jp .warikan-spp-calculate-btn { display: block !important; width: 100% !important; margin: 1.8rem auto 0 auto !important; padding: 0.9rem !important; font-size: 1.1rem !important; font-weight: 700 !important; color: #ffffff !important; background-color: #B45309 !important; border: none !important; border-radius: 0.5rem !important; cursor: pointer !important; transition: background-color 0.2s, transform 0.1s !important; }
+        #warikan-sp-plus-app-jp .warikan-spp-calculate-btn:hover { background-color: #92400e !important; }
+        #warikan-sp-plus-app-jp .warikan-spp-calculate-btn:active { transform: scale(0.98) !important; }
+        #warikan-sp-plus-app-jp .warikan-spp-error-message { color: #b91c1c !important; background-color: #fee2e2 !important; border: 1px solid #f87171 !important; padding: 0.8rem 1rem !important; border-radius: 0.375rem !important; text-align: center !important; margin-top: 1rem !important; font-size: 0.9rem !important; display: none; }
+        #warikan-sp-plus-app-jp .warikan-spp-results-area { margin-top: 1.8rem !important; padding-top: 1.2rem !important; border-top: 1px solid #e5e7eb !important; display: none; animation: fadeInWarikanFxV1 0.3s ease-out !important; /* Reuse animation */}
+        @keyframes fadeInWarikanFxV1 { from { opacity: 0; } to { opacity: 1; } } /* Simple fade in */
+        #warikan-sp-plus-app-jp .warikan-spp-result-item { display: flex !important; justify-content: space-between !important; align-items: center !important; padding: 0.7rem 0 !important; font-size: 1rem !important; border-bottom: 1px dashed #d1d5db !important; }
+        #warikan-sp-plus-app-jp .warikan-spp-result-item:last-child { border-bottom: none !important; }
+        #warikan-sp-plus-app-jp .warikan-spp-result-item .label { color: #374151 !important; font-weight: 500 !important; }
+        #warikan-sp-plus-app-jp .warikan-spp-result-item .amount { font-weight: 700 !important; color: #B45309 !important; font-size: 1.15rem !important; }
+        #warikan-sp-plus-app-jp .warikan-spp-result-item .total { color: #059669 !important; }
+        #warikan-sp-plus-app-jp .warikan-spp-result-item .diff { color: #ca8a04 !important; }
+    </style>
+
+    <h2>割り勘計算 (先輩追加版 V9)</h2> <div class="warikan-spp-input-group"> <label for="warikan-spp-total-amount">支払総額 (円)</label> <input type="number" id="warikan-spp-total-amount" class="warikan-spp-input" placeholder="例: 20000" min="0" step="1"> </div>
+    <div class="warikan-spp-input-group"> <label for="warikan-spp-normal-count">一般 人数 <span class="warikan-spp-ratio-text">(比率: 1.0 固定)</span></label> <input type="number" id="warikan-spp-normal-count" class="warikan-spp-input" placeholder="例: 3" value="1" min="0" step="1"> </div>
+    <div class="warikan-spp-input-group"> <label for="warikan-spp-senpai-count">先輩 人数 <span class="warikan-spp-ratio-text">(比率: 1.2 固定)</span></label> <input type="number" id="warikan-spp-senpai-count" class="warikan-spp-input" placeholder="例: 1" value="0" min="0" step="1"> </div>
+    <div class="warikan-spp-input-group"> <label for="warikan-spp-rounding-unit">端数処理 (切り上げ)</label> <select id="warikan-spp-rounding-unit" class="warikan-spp-select"> <option value="1">1円単位 (そのまま)</option> <option value="10">10円単位</option> <option value="100" selected>100円単位</option> <option value="1000">1000円単位</option> </select> </div>
+    <button id="warikan-spp-calculate-btn" class="warikan-spp-calculate-btn">計算する</button>
+    <div id="warikan-spp-error-message" class="warikan-spp-error-message"></div>
+    <div id="warikan-spp-results-area" class="warikan-spp-results-area">
+        <div id="warikan-spp-result-normal" class="warikan-spp-result-item"> <span class="label">一般 1人あたり:</span> <span class="amount">-- 円</span> </div>
+        <div id="warikan-spp-result-senpai" class="warikan-spp-result-item"> <span class="label">先輩 1人あたり:</span> <span class="amount">-- 円</span> </div>
+        <div id="warikan-spp-result-collected" class="warikan-spp-result-item"> <span class="label">集金合計:</span> <span class="amount total">-- 円</span> </div>
+        <div id="warikan-spp-result-difference" class="warikan-spp-result-item"> <span class="label">差額 (集金 - 支払い):</span> <span class="amount diff">-- 円</span> </div>
+    </div>
+
+</div>
+
+<script>
+// 規範 1.3 & 1.6：使用 DOMContentLoaded 和 IIFE
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('WarikanSPP V9: DOMContentLoaded event fired.'); 
+
+    (function() {
+        console.log('WarikanSPP V9: IIFE executed.'); 
+
+        const appId = 'warikan-sp-plus-app-jp'; // 保存 App ID
+        const app = document.getElementById(appId); 
+        if (!app) { 
+            console.error(`WarikanSPP V9: Container #${appId} not found.`); 
+            return; 
+        }
+        
+        const calculateBtn = app.querySelector('#warikan-spp-calculate-btn');
+        if (!calculateBtn) {
+            console.error("WarikanSPP V9: Calculate button #warikan-spp-calculate-btn not found.");
+            app.innerHTML = '<p style="color: red; text-align: center;">エラー: 計算ボタンが見つかりません。</p>';
+            return;
+        }
+
+        console.log('WarikanSPP V9: Calculate button found. Adding event listener.'); 
+
+        // --- 顯示錯誤訊息 (輔助函數) ---
+        const showError = (message) => {
+            const errorMessage = app.querySelector('#warikan-spp-error-message');
+            const resultsArea = app.querySelector('#warikan-spp-results-area');
+            if (errorMessage) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                console.warn('WarikanSPP V9: Error displayed -', message); 
+            } else {
+                 console.error("WarikanSPP V9: Error message element missing when trying to show:", message);
+            }
+             if (resultsArea) { 
+                 resultsArea.style.display = 'none'; 
+             }
+        };
+
+        // --- 核心計算與顯示邏輯 (放在事件監聽器內部) ---
+        calculateBtn.addEventListener('click', function() {
+            console.log('WarikanSPP V9: Calculate button clicked.'); 
+
+            // --- 在需要時查找元素 ---
+            const totalAmountInput = app.querySelector('#warikan-spp-total-amount');
+            const normalCountInput = app.querySelector('#warikan-spp-normal-count');
+            const senpaiCountInput = app.querySelector('#warikan-spp-senpai-count'); 
+            const roundingUnitSelect = app.querySelector('#warikan-spp-rounding-unit'); 
+            const errorMessage = app.querySelector('#warikan-spp-error-message'); // 查找錯誤區
+            const resultsArea = app.querySelector('#warikan-spp-results-area');
+            const resultNormalSpan = app.querySelector('#warikan-spp-result-normal .amount');
+            const resultSenpaiSpan = app.querySelector('#warikan-spp-result-senpai .amount'); 
+            const resultCollectedSpan = app.querySelector('#warikan-spp-result-collected .amount'); 
+            const resultDifferenceSpan = app.querySelector('#warikan-spp-result-difference .amount'); 
+
+            // --- 健壯性檢查 ---
+            if (!totalAmountInput || !normalCountInput || !senpaiCountInput || !roundingUnitSelect || !resultsArea || !resultNormalSpan || !resultSenpaiSpan || !resultCollectedSpan || !resultDifferenceSpan) {
+                console.error("WarikanSPP V9: Critical elements not found inside click handler.");
+                showError("エラー：画面要素が見つかりません。"); 
+                return; 
+            }
+            console.log('WarikanSPP V9: All calculation elements found.'); 
+
+            // 隱藏舊錯誤和結果
+            if (errorMessage) errorMessage.style.display = 'none';
+            resultsArea.style.display = 'none'; // 先隱藏
+
+            // --- 獲取值並驗證 ---
+            const totalAmount = parseFloat(totalAmountInput.value);
+            const normalCount = parseInt(normalCountInput.value, 10) || 0; 
+            const senpaiCount = parseInt(senpaiCountInput.value, 10) || 0; 
+            const roundingUnit = parseInt(roundingUnitSelect.value, 10);
+            const normalRatio = 1.0; 
+            const senpaiRatio = 1.2; 
+
+            if (isNaN(totalAmount) || totalAmount < 0) { showError('支払総額を正しく入力してください（0以上）。'); return; }
+            if (normalCount < 0 || senpaiCount < 0) { showError('人数は0以上で入力してください。'); return; }
+            
+            const totalPeople = normalCount + senpaiCount;
+            if (totalPeople <= 0 && totalAmount > 0) { showError('合計人数が0人です。人数を入力してください。'); return; }
+            
+            // --- 計算總權重單位 ---
+            const totalWeightedUnits = (normalCount * normalRatio) + (senpaiCount * senpaiRatio);
+
+            if (totalWeightedUnits <= 0 && totalAmount > 0) { showError('比率設定により、合計の負担単位が0以下になりました。'); return; }
+
+            console.log(`WarikanSPP V9: Inputs - Amount=${totalAmount}, Normal=${normalCount}, Senpai=${senpaiCount}, Units=${totalWeightedUnits}, Round=${roundingUnit}`); 
+
+            // --- 計算 ---
+            const costPerUnit = (totalWeightedUnits > 0) ? totalAmount / totalWeightedUnits : 0;
+            let idealNormalAmount = (normalCount > 0) ? costPerUnit * normalRatio : 0;
+            let idealSenpaiAmount = (senpaiCount > 0) ? costPerUnit * senpaiRatio : 0;
+            
+            let actualNormalAmount = 0;
+            let actualSenpaiAmount = 0;
+
+            // 應用端數處理 (向上取整), 僅在人數 > 0 且理想金額 > 0 時
+            if (normalCount > 0 && idealNormalAmount > 0 && roundingUnit > 0) {
+                 actualNormalAmount = Math.ceil(idealNormalAmount / roundingUnit) * roundingUnit;
+            } else {
+                 actualNormalAmount = Math.round(idealNormalAmount); // 否則四捨五入 (處理 0 或負數)
+            }
+             if (senpaiCount > 0 && idealSenpaiAmount > 0 && roundingUnit > 0) {
+                 actualSenpaiAmount = Math.ceil(idealSenpaiAmount / roundingUnit) * roundingUnit;
+            } else {
+                 actualSenpaiAmount = Math.round(idealSenpaiAmount); 
+            }
+            
+            // 計算總收款和差額
+            let totalCollected = (actualNormalAmount * normalCount) + (actualSenpaiAmount * senpaiCount);
+            totalCollected = Math.round(totalCollected); 
+            const difference = totalCollected - totalAmount;
+            
+            console.log(`WarikanSPP V9: Calculated - Normal=${actualNormalAmount}, Senpai=${actualSenpaiAmount}, Collected=${totalCollected}, Diff=${difference}`); 
+
+            // --- 顯示結果 ---
+            resultNormalSpan.textContent = `${actualNormalAmount.toLocaleString()} 円`;
+            resultSenpaiSpan.textContent = `${actualSenpaiAmount.toLocaleString()} 円`;
+            resultCollectedSpan.textContent = `${totalCollected.toLocaleString()} 円`;
+            resultDifferenceSpan.textContent = `${difference.toLocaleString()} 円`;
+            resultsArea.style.display = 'block'; // **顯示結果區域**
+            console.log('WarikanSPP V9: Displaying results.'); 
+
+        }); // --- calculateBtn listener 結束 ---
+
+        // --- 輸入時隱藏結果和錯誤 ---
+        if (app) {
+             app.querySelectorAll('input, select').forEach(el => {
+                 el.addEventListener('input', () => { 
+                     const errorMessage = app.querySelector('#warikan-spp-error-message');
+                     const resultsArea = app.querySelector('#warikan-spp-results-area');
+                     if (errorMessage) { errorMessage.style.display = 'none'; }
+                     if (resultsArea) { resultsArea.style.display = 'none'; } // 輸入時隱藏結果
+                 });
+             });
+         }
+
+    })(); // 結束 IIFE
+}); // 結束 DOMContentLoaded
+</script>
