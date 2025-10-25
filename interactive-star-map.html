@@ -1,594 +1,272 @@
-<div id="jhs-kanji-quiz-v1">
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D 互動星空圖 (附星座名稱)</title>
     <style>
-        /* --- 核心重置與隔離 (使用 .jhs-kq- 前綴) --- */
-        #jhs-kanji-quiz-v1 {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
-            line-height: 1.6 !important;
-            background-color: #f9fafb !important;
-            border: 1px solid #e5e7eb !important;
-            border-radius: 0.75rem !important;
-            padding: 2rem !important;
-            margin: 2rem auto !important;
-            max-width: 700px !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
-            overflow: hidden;
+        body { margin: 0; overflow: hidden; background-color: #00000a; }
+        canvas { display: block; }
+        #controls-panel {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 15px 20px;
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid #374151;
+            color: #e5e7eb;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            width: 320px;
         }
-        #jhs-kanji-quiz-v1 *, 
-        #jhs-kanji-quiz-v1 *::before, 
-        #jhs-kanji-quiz-v1 *::after {
-            box-sizing: border-box !important;
+        #controls-panel h2, #controls-panel h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #4b5563;
+            padding-bottom: 10px;
+            color: #f39c12;
         }
-
-        /* --- 畫面切換 --- */
-        #jhs-kanji-quiz-v1 .jhs-kq-screen {
-            display: none; 
-            animation: fadeInJhsKqV1 0.3s ease-in-out !important;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-screen.active {
-            display: block !important;
-        }
-         @keyframes fadeInJhsKqV1 { /* 新的動畫名稱 */
-             from { opacity: 0; transform: translateY(10px); }
-             to { opacity: 1; transform: translateY(0); }
-         }
+        #controls-panel h2 { font-size: 1.5rem; }
+        #controls-panel h3 { font-size: 1.1rem; margin-top: 20px; }
         
-        /* --- 標題與通用按鈕 (視覺保持一致) --- */
-        #jhs-kanji-quiz-v1 h2 {
-            color: #059669 !important; /* 主題綠色 (保持一致性) */
-            text-align: center !important;
-            font-size: 2rem !important;
-            font-weight: 700 !important;
-            margin-top: 0 !important;
-            margin-bottom: 0.5rem !important;
+        #season-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
         }
-        #jhs-kanji-quiz-v1 h3 {
-            text-align: center !important;
-            font-size: 1.5rem !important;
-            font-weight: 700 !important;
-            margin-top: 0 !important;
-            margin-bottom: 1.5rem !important;
-            color: #1f2937 !important;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-subtitle {
-            text-align: center !important;
-            font-size: 1.1rem !important;
-            color: #4b5563 !important;
-            margin: 0 auto 2rem auto !important;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-main-btn {
-            display: block !important;
-            width: 100% !important;
-            max-width: 300px !important;
-            margin: 2rem auto 0 auto !important;
-            padding: 1rem !important;
-            font-size: 1.25rem !important;
-            font-weight: 700 !important;
-            color: #ffffff !important;
-            background-color: #059669 !important; /* Green */
-            border: none !important;
-            border-radius: 0.5rem !important;
-            cursor: pointer !important;
-            transition: background-color 0.2s, transform 0.1s !important;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-main-btn:hover { background-color: #047857 !important; }
-        #jhs-kanji-quiz-v1 .jhs-kq-main-btn:active { transform: scale(0.98) !important; }
-        
-        /* --- 學年選擇畫面 --- */
-        #jhs-kanji-quiz-v1 .jhs-kq-level-grid {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr 1fr !important; /* 3 欄 */
-            gap: 1rem !important;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-level-btn {
-            width: 100% !important;
-            padding: 1.5rem 0.5rem !important;
-            font-size: 1.1rem !important;
-            font-weight: 600 !important;
-            color: #374151 !important;
-            background-color: #ffffff !important;
-            border: 1px solid #d1d5db !important;
-            border-radius: 0.5rem !important;
-            cursor: pointer !important;
-            transition: all 0.2s ease !important;
-            text-align: center;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-level-btn:hover {
-            border-color: #059669 !important;
-            color: #059669 !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-level-btn small {
-             font-size: 0.8rem;
-             color: #6b7280;
-             display: block;
-             font-weight: 400;
-             margin-top: 0.25rem;
-        }
-
-        /* --- 測驗畫面 --- */
-        #jhs-kanji-quiz-v1 .jhs-kq-header {
-             display: flex; 
-             justify-content: space-between; 
-             align-items: center; 
-             margin-bottom: 1rem; 
-             color: #4a5568; 
-             font-weight: 600;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-counter {
+        .season-btn, .toggle-btn, .const-btn {
+            padding: 10px 15px;
             font-size: 1rem;
-            font-weight: 600;
-            color: #6b7280;
-        }
-        
-        #jhs-kanji-quiz-v1 .jhs-kq-question-display {
-            font-size: 4.5rem !important; 
-            font-weight: 700 !important;
-            color: #111827 !important;
-            text-align: center;
-            background-color: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 2.5rem 1.5rem;
-            margin-bottom: 2rem;
-            min-height: 200px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Kyokasho', 'Yu Mincho', 'Hiragino Mincho ProN', serif !important;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-options-grid {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 1rem !important;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-option-btn {
-            width: 100% !important;
-            padding: 1rem !important;
-            font-size: 1.25rem !important;
-            font-weight: 600 !important;
-            color: #374151 !important;
-            background-color: #ffffff !important;
-            border: 1px solid #d1d5db !important;
-            border-radius: 0.5rem !important;
-            cursor: pointer !important;
-            transition: all 0.2s ease !important;
-            text-align: center;
-            min-height: 80px; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-option-btn:not(:disabled):hover {
-            border-color: #059669 !important;
-            color: #059669 !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-option-btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-option-btn.correct {
-            background-color: #dcfce7 !important;
-            border-color: #16a34a !important;
-            color: #15803d !important;
-            font-weight: 700 !important;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-option-btn.wrong {
-            background-color: #fee2e2 !important;
-            border-color: #dc2626 !important;
-            color: #b91c1c !important;
-            opacity: 1 !important;
-        }
-        
-        /* --- 反饋區域 --- */
-        #jhs-kanji-quiz-v1 .jhs-kq-feedback-box {
-            display: none;
-            background-color: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            margin-top: 1.5rem; 
-            text-align: center;
-            animation: fadeInJhsKqV1 0.3s ease-in-out !important;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-feedback-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 0 0 1rem 0;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-feedback-text.correct { color: #16a34a; }
-        #jhs-kanji-quiz-v1 .jhs-kq-feedback-text.wrong { color: #dc2626; }
-        
-        #jhs-kanji-quiz-v1 .jhs-kq-answer-reveal {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #1f2937;
-        }
-        
-        #jhs-kanji-quiz-v1 .jhs-kq-next-btn {
-            display: none; 
+            border: 1px solid #4b5563;
+            background-color: #374151;
+            color: #e5e7eb;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
             width: 100%;
-            background-color: #0284c7 !important; /* 藍色 */
-            margin: 1.5rem auto 0 auto;
-            max-width: 300px;
-        }
-        #jhs-kanji-quiz-v1 .jhs-kq-next-btn:hover {
-            background-color: #0369a1 !important;
-        }
-        
-        /* --- 結果畫面 --- */
-        #jhs-kanji-quiz-v1 .jhs-kq-score-display {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1f2937;
+            box-sizing: border-box;
             text-align: center;
         }
-         #jhs-kanji-quiz-v1 .jhs-kq-score-display .score {
-             font-size: 3rem;
-             font-weight: 700;
-             color: #059669; /* Green score */
-             display: block;
-             margin: 0.5rem 0;
-         }
-         #jhs-kanji-quiz-v1 .jhs-kq-controls-box {
+        .season-btn:hover, .toggle-btn:hover, .const-btn:hover { background-color: #4b5563; }
+        .season-btn.active {
+            background-color: #f39c12;
+            color: #111827;
+            border-color: #f39c12;
+            font-weight: bold;
+        }
+        .const-btn.active {
+            background-color: #60a5fa;
+            color: #ffffff;
+            border-color: #60a5fa;
+        }
+
+        #constellation-list {
+            margin-top: 15px;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            max-width: 300px;
-            margin: 2rem auto 0 auto;
-         }
-         #jhs-kanji-quiz-v1 .jhs-kq-controls-box .jhs-kq-main-btn {
-             margin-top: 0 !important;
-             background-color: #059669 !important; /* Green */
-         }
-          #jhs-kanji-quiz-v1 .jhs-kq-controls-box .jhs-kq-main-btn:hover {
-             background-color: #047857 !important;
-         }
-         #jhs-kanji-quiz-v1 .jhs-kq-controls-box .jhs-kq-secondary-btn {
-             background-color: #ffffff !important;
-             color: #374151 !important;
-             border: 1px solid #d1d5db !important;
-         }
-         #jhs-kanji-quiz-v1 .jhs-kq-controls-box .jhs-kq-secondary-btn:hover {
-             background-color: #f9fafb !important;
-         }
-         
-         /* --- 響應式 --- */
-         @media (max-width: 600px) {
-             #jhs-kanji-quiz-v1 {
-                 padding: 1.5rem !important;
-                 margin: 1rem auto !important;
-             }
-             #jhs-kanji-quiz-v1 h2 {
-                  font-size: 1.75rem !important;
-             }
-             #jhs-kanji-quiz-v1 .jhs-kq-question-display {
-                  font-size: 3.5rem !important;
-             }
-         }
-         @media (max-width: 480px) {
-             #jhs-kanji-quiz-v1 .jhs-kq-options-grid {
-                  grid-template-columns: 1fr !important; /* 單欄 */
-             }
-             #jhs-kanji-quiz-v1 .jhs-kq-level-grid {
-                  grid-template-columns: 1fr !important; /* 中學生只有3個選項，單欄更合適 */
-             }
-         }
+            gap: 8px;
+            max-height: 220px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
     </style>
+</head>
+<body>
 
-    <div class="jhs-kq-card">
-        
-        <div id="jhs-kq-screen-start" class="jhs-kq-screen active">
-            <h2>中学生漢字クイズ</h2>
-            <p class="jhs-kq-subtitle">挑戦する学年を選んでください。</p>
-            <div id="jhs-kq-level-grid" class="jhs-kq-level-grid">
-                </div>
+    <div id="controls-panel">
+        <h2>季節星空圖</h2>
+        <div id="season-buttons">
+            <button class="season-btn active" data-season="spring">春季</button>
+            <button class="season-btn" data-season="summer">夏季</button>
+            <button class="season-btn" data-season="autumn">秋季</button>
+            <button class="season-btn" data-season="winter">冬季</button>
         </div>
-
-        <div id="jhs-kq-screen-quiz" class="jhs-kq-screen">
-            <div class="jhs-kq-header">
-                 <span id="jhs-kq-question-counter" class="jhs-kq-counter"></span>
-                 <span id="jhs-kq-score-counter" class="jhs-kq-counter"></span>
-            </div>
-            <div id="jhs-kq-question-display" class="jhs-kq-question-display"></div>
-            <div id="jhs-kq-options-grid" class="jhs-kq-options-grid"></div>
-            
-            <button id="jhs-kq-next-btn" class="jhs-kq-main-btn jhs-kq-next-btn">次の問題へ</button>
-            <div id="jhs-kq-feedback-box" class="jhs-kq-feedback-box">
-                 <h3 id="jhs-kq-feedback-text" class="jhs-kq-feedback-text"></h3>
-                 <div id="jhs-kq-answer-reveal" class="jhs-kq-answer-reveal"></div>
-            </div>
-        </div>
-
-        <div id="jhs-kq-screen-end" class="jhs-kq-screen">
-            <h3>お疲れ様でした！</h3>
-            <div class="jhs-kq-score-display">
-                あなたのスコア:
-                <span id="jhs-kq-final-score" class="score">10問中 0問</span>
-                正解
-            </div>
-            <div id="jhs-kq-controls-box" class="jhs-kq-controls-box">
-                <button id="jhs-kq-restart-btn" class="jhs-kq-main-btn">もう一度挑戦する</button>
-                <button id="jhs-kq-menu-btn" class="jhs-kq-main-btn jhs-kq-secondary-btn">学年選択に戻る</button>
-            </div>
-        </div>
+        <h3 id="constellation-list-title">春季星座</h3>
+        <div id="constellation-list"></div>
+        <button class="toggle-btn" id="toggle-labels-btn" style="margin-top: 15px;">隱藏星座名稱</button>
     </div>
-</div>
 
-<script>
-// 規範 1.3 & 1.6：使用 DOMContentLoaded 和 IIFE
-document.addEventListener('DOMContentLoaded', function() {
-    (function() {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
 
-        /**
-         * JhsKanjiQuiz (中学生漢字クイズ)
-         * 重新撰寫的物件導向結構
-         */
-        const JhsKanjiQuiz = {
-            // --- 1. 數據庫 (每個年級 20 題) ---
-            quizData: {
-                'g7': { // 中學1年生
-                    name: '中学1年生<small>(全 317 字)</small>',
-                    data: [
-                        {q:'瞬',a:'しゅん'}, {q:'雰',a:'ふん'}, {q:'扱',a:'あつかう'}, {q:'諮',a:'はかる'}, {q:'択',a:'えらぶ'}, 
-                        {q:'屈',a:'くつ'}, {q:'郊',a:'こう'}, {q:'析',a:'せき'}, {q:'徴',a:'ちょう'}, {q:'聴',a:'きく'}, 
-                        {q:'脅',a:'おびやかす'}, {q:'肝',a:'きも'}, {q:'謙',a:'けん'}, {q:'召',a:'めす'}, {q:'伺',a:'うかがう'}, 
-                        {q:'暫',a:'ざん'}, {q:'宜',a:'ぎ'}, {q:'徹',a:'てつ'}, {q:'頻',a:'ひん'}, {q:'衷',a:'ちゅう'}
-                    ]
+    <script>
+        window.onload = function() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+            camera.position.set(0, 0, 350);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.maxDistance = 800;
+            controls.minDistance = 50;
+
+            const starfield = createStarfield();
+            scene.add(starfield);
+
+            // 擴充後的星座數據庫
+            const constellationsData = {
+                spring: { 
+                    'Ursa Major': { name_ch: '大熊', stars: [[-30,80,0], [-10,75,5], [10,85,10], [25,78,8], [45,88,3], [60,80,-5], [80,70,-10]], lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]] }, 
+                    'Leo': { name_ch: '獅子', stars: [[-50,-10,20], [-40,-25,15], [-20,-30,10], [0,-20,5], [15,-25,8], [20,-40,12]], lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[3,0]] }, 
+                    'Boötes': { name_ch: '牧夫', stars: [[100,50,30], [80,30,25], [90,10,20], [110,10,22], [120,30,28]], lines: [[0,1],[1,2],[2,3],[3,4],[4,1]] }, 
+                    'Virgo': { name_ch: '室女', stars: [[-10,-80,-20], [10,-90,-25], [30,-85,-22], [20,-65,-15], [0,-50,-10]], lines: [[0,1],[1,2],[2,3],[3,4],[4,0]] },
+                    'Cancer': { name_ch: '巨蟹', stars: [[-80,-5,5], [-70,10,8], [-90,10,12], [-80,25,10]], lines: [[0,1],[1,2],[2,3],[3,0]] },
+                    'Hydra': { name_ch: '長蛇', stars: [[-100,-40,-10], [-80,-50,-5], [-60,-45,0], [-40,-55,5]], lines: [[0,1],[1,2],[2,3]] }
                 },
-                'g8': { // 中學2年生
-                    name: '中学2年生<small>(全 399 字)</small>',
-                    data: [
-                        {q:'劾',a:'がい'}, {q:'斎',a:'さい'}, {q:'粛',a:'しゅく'}, {q:'彰',a:'しょう'}, {q:'庸',a:'よう'}, 
-                        {q:'罷',a:'ひ'}, {q:'摯',a:'し'}, {q:'隙',a:'すき'}, {q:'稚',a:'ち'}, {q:'辱',a:'はずかしめる'}, 
-                        {q:'蜜',a:'みつ'}, {q:'嚇',a:'かく'}, {q:'寡',a:'か'}, {q:'矯',a:'ためる'}, {q:'堪',a:'たえる'},
-                        {q:'煎',a:'せんじる'}, {q:'諾',a:'だく'}, {q:'轄',a:'かつ'}, {q:'且',a:'かつ'}, {q:'悼',a:'いたむ'}
-                    ]
+                summer: { 
+                    'Scorpius': { name_ch: '天蠍', stars: [[-70,-60,0], [-50,-55,5], [-40,-65,10], [-30,-50,8], [0,-45,-5], [20,-55,-10], [30,-70,-15]], lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]] }, 
+                    'Cygnus': { name_ch: '天鵝', stars: [[0,80,30], [10,60,25], [-10,60,25], [0,50,20], [40,70,35], [-40,70,35]], lines: [[0,3],[1,3],[2,3],[0,4],[0,5]] }, 
+                    'Lyra': { name_ch: '天琴', stars: [[-50,85,10], [-45,75,8], [-55,75,12], [-50,65,5]], lines: [[0,1],[0,2],[1,3],[2,3]] }, 
+                    'Sagittarius': { name_ch: '人馬', stars: [[-120,-80,10], [-100,-70,5], [-90,-90,15], [-70,-85,8], [-80,-60,0]], lines: [[0,1],[1,2],[2,3],[3,4],[4,1]] },
+                    'Aquila': { name_ch: '天鷹', stars: [[-80,-20,15], [-70,0,10], [-90,0,20]], lines: [[0,1],[0,2]] },
+                    'Hercules': { name_ch: '武仙', stars: [[-10,30,50], [10,30,50], [10,10,45], [-10,10,45]], lines: [[0,1],[1,2],[2,3],[3,0]] }
                 },
-                'g9': { // 中學3年生
-                    name: '中学3年生<small>(全 394 字)</small>',
-                    data: [
-                        {q:'藍',a:'あい'}, {q:'鬱',a:'うつ'}, {q:'彙',a:'い'}, {q:'岐',a:'き'}, {q:'睦',a:'むつ'}, 
-                        {q:'宛',a:'あてる'}, {q:'籠',a:'かご'}, {q:'麓',a:'ふもと'}, {q:'襲',a:'おそう'}, {q:'猶',a:'なお'}, 
-                        {q:'諧',a:'かい'}, {q:'璽',a:'じ'}, {q:'箋',a:'せん'}, {q:'挫',a:'ざ'}, {q:'僅',a:'わずか'},
-                        {q:'謄',a:'とう'}, {q:'楷',a:'かい'}, {q:'遡',a:'さかのぼる'}, {q:'遜',a:'へりくだる'}, {q:'謎',a:'なぞ'}
-                    ]
+                autumn: { 
+                    'Pegasus': { name_ch: '飛馬', stars: [[-40,30,0], [40,30,0], [40,-30,0], [-40,-30,0], [-60,10,-10]], lines: [[0,1],[1,2],[2,3],[3,0],[0,4]] }, 
+                    'Cassiopeia': { name_ch: '仙后', stars: [[-30,80,40], [-10,70,35], [0,85,30], [20,70,35], [40,80,40]], lines: [[0,1],[1,2],[2,3],[3,4]] }, 
+                    'Andromeda': { name_ch: '仙女', stars: [[-40,30,0], [-70,45,-10], [-90,60,-20]], lines: [[0,1],[1,2]] }, 
+                    'Pisces': { name_ch: '雙魚', stars: [[100,-10,-30],[80,-20,-35],[110,-30,-40]], lines: [[0,1],[1,2]] },
+                    'Aquarius': { name_ch: '寶瓶', stars: [[50,-70,-20], [70,-80,-25], [60,-90,-30]], lines: [[0,1],[1,2]] },
+                    'Cetus': { name_ch: '鯨魚', stars: [[130,-50,-50], [110,-60,-45], [120,-75,-55]], lines: [[0,1],[1,2]] }
+                },
+                winter: { 
+                    'Orion': { name_ch: '獵戶', stars: [[-25,30,0], [25,-30,0], [-30,25,5], [30,-25,-5], [5,0,-2], [0,0,0], [-5,0,2]], lines: [ [0,2],[0,5],[2,6],[1,3],[1,5],[3,4],[4,5],[5,6] ] }, 
+                    'Taurus': { name_ch: '金牛', stars: [[-80,10,20], [-60,0,15], [-50,20,10], [-40,5,5], [-90,30,25]], lines: [[0,1],[1,2],[2,3],[2,0],[0,4]] }, 
+                    'Canis Major': { name_ch: '大犬', stars: [[0,-70,-40], [-10,-85,-45], [10,-85,-45]], lines: [[0,1],[0,2]] }, 
+                    'Gemini': { name_ch: '雙子', stars: [[-60,50,30], [-65,65,35], [-55,35,25], [-80,20,20]], lines: [[0,1],[0,2],[2,3]] },
+                    'Auriga': { name_ch: '御夫', stars: [[-20,70,60], [0,85,65], [20,70,60], [10,55,55], [-10,55,55]], lines: [[0,1],[1,2],[2,3],[3,4],[4,0]] },
+                    'Canis Minor': { name_ch: '小犬', stars: [[-20,-40,-30], [0,-45,-35]], lines: [[0,1]] }
                 }
-            },
+            };
 
-            // --- 2. 遊戲狀態 ---
-            state: {
-                currentGradeData: [],
-                currentQuestions: [],
-                score: 0,
-                currentQuestionIndex: 0,
-                currentGradeId: 'g7',
-                QUESTIONS_PER_GAME: 10
-            },
+            const constellationGroup = new THREE.Group();
+            scene.add(constellationGroup);
+            const fontLoader = new THREE.FontLoader();
+            let font, labelsVisible = true, currentSeason = 'spring';
 
-            // --- 3. DOM 元素 ---
-            elements: {},
+            fontLoader.load('https://storage.googleapis.com/gemini-web-app-assets/NotoSansTC_Regular.json', (loadedFont) => {
+                font = loadedFont;
+                updateConstellationList(currentSeason);
+            });
 
-            // --- 4. 初始化 ---
-            init: function() {
-                const app = document.getElementById('jhs-kanji-quiz-v1');
-                if (!app) {
-                    console.error("JHS-KQ V1: 頂層容器 #jhs-kanji-quiz-v1 未找到。");
-                    return;
+            function createStarfield() {
+                const vertices = [];
+                for (let i = 0; i < 20000; i++) {
+                    const x = (Math.random() - 0.5) * 2000;
+                    const y = (Math.random() - 0.5) * 2000;
+                    const z = (Math.random() - 0.5) * 2000;
+                    vertices.push(x, y, z);
                 }
-
-                // 綁定所有需要的 DOM 元素
-                this.elements = {
-                    app: app,
-                    screens: {
-                        start: app.querySelector('#jhs-kq-screen-start'),
-                        quiz: app.querySelector('#jhs-kq-screen-quiz'),
-                        end: app.querySelector('#jhs-kq-screen-end')
-                    },
-                    levelGrid: app.querySelector('#jhs-kq-level-grid'),
-                    questionCounter: app.querySelector('#jhs-kq-question-counter'),
-                    scoreCounter: app.querySelector('#jhs-kq-score-counter'),
-                    questionDisplay: app.querySelector('#jhs-kq-question-display'),
-                    optionsGrid: app.querySelector('#jhs-kq-options-grid'),
-                    nextBtn: app.querySelector('#jhs-kq-next-btn'),
-                    feedbackBox: app.querySelector('#jhs-kq-feedback-box'),
-                    feedbackText: app.querySelector('#jhs-kq-feedback-text'),
-                    answerReveal: app.querySelector('#jhs-kq-answer-reveal'),
-                    finalScore: app.querySelector('#jhs-kq-final-score'),
-                    restartBtn: app.querySelector('#jhs-kq-restart-btn'),
-                    menuBtn: app.querySelector('#jhs-kq-menu-btn')
-                };
-
-                // 檢查關鍵元素是否都存在
-                if (!this.elements.levelGrid || !this.elements.screens.quiz || !this.elements.questionDisplay) {
-                     console.error("JHS-KQ V1: 核心 UI 元素缺失，無法啟動。");
-                     app.innerHTML = '<p style="color: red; text-align: center;">エラー: UIコンポーネントの読み込みに失敗しました。</p>';
-                     return;
-                }
-
-                this.bindEvents();
-                this.populateGradeButtons();
-            },
-
-            // --- 5. 事件綁定 ---
-            bindEvents: function() {
-                this.elements.levelGrid.addEventListener('click', (e) => {
-                    const levelBtn = e.target.closest('.jhs-kq-level-btn');
-                    if (levelBtn && levelBtn.dataset.grade) {
-                        this.startGame(levelBtn.dataset.grade);
-                    }
-                });
-
-                this.elements.optionsGrid.addEventListener('click', (e) => {
-                    const optionBtn = e.target.closest('.jhs-kq-option-btn');
-                    if (optionBtn && !optionBtn.disabled) {
-                        this.checkAnswer(optionBtn);
-                    }
-                });
-
-                this.elements.nextBtn.addEventListener('click', () => this.nextQuestion());
-                this.elements.restartBtn.addEventListener('click', () => this.startGame(this.state.currentGradeId));
-                this.elements.menuBtn.addEventListener('click', () => this.showScreen('start'));
-            },
-
-            // --- 6. 核心功能 ---
-
-            // 顯示畫面
-            showScreen: function(screenName) {
-                for (let key in this.elements.screens) {
-                    this.elements.screens[key].classList.remove('active');
-                }
-                if (this.elements.screens[screenName]) {
-                    this.elements.screens[screenName].classList.add('active');
-                }
-            },
-
-            // 生成學年按鈕
-            populateGradeButtons: function() {
-                this.elements.levelGrid.innerHTML = '';
-                for (const [gradeId, gradeInfo] of Object.entries(this.quizData)) {
-                    const btn = document.createElement('button');
-                    btn.className = 'jhs-kq-level-btn';
-                    btn.dataset.grade = gradeId;
-                    btn.innerHTML = gradeInfo.name; // 包含 <small> 標籤
-                    this.elements.levelGrid.appendChild(btn);
-                }
-            },
-
-            // 洗牌函數
-            shuffleArray: function(array) {
-                let currentIndex = array.length, randomIndex;
-                while (currentIndex > 0) {
-                    randomIndex = Math.floor(Math.random() * currentIndex);
-                    currentIndex--;
-                    [array[currentIndex], array[randomIndex]] = [
-                        array[randomIndex], array[currentIndex]];
-                }
-                return array;
-            },
-
-            // 開始遊戲
-            startGame: function(gradeId) {
-                if (!this.quizData[gradeId]) {
-                    console.error(`JHS-KQ V1: 找不到 ${gradeId} 的數據。`);
-                    return;
-                }
-
-                // 重置狀態
-                this.state.currentGradeId = gradeId;
-                this.state.currentGradeData = this.quizData[gradeId].data;
-                this.state.score = 0;
-                this.state.currentQuestionIndex = 0;
-
-                // 準備 10 個問題 (從 20 題中隨機抽取)
-                this.state.currentQuestions = this.shuffleArray([...this.state.currentGradeData]).slice(0, this.state.QUESTIONS_PER_GAME);
-                
-                this.showScreen('quiz');
-                this.displayQuestion();
-            },
-
-            // 顯示問題
-            displayQuestion: function() {
-                // 隱藏反饋
-                this.elements.feedbackBox.style.display = 'none';
-                this.elements.nextBtn.style.display = 'none';
-                
-                const q = this.state.currentQuestions[this.state.currentQuestionIndex];
-                
-                // 更新計數器
-                this.elements.questionCounter.textContent = `問題 ${this.state.currentQuestionIndex + 1} / ${this.state.QUESTIONS_PER_GAME}`;
-                this.elements.scoreCounter.textContent = `スコア: ${this.state.score}`;
-                
-                // 顯示漢字
-                this.elements.questionDisplay.textContent = q.q;
-                
-                // 準備選項
-                const correctAnswer = q.a;
-                let fakes = [];
-                
-                // 從當前年級的 20 題中隨機抽取 3 個錯誤答案
-                const fakePool = this.state.currentGradeData.filter(item => item.a !== correctAnswer);
-                this.shuffleArray(fakePool);
-                fakes = fakePool.slice(0, 3).map(item => item.a);
-
-                const options = this.shuffleArray([correctAnswer, ...fakes]);
-
-                // 渲染選項按鈕
-                this.elements.optionsGrid.innerHTML = '';
-                options.forEach(optionText => {
-                    const btn = document.createElement('button');
-                    btn.className = 'jhs-kq-option-btn';
-                    btn.textContent = optionText;
-                    btn.dataset.answer = optionText;
-                    this.elements.optionsGrid.appendChild(btn);
-                });
-            },
-
-            // 檢查答案
-            checkAnswer: function(selectedBtn) {
-                // 禁用所有按鈕
-                this.elements.optionsGrid.querySelectorAll('.jhs-kq-option-btn').forEach(btn => {
-                    btn.disabled = true;
-                });
-
-                const selectedAnswer = selectedBtn.dataset.answer;
-                const q = this.state.currentQuestions[this.state.currentQuestionIndex];
-                const correctAnswer = q.a;
-
-                // 顯示答案
-                this.elements.answerReveal.textContent = `正解： ${q.q} ( ${q.a} )`;
-                this.elements.feedbackBox.style.display = 'block';
-
-                if (selectedAnswer === correctAnswer) {
-                    this.state.score++;
-                    selectedBtn.classList.add('correct');
-                    this.elements.feedbackText.textContent = '正解！';
-                    this.elements.feedbackText.className = 'jhs-kq-feedback-text correct';
-                } else {
-                    selectedBtn.classList.add('wrong');
-                    // 標記正確答案
-                    const correctBtn = this.elements.optionsGrid.querySelector(`[data-answer="${correctAnswer}"]`);
-                    if (correctBtn) {
-                        correctBtn.classList.add('correct');
-                    }
-                    this.elements.feedbackText.textContent = '不正解...';
-                    this.elements.feedbackText.className = 'jhs-kq-feedback-text wrong';
-                }
-
-                // 更新分數顯示
-                this.elements.scoreCounter.textContent = `スコア: ${this.state.score}`;
-
-                // 顯示 "下一題" 或 "看結果" 按鈕
-                if (this.state.currentQuestionIndex < this.state.QUESTIONS_PER_GAME - 1) {
-                    this.elements.nextBtn.textContent = '次の問題へ';
-                } else {
-                    this.elements.nextBtn.textContent = '結果を見る';
-                }
-                this.elements.nextBtn.style.display = 'block';
-            },
-
-            // 下一題
-            nextQuestion: function() {
-                this.state.currentQuestionIndex++;
-                if (this.state.currentQuestionIndex < this.state.QUESTIONS_PER_GAME) {
-                    this.displayQuestion();
-                } else {
-                    this.showEndScreen();
-                }
-            },
-
-            // 顯示最終結果
-            showEndScreen: function() {
-                this.elements.finalScore.textContent = `${this.state.QUESTIONS_PER_GAME}問中 ${this.state.score}問`;
-                this.showScreen('end');
+                const geometry = new THREE.BufferGeometry();
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+                return new THREE.Points(geometry, new THREE.PointsMaterial({ color: 0xffffff, size: 0.7 }));
             }
+            
+            function createTextLabel(text, position) {
+                if (!font) return null;
+                const textGeometry = new THREE.TextGeometry(text, { font: font, size: 6, height: 0.5 });
+                const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+                textMesh.position.copy(position).add(new THREE.Vector3(8, 8, 0));
+                return textMesh;
+            }
+
+            function highlightConstellation(constName, seasonKey) {
+                while (constellationGroup.children.length) constellationGroup.remove(constellationGroup.children[0]);
+                
+                const constellationsToDraw = (constName === 'all') ? constellationsData[seasonKey] : { [constName]: constellationsData[seasonKey][constName] };
+
+                const starMaterial = new THREE.MeshBasicMaterial({ color: 0xfff000 });
+                const lineMaterial = new THREE.LineBasicMaterial({ color: 0x60a5fa, linewidth: 2 });
+                
+                for (const name in constellationsToDraw) {
+                    const data = constellationsToDraw[name];
+                    data.stars.forEach(posArray => {
+                        const starMesh = new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 16), starMaterial);
+                        starMesh.position.set(...posArray);
+                        constellationGroup.add(starMesh);
+                    });
+                    data.lines.forEach(linePair => {
+                        const points = [ new THREE.Vector3(...data.stars[linePair[0]]), new THREE.Vector3(...data.stars[linePair[1]]) ];
+                        const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), lineMaterial);
+                        constellationGroup.add(line);
+                    });
+                    const center = data.stars.reduce((acc, s) => acc.add(new THREE.Vector3(...s)), new THREE.Vector3()).divideScalar(data.stars.length);
+                    const label = createTextLabel(`${name} (${data.name_ch})`, center);
+                    if (label) {
+                        label.visible = labelsVisible;
+                        constellationGroup.add(label);
+                    }
+                }
+            }
+
+            function updateConstellationList(seasonKey) {
+                currentSeason = seasonKey;
+                const listContainer = document.getElementById('constellation-list');
+                const title = document.getElementById('constellation-list-title');
+                listContainer.innerHTML = '';
+                const seasonData = constellationsData[seasonKey];
+                title.textContent = `${document.querySelector(`.season-btn[data-season="${seasonKey}"]`).textContent} 星座`;
+                
+                const allBtn = document.createElement('button');
+                allBtn.className = 'const-btn active';
+                allBtn.textContent = '顯示全部';
+                allBtn.dataset.key = 'all';
+                listContainer.appendChild(allBtn);
+
+                for (const constName in seasonData) {
+                    const button = document.createElement('button');
+                    button.className = 'const-btn';
+                    button.textContent = `${constName} (${seasonData[constName].name_ch})`;
+                    button.dataset.key = constName;
+                    listContainer.appendChild(button);
+                }
+                highlightConstellation('all', seasonKey);
+            }
+            
+            document.getElementById('season-buttons').addEventListener('click', function(e) {
+                if (e.target.classList.contains('season-btn')) {
+                    document.querySelectorAll('.season-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    updateConstellationList(e.target.dataset.season);
+                }
+            });
+
+            document.getElementById('constellation-list').addEventListener('click', function(e) {
+                if (e.target.classList.contains('const-btn')) {
+                    document.querySelectorAll('#constellation-list .const-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    highlightConstellation(e.target.dataset.key, currentSeason);
+                }
+            });
+
+            document.getElementById('toggle-labels-btn').addEventListener('click', function() {
+                labelsVisible = !labelsVisible;
+                constellationGroup.children.forEach(child => {
+                    if (child.geometry instanceof THREE.TextGeometry) child.visible = labelsVisible;
+                });
+                this.textContent = labelsVisible ? '隱藏星座名稱' : '顯示星座名稱';
+            });
+            
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            
+            fontLoader.load('https://storage.googleapis.com/gemini-web-app-assets/NotoSansTC_Regular.json', (loadedFont) => {
+                font = loadedFont;
+                updateConstellationList('spring');
+            });
+            animate();
         };
-
-        // 嚴格遵守規範：在 DOMContentLoaded 後立即初始化
-        JhsKanjiQuiz.init();
-
-    })(); // 結束 IIFE
-}); // 結束 DOMContentLoaded
-</script>
+    </script>
+</body>
+</html>
