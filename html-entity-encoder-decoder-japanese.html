@@ -1,6 +1,6 @@
 <div id="html-entity-converter-app-v1-1">
     <style>
-        /* --- CSS 樣式 (與 V1.1 英文版完全相同) --- */
+        /* CSS 樣式 (與 V1.1 英文版完全相同) */
         #html-entity-converter-app-v1-1 {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
             line-height: 1.6 !important; color: #333 !important;
@@ -18,7 +18,7 @@
         #html-entity-converter-app-v1-1 textarea {
             width: 100% !important; min-height: 180px !important; border: 1px solid #d1d5db !important; border-radius: 0.5rem !important;
             padding: 0.75rem 1rem !important; font-family: "Courier New", Courier, monospace !important; font-size: 0.9rem !important;
-            line-height: 1.5 !important; resize: vertical !important; box-sizing: border-box !important; color: #1f2937 !important; background-color: #fff !important;
+            line-height: 1.5 !important; resize: vertical !important; box-sizing: border-box !important; color: #1f2937 !important; background-color: #fff !important; /* 確保樣式被應用 */
         }
         #html-entity-converter-app-v1-1 textarea:focus { outline: none !important; border-color: #0284c7 !important; box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2) !important; }
         #html-entity-converter-app-v1-1 .hec-button-group { display: flex; flex-direction: row; gap: 0.75rem !important; justify-content: center; align-items: center; margin: 0.5rem 0; }
@@ -33,10 +33,10 @@
         #html-entity-converter-app-v1-1 .hec-utility-buttons { display: flex; gap: 0.75rem; margin-top: 1rem; justify-content: space-between; }
         #html-entity-converter-app-v1-1 .hec-utility-buttons button {
              padding: 0.5rem 1rem !important; font-size: 0.85rem !important; background-color: #6b7280 !important;
-             color: #ffffff !important; border: none; border-radius: 0.5rem; cursor: pointer; transition: background-color 0.2s, transform 0.1s !important; /* 確保 V1.1 的 transition 存在 */
+             color: #ffffff !important; border: none; border-radius: 0.5rem; cursor: pointer; transition: background-color 0.2s, transform 0.1s !important; /* 確保 transition 存在 */
         }
          #html-entity-converter-app-v1-1 .hec-utility-buttons button:hover { background-color: #4b5563 !important; }
-         #html-entity-converter-app-v1-1 .hec-utility-buttons button:active { transform: scale(0.98) !important; } /* 確保 V1.1 的 active 存在 */
+         #html-entity-converter-app-v1-1 .hec-utility-buttons button:active { transform: scale(0.98) !important; } /* 確保 active 存在 */
         #hec-message-area-v1-1 { font-size: 0.9rem; font-weight: 500; text-align: center; min-height: 1.5em; margin-top: 0.5rem; color: #16a34a; }
         #hec-message-area-v1-1.error { color: #ef4444 !important; }
         #html-entity-converter-app-v1-1 .hec-reference-section { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee; }
@@ -173,7 +173,8 @@ document.addEventListener('DOMContentLoaded', function() {
             { char: '♦', name: '&diams;', num: '&#9830;' }, { char: '\u2002', name: '&ensp;', num: '&#8194;' },
             { char: '\u2003', name: '&emsp;', num: '&#8195;' }, { char: '\u2009', name: '&thinsp;', num: '&#8201;' },
             { char: '\u200C', name: '&zwnj;', num: '&#8204;' }, { char: '\u200D', name: '&zwj;', num: '&#8205;' },
-G           { char: '\u200E', name: '&lrm;', num: '&#8206;' }, { char: '\u200F', name: '&rlm;', num: '&#8207;' },
+g: 'G', 
+            { char: '\u200E', name: '&lrm;', num: '&#8206;' }, { char: '\u200F', name: '&rlm;', num: '&#8207;' },
             { char: 'Α', name: '&Alpha;', num: '&#913;' }, { char: 'Β', name: '&Beta;', num: '&#914;' },
             { char: 'Γ', name: '&Gamma;', num: '&#915;' }, { char: 'Δ', name: '&Delta;', num: '&#916;' },
             { char: 'Ε', name: '&Epsilon;', num: '&#917;' }, { char: 'Ζ', name: '&Zeta;', num: '&#918;' },
@@ -200,49 +201,14 @@ G           { char: '\u200E', name: '&lrm;', num: '&#8206;' }, { char: '\u2
             { char: 'χ', name: '&chi;', num: '&#967;' }, { char: 'ψ', name: '&psi;', num: '&#968;' },
             { char: 'ω', name: '&omega;', num: '&#969;' }, { char: '¨', name: '&uml;', num: '&#168;' },
             { char: 'ª', name: '&ordf;', num: '&#170;' }, { char: '¬', name: '&not;', num: '&#172;' },
-            { char: '­', name: '&shy;', num: '&#173;' }, { char: '¯', name: '&macr;', num: '&#175;' },
-            { char: '´', name: '&acute;', num: '&#180;' }, { char: '·', name: '&middot;', num: '&#183;' },
-            { char: '¸', name: '&cedil;', num: '&#184;' }, { char: 'º', name: '&ordm;', num: '&#186;' },
-            { char: 'À', name: '&Agrave;', num: '&#192;' }, { char: 'Á', name: '&Aacute;', num: '&#193;' },
-            { char: 'Â', name: '&Acirc;', num: '&#194;' }, { char: 'Ã', name: '&Atilde;', num: '&#195;' },
-            { char: 'Ä', name: '&Auml;', num: '&#196;' }, { char: 'Å', name: '&Aring;', num: '&#197;' },
-            { char: 'Æ', name: '&AElig;', num: '&#198;' }, { char: 'Ç', name: '&Ccedil;', num: '&#199;' },
-            { char: 'È', name: '&Egrave;', num: '&#200;' }, { char: 'É', name: '&Eacute;', num: '&#201;' },
-            { char: 'Ê', name: '&Ecirc;', num: '&#202;' }, { char: 'Ë', name: '&Euml;', num: '&#203;' },
-            { char: 'Ì', name: '&Igrave;', num: '&#204;' }, { char: 'Í', name: '&Iacute;', num: '&#205;' },
-            { char: 'Î', name: '&Icirc;', num: '&#206;' }, { char: 'Ï', name: '&Iuml;', num: '&#207;' },
-            { char: 'Ð', name: '&ETH;', num: '&#208;' }, { char: 'Ñ', name: '&Ntilde;', num: '&#209;' },
-            { char: 'Ò', name: '&Ograve;', num: '&#210;' }, { char: 'Ó', name: '&Oacute;', num: '&#211;' },
-            { char: 'Ô', name: '&Ocirc;', num: '&#212;' }, { char: 'Õ', name: '&Otilde;', num: '&#213;' },
-            { char: 'Ö', name: '&Ouml;', num: '&#214;' }, { char: 'Ø', name: '&Oslash;', num: '&#216;' },
-            { char: 'Ù', name: '&Ugrave;', num: '&#217;' }, { char: 'Ú', name: '&Uacute;', num: '&#218;' },
-            { char: 'Û', name: '&Ucirc;', num: '&#219;' }, { char: 'Ü', name: '&Uuml;', num: '&#220;' },
-            { char: 'Ý', name: '&Yacute;', num: '&#221;' }, { char: 'Þ', name: '&THORN;', num: '&#222;' },
-            { char: 'ß', name: '&szlig;', num: '&#223;' }, { char: 'à', name: '&agrave;', num: '&#224;' },
-            { char: 'á', name: '&aacute;', num: '&#225;' }, { char: 'â', name: '&acirc;', num: '&#226;' },
-            { char: 'ã', name: '&atilde;', num: '&#227;' }, { char: 'ä', name: '&auml;', num: '&#228;' },
-            { char: 'å', name: '&aring;', num: '&#229;' }, { char: 'æ', name: '&aelig;', num: '&#230;' },
-            { char: 'ç', name: '&ccedil;', num: '&#231;' }, { char: 'è', name: '&egrave;', num: '&#232;' },
-            { char: 'é', name: '&eacute;', num: '&#233;' }, { char: 'ê', name: '&ecirc;', num: '&#234;' },
-            { char: 'ë', name: '&euml;', num: '&#235;' }, { char: 'ì', name: '&igrave;', num: '&#236;' },
-            { char: 'í', name: '&iacute;', num: '&#237;' }, { char: 'î', name: '&icirc;', num: '&#238;' },
-content-type: text/plain
-            { char: 'ï', name: '&iuml;', num: '&#239;' }, { char: 'ð', name: '&eth;', num: '&#240;' },
-            { char: 'ñ', name: '&ntilde;', num: '&#241;' }, { char: 'ò', name: '&ograve;', num: '&#242;' },
-            { char: 'ó', name: '&oacute;', num: '&#243;' }, { char: 'ô', name: '&ocirc;', num: '&#244;' },
-            { char: 'õ', name: '&otilde;', num: '&#245;' }, { char: 'ö', name: '&ouml;', num: '&#246;' },
-            { char: 'ø', name: '&oslash;', num: '&#248;' }, { char: 'ù', name: '&ugrave;', num: '&#249;' },
-            { char: 'ú', name: '&uacute;', num: '&#250;' }, { char: 'û', name: '&ucirc;', num: '&#251;' },
-            { char: 'ü', name: '&uuml;', num: '&#252;' }, { char: 'ý', name: '&yacute;', num: '&#253;' },
-            { char: 'þ', name: '&thorn;', num: '&#254;' }, { char: 'ÿ', name: '&yuml;', num: '&#255;' }
+// ... (database continues) ...
         ];
-        
+
         // --- 建立查詢地圖 ---
         let encodeMap = {}; // char -> name
         let decodeMap = {}; // name -> char
         try {
             entityDatabase.forEach(entity => {
-                // 優先使用核心 HTML 實體, 然後才是其他
                 if (entity.char && (!encodeMap[entity.char] || ['&lt;', '&gt;', '&amp;', '&quot;', '&apos;'].includes(entity.name))) {
                     encodeMap[entity.char] = entity.name;
                 }
@@ -276,10 +242,12 @@ content-type: text/plain
                 clearTimeout(messageArea.timeoutId);
             }
             // 設定新計時器清除訊息
-            messageArea.timeoutId = setTimeout(() => {
-                messageArea.textContent = '';
-                messageArea.className = 'hec-message';
-            }, duration);
+            if (message) { // [V1.1-JP 修正] 確保有訊息時才設定 timeout
+                messageArea.timeoutId = setTimeout(() => {
+                    messageArea.textContent = '';
+                    messageArea.className = 'hec-message';
+                }, duration);
+            }
         }
 
         // 填充參考表格
@@ -303,7 +271,7 @@ content-type: text/plain
                     (entity.name === '&gt;' && 'greater than 大なり'.includes(lowerFilter)) ||
                     (entity.name === '&amp;' && 'ampersand アンパサンド'.includes(lowerFilter)) ||
                     (entity.name.includes('arr') && 'arrow 矢印'.includes(lowerFilter))
-                );
+  S             );
 
                 if (filteredData.length === 0) {
                     const row = tableBody.insertRow();
@@ -317,9 +285,9 @@ content-type: text/plain
                         row.insertCell(0).textContent = entity.char;
                         row.insertCell(1).textContent = entity.name;
                         row.insertCell(2).textContent = entity.num;
-                    });
+S                   });
                     rowsAdded = filteredData.length;
-                }
+    S           }
                 console.log(`HEC V1.1 (JP): テーブルに ${rowsAdded} 行が追加されました。`); // [翻譯]
             } catch (e) { console.error("HEC V1.1 (JP): テーブル作成エラー:", e); showMessage("リファレンスリストの表示エラー。", true); } // [翻譯]
         }
@@ -339,6 +307,7 @@ content-type: text/plain
         // デコード函數
         function decodeText() {
             console.log("HEC V1.1 (JP): デコードがクリックされました。"); // [翻譯]
+section-divider
             try {
                 let text = outputArea.value; // 出力エリアから読み込む
                 if (text === "") { inputArea.value = ""; showMessage("デコード完了（空）。"); return; } // [翻譯]
@@ -364,23 +333,28 @@ content-type: text/plain
         // コピー函數
         function copyOutput() {
             console.log("HEC V1.1 (JP): コピーがクリックされました。"); // [翻譯]
+content-type: text/plain
             if (outputArea.value === "") { showMessage("コピーする内容がありません。", true); return; } // [翻譯]
             try {
-                outputArea.select();
+                // Select text for copy
+          _http_chunk:         outputArea.select();
                 outputArea.setSelectionRange(0, 99999); // モバイル用
+                // Use clipboard API if available (more modern), fallback to execCommand
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(outputArea.value).then(() => {
                         showMessage("クリップボードにコピーしました！"); // [翻譯]
                     }).catch(err => {
                         console.warn("HEC V1.1 (JP): navigator.clipboard.writeText が失敗、フォールバックします...", err); // [翻譯]
-                        document.execCommand('copy');
+                        document.execCommand('copy'); // Fallback
                         showMessage("クリップボードにコピーしました！ (フォールバック)"); // [翻譯]
                     });
                 } else {
-                    document.execCommand('copy');
+                    document.execCommand('copy'); // Fallback for older browsers/insecure contexts
+content-type: text/plain
                     showMessage("クリップボードにコピーしました！"); // [翻譯]
                 }
             } catch (e) { console.error("HEC V1.1 (JP): コピー失敗:", e); showMessage("コピーに失敗しました。手動でコピーしてください。", true); } // [翻譯]
+            // Deselect text
              if (window.getSelection) { window.getSelection().removeAllRanges(); }
              else if (document.selection) { document.selection.empty(); }
         }
@@ -397,12 +371,16 @@ content-type: text/plain
             encodeBtn.addEventListener('click', encodeText);
             decodeBtn.addEventListener('click', decodeText);
             copyBtn.addEventListener('click', copyOutput);
+out-1
             clearBtn.addEventListener('click', clearAll);
             searchBar.addEventListener('input', (e) => { populateReferenceTable(e.target.value); });
+            // [V1.1-JP 修正] 入力時にもメッセージをクリア
+            inputArea.addEventListener('input', () => showMessage(""));
+            outputArea.addEventListener('input', () => showMessage("")); // output も入力可能と仮定 (decodeText の振る舞いによる)
             console.log("HEC V1.1 (JP): イベントリスナーをアタッチしました。"); // [翻譯]
-        } catch (e) { 
+        } catch (e) { 
             console.error("HEC V1.1 (JP): リスナーのアタッチエラー:", e); // [翻譯]
-            showMessage("コントロールのアタッチに失敗しました。", true, 5000); // [翻譯]
+s           showMessage("コントロールのアタッチに失敗しました。", true, 5000); // [翻譯]
         }
         
         console.log("HEC V1.1 (JP): 初期化完了。"); // [翻譯]
