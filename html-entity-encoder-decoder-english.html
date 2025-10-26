@@ -1,180 +1,52 @@
-<!-- HTML Entity Encoder/Decoder App V1 - Start -->
-<div id="html-entity-converter-app-v1">
+<div id="html-entity-converter-app-v1-1">
     <style>
-        #html-entity-converter-app-v1 {
+        /* CSS 樣式與 V1 相同, 只是更新了 ID */
+        #html-entity-converter-app-v1-1 {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
-            line-height: 1.6 !important;
-            color: #333 !important;
+            line-height: 1.6 !important; color: #333 !important;
         }
-        #html-entity-converter-app-v1 .hec-card {
-            background-color: #ffffff !important;
-            padding: 1.5rem 2rem !important;
-            border-radius: 0.75rem !important;
+        #html-entity-converter-app-v1-1 .hec-card {
+            background-color: #ffffff !important; padding: 1.5rem 2rem !important; border-radius: 0.75rem !important;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1) !important;
-            border: 1px solid #e5e7eb !important;
-            max-width: 700px; /* Wider card */
-            margin: 2rem auto !important;
+            border: 1px solid #e5e7eb !important; max-width: 700px; margin: 2rem auto !important;
         }
-        #html-entity-converter-app-v1 h2 {
-            color: #B45309 !important;
-            font-size: 1.75rem !important;
-            font-weight: 700 !important;
-            margin-top: 0 !important;
-            margin-bottom: 0.5rem !important;
-            text-align: center !important;
+        #html-entity-converter-app-v1-1 h2 { color: #B45309 !important; font-size: 1.75rem !important; font-weight: 700 !important; margin-top: 0 !important; margin-bottom: 0.5rem !important; text-align: center !important; }
+        #html-entity-converter-app-v1-1 .hec-subtitle { text-align: center !important; color: #4b5563 !important; margin-bottom: 2rem !important; }
+        #html-entity-converter-app-v1-1 .hec-converter-body { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: center; }
+         @media (min-width: 640px) { #html-entity-converter-app-v1-1 .hec-converter-body { grid-template-columns: 1fr auto 1fr; gap: 0.5rem; } }
+        #html-entity-converter-app-v1-1 .hec-textarea-group label { display: block !important; margin-bottom: 0.5rem !important; font-weight: 600 !important; color: #374151 !important; font-size: 0.9rem !important; }
+        #html-entity-converter-app-v1-1 textarea {
+            width: 100% !important; min-height: 180px !important; border: 1px solid #d1d5db !important; border-radius: 0.5rem !important;
+            padding: 0.75rem 1rem !important; font-family: "Courier New", Courier, monospace !important; font-size: 0.9rem !important;
+            line-height: 1.5 !important; resize: vertical !important; box-sizing: border-box !important;
         }
-        #html-entity-converter-app-v1 .hec-subtitle {
-            text-align: center !important;
-            color: #4b5563 !important;
-            margin-bottom: 2rem !important;
+        #html-entity-converter-app-v1-1 textarea:focus { outline: none !important; border-color: #0284c7 !important; box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2) !important; }
+        #html-entity-converter-app-v1-1 .hec-button-group { display: flex; flex-direction: row; gap: 0.75rem !important; justify-content: center; align-items: center; margin: 0.5rem 0; }
+         @media (min-width: 640px) { #html-entity-converter-app-v1-1 .hec-button-group { flex-direction: column; } }
+        #html-entity-converter-app-v1-1 .hec-button-group button {
+            padding: 0.6rem 1rem !important; border-radius: 0.5rem !important; font-size: 0.9rem !important; font-weight: 600 !important;
+            border: none !important; cursor: pointer !important; transition: background-color 0.2s, transform 0.1s !important;
+            background-color: #0284c7 !important; color: #ffffff !important; min-width: 110px;
         }
-        #html-entity-converter-app-v1 .hec-converter-body {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
-            align-items: center;
+        #html-entity-converter-app-v1-1 .hec-button-group button:hover { background-color: #0369a1 !important; }
+        #html-entity-converter-app-v1-1 .hec-button-group button:active { transform: scale(0.98) !important; }
+        #html-entity-converter-app-v1-1 .hec-utility-buttons { display: flex; gap: 0.75rem; margin-top: 1rem; justify-content: space-between; }
+        #html-entity-converter-app-v1-1 .hec-utility-buttons button {
+             padding: 0.5rem 1rem !important; font-size: 0.85rem !important; background-color: #6b7280 !important;
+             color: #ffffff !important; border: none; border-radius: 0.5rem; cursor: pointer;
         }
-         @media (min-width: 640px) {
-             #html-entity-converter-app-v1 .hec-converter-body {
-                 /* 2 columns for textareas, 1 for buttons */
-                 grid-template-columns: 1fr auto 1fr; 
-                 gap: 0.5rem;
-             }
-         }
-        
-        #html-entity-converter-app-v1 .hec-textarea-group label {
-            display: block !important;
-            margin-bottom: 0.5rem !important;
-            font-weight: 600 !important;
-            color: #374151 !important;
-            font-size: 0.9rem !important;
-        }
-        #html-entity-converter-app-v1 textarea {
-            width: 100% !important;
-            min-height: 180px !important;
-            border: 1px solid #d1d5db !important;
-            border-radius: 0.5rem !important;
-            padding: 0.75rem 1rem !important;
-            font-family: "Courier New", Courier, monospace !important;
-            font-size: 0.9rem !important;
-            line-height: 1.5 !important;
-            resize: vertical !important;
-            box-sizing: border-box !important;
-        }
-        #html-entity-converter-app-v1 textarea:focus {
-            outline: none !important;
-            border-color: #0284c7 !important;
-            box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2) !important;
-        }
-
-        #html-entity-converter-app-v1 .hec-button-group {
-            display: flex;
-            flex-direction: row;
-            gap: 0.75rem !important;
-            justify-content: center;
-            align-items: center;
-            margin: 0.5rem 0;
-        }
-         @media (min-width: 640px) {
-             #html-entity-converter-app-v1 .hec-button-group {
-                 flex-direction: column; /* Stack buttons vertically on desktop */
-             }
-         }
-        
-        #html-entity-converter-app-v1 .hec-button-group button {
-            padding: 0.6rem 1rem !important;
-            border-radius: 0.5rem !important;
-            font-size: 0.9rem !important;
-            font-weight: 600 !important;
-            border: none !important;
-            cursor: pointer !important;
-            transition: background-color 0.2s, transform 0.1s !important;
-            background-color: #0284c7 !important; /* Blue */
-            color: #ffffff !important;
-            min-width: 110px;
-        }
-        #html-entity-converter-app-v1 .hec-button-group button:hover { background-color: #0369a1 !important; }
-        #html-entity-converter-app-v1 .hec-button-group button:active { transform: scale(0.98) !important; }
-
-        #html-entity-converter-app-v1 .hec-utility-buttons {
-             display: flex;
-             gap: 0.75rem;
-             margin-top: 1rem;
-             justify-content: space-between;
-        }
-        #html-entity-converter-app-v1 .hec-utility-buttons button {
-             padding: 0.5rem 1rem !important;
-             font-size: 0.85rem !important;
-             background-color: #6b7280 !important; /* Gray */
-             color: #ffffff !important;
-             border: none;
-             border-radius: 0.5rem;
-             cursor: pointer;
-        }
-         #html-entity-converter-app-v1 .hec-utility-buttons button:hover { background-color: #4b5563 !important; }
-
-        #hec-message-area {
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-align: center;
-            min-height: 1.5em;
-            margin-top: 0.5rem;
-            color: #16a34a; /* Default success color */
-        }
-        #hec-message-area.error { color: #ef4444 !important; }
-        
-        /* Reference Section */
-        #html-entity-converter-app-v1 .hec-reference-section {
-             margin-top: 2rem;
-             padding-top: 1.5rem;
-             border-top: 1px solid #eee;
-        }
-        #html-entity-converter-app-v1 .hec-reference-section h3 {
-             font-size: 1.2rem; color: #1e293b; margin-top: 0; margin-bottom: 1rem; text-align: center;
-        }
-        #html-entity-converter-app-v1 #hec-search-bar {
-             width: 100%;
-             padding: 0.75rem 1rem !important;
-             border: 1px solid #d1d5db !important;
-             border-radius: 0.5rem !important;
-             font-size: 1rem !important;
-             margin-bottom: 1rem;
-             box-sizing: border-box;
-        }
-        #html-entity-converter-app-v1 .hec-table-container {
-             max-height: 400px;
-             overflow-y: auto;
-             border: 1px solid #e5e7eb;
-             border-radius: 0.5rem;
-        }
-        #html-entity-converter-app-v1 table {
-             width: 100% !important;
-             border-collapse: collapse !important;
-             font-size: 0.9rem;
-        }
-        #html-entity-converter-app-v1 th, 
-        #html-entity-converter-app-v1 td {
-             border-bottom: 1px solid #e5e7eb !important;
-             padding: 0.75rem !important;
-             text-align: left !important;
-             line-height: 1.4 !important;
-        }
-        #html-entity-converter-app-v1 th {
-             background-color: #f9fafb !important;
-             font-weight: 600 !important;
-             color: #374151 !important;
-             position: sticky; /* Make header sticky */
-             top: 0;
-             z-index: 1;
-        }
-        #html-entity-converter-app-v1 td:nth-child(1) { text-align: center !important; font-size: 1.2rem; }
-        #html-entity-converter-app-v1 td:nth-child(2),
-        #html-entity-converter-app-v1 td:nth-child(3) {
-             font-family: "Courier New", Courier, monospace !important;
-             color: #B45309; /* Brown color for entities */
-             font-weight: 600;
-             word-break: break-all;
-        }
+         #html-entity-converter-app-v1-1 .hec-utility-buttons button:hover { background-color: #4b5563 !important; }
+        #hec-message-area-v1-1 { font-size: 0.9rem; font-weight: 500; text-align: center; min-height: 1.5em; margin-top: 0.5rem; color: #16a34a; }
+        #hec-message-area-v1-1.error { color: #ef4444 !important; }
+        #html-entity-converter-app-v1-1 .hec-reference-section { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee; }
+        #html-entity-converter-app-v1-1 .hec-reference-section h3 { font-size: 1.2rem; color: #1e293b; margin-top: 0; margin-bottom: 1rem; text-align: center; }
+        #html-entity-converter-app-v1-1 #hec-search-bar-v1-1 { width: 100%; padding: 0.75rem 1rem !important; border: 1px solid #d1d5db !important; border-radius: 0.5rem !important; font-size: 1rem !important; margin-bottom: 1rem; box-sizing: border-box; }
+        #html-entity-converter-app-v1-1 .hec-table-container { max-height: 400px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 0.5rem; }
+        #html-entity-converter-app-v1-1 table { width: 100% !important; border-collapse: collapse !important; font-size: 0.9rem; }
+        #html-entity-converter-app-v1-1 th, #html-entity-converter-app-v1-1 td { border-bottom: 1px solid #e5e7eb !important; padding: 0.75rem !important; text-align: left !important; line-height: 1.4 !important; }
+        #html-entity-converter-app-v1-1 th { background-color: #f9fafb !important; font-weight: 600 !important; color: #374151 !important; position: sticky; top: 0; z-index: 1; }
+        #html-entity-converter-app-v1-1 td:nth-child(1) { text-align: center !important; font-size: 1.2rem; }
+        #html-entity-converter-app-v1-1 td:nth-child(2), #html-entity-converter-app-v1-1 td:nth-child(3) { font-family: "Courier New", Courier, monospace !important; color: #B45309; font-weight: 600; word-break: break-all; }
     </style>
 
     <div class="hec-card">
@@ -182,38 +54,34 @@
         <p class="hec-subtitle">Easily encode text to HTML entities or decode entities back to plain text.</p>
 
         <div class="hec-converter-body">
-            <!-- Left Side: Plain Text -->
             <div class="hec-textarea-group">
-                <label for="hec-input-text">Plain Text (Decoded)</label>
-                <textarea id="hec-input-text" placeholder="Paste your text or code here... e.g., <p>Hello</p>"></textarea>
+                <label for="hec-input-text-v1-1">Plain Text (Decoded)</label>
+                <textarea id="hec-input-text-v1-1" placeholder="Paste your text or code here... e.g., <p>Hello</p>"></textarea>
             </div>
             
-            <!-- Middle: Buttons -->
             <div class="hec-button-group">
-                <button id="hec-encode-btn" title="Encode Plain Text to Entities">Encode &gt;</button>
-                <button id="hec-decode-btn" title="Decode Entities to Plain Text">&lt; Decode</button>
+                <button id="hec-encode-btn-v1-1" title="Encode Plain Text to Entities">Encode &gt;</button>
+                <button id="hec-decode-btn-v1-1" title="Decode Entities to Plain Text">&lt; Decode</button>
             </div>
 
-            <!-- Right Side: Encoded -->
             <div class="hec-textarea-group">
-                 <label for="hec-output-entities">HTML Entities (Encoded)</label>
-                 <textarea id="hec-output-entities" placeholder="Encoded result... e.g., &lt;p&gt;Hello&lt;/p&gt;" readonly></textarea>
+                 <label for="hec-output-entities-v1-1">HTML Entities (Encoded)</label>
+                 <textarea id="hec-output-entities-v1-1" placeholder="Encoded result... e.g., &lt;p&gt;Hello&lt;/p&gt;"></textarea>
             </div>
         </div>
 
         <div class="hec-utility-buttons">
-             <button id="hec-clear-btn" title="Clear both text boxes">Clear All</button>
-             <button id="hec-copy-btn" title="Copy encoded output to clipboard" style="margin-left: auto;">Copy Output</button>
+             <button id="hec-clear-btn-v1-1" title="Clear both text boxes">Clear All</button>
+             <button id="hec-copy-btn-v1-1" title="Copy encoded output to clipboard" style="margin-left: auto;">Copy Output</button>
         </div>
 
-        <div id="hec-message-area"></div>
+        <div id="hec-message-area-v1-1"></div>
 
-        <!-- Reference Section -->
         <div class="hec-reference-section">
              <h3>Quick Entity Reference</h3>
-             <input type="text" id="hec-search-bar" placeholder="Search by character, name, or code (e.g., 'copy' or '&lt;')">
+             <input type="text" id="hec-search-bar-v1-1" placeholder="Search by character, name, or code (e.g., 'copy' or '&lt;')">
              <div class="hec-table-container">
-                 <table id="hec-reference-table">
+                 <table id="hec-reference-table-v1-1">
                      <thead>
                          <tr>
                              <th>Character</th>
@@ -221,9 +89,8 @@
                              <th>Numeric Code</th>
                          </tr>
                      </thead>
-                     <tbody id="hec-table-body">
-                         <!-- Table body populated by JS -->
-                     </tbody>
+                     <tbody id="hec-table-body-v1-1">
+                         </tbody>
                  </table>
              </div>
         </div>
@@ -232,37 +99,37 @@
 </div>
 
 <script>
-console.log("HEC V1: Script starting.");
+console.log("HEC V1.1: Script starting.");
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("HEC V1: DOMContentLoaded.");
+    console.log("HEC V1.1: DOMContentLoaded.");
     
-    // V1: Add slight delay for stability
+    // V1.1: Add slight delay for stability
     setTimeout(initializeConverter, 150); 
 
     function initializeConverter() {
-        console.log("HEC V1: Initializing app...");
-        const container = document.getElementById('html-entity-converter-app-v1');
-        if (!container) { console.error("HEC V1: Container not found."); return; }
+        console.log("HEC V1.1: Initializing app...");
+        const container = document.getElementById('html-entity-converter-app-v1-1'); // V1.1 ID
+        if (!container) { console.error("HEC V1.1: Container not found."); return; }
 
-        // --- Elements ---
-        const inputArea = container.querySelector('#hec-input-text');
-        const outputArea = container.querySelector('#hec-output-entities');
-        const encodeBtn = container.querySelector('#hec-encode-btn');
-        const decodeBtn = container.querySelector('#hec-decode-btn');
-        const copyBtn = container.querySelector('#hec-copy-btn');
-        const clearBtn = container.querySelector('#hec-clear-btn');
-        const searchBar = container.querySelector('#hec-search-bar');
-        const tableBody = container.querySelector('#hec-table-body');
-        const messageArea = container.querySelector('#hec-message-area');
+        // --- Elements (V1.1 IDs) ---
+        const inputArea = container.querySelector('#hec-input-text-v1-1');
+        const outputArea = container.querySelector('#hec-output-entities-v1-1');
+        const encodeBtn = container.querySelector('#hec-encode-btn-v1-1');
+        const decodeBtn = container.querySelector('#hec-decode-btn-v1-1');
+        const copyBtn = container.querySelector('#hec-copy-btn-v1-1');
+        const clearBtn = container.querySelector('#hec-clear-btn-v1-1');
+        const searchBar = container.querySelector('#hec-search-bar-v1-1');
+        const tableBody = container.querySelector('#hec-table-body-v1-1');
+        const messageArea = container.querySelector('#hec-message-area-v1-1');
 
         if (!inputArea || !outputArea || !encodeBtn || !decodeBtn || !copyBtn || !clearBtn || !searchBar || !tableBody || !messageArea) {
-             console.error("HEC V1: One or more UI elements are missing!");
+             console.error("HEC V1.1: UI elements missing!");
              container.innerHTML = "<p style='color:red; text-align:center;'>Error: Failed to load UI components.</p>";
              return;
         }
-        console.log("HEC V1: All UI elements found.");
+        console.log("HEC V1.1: All UI elements found.");
 
-        // --- The Database ---
+        // --- The Database (Same as V1) ---
         const entityDatabase = [
             { char: '<', name: '&lt;', num: '&#60;' }, { char: '>', name: '&gt;', num: '&#62;' },
             { char: '&', name: '&amp;', num: '&#38;' }, { char: '"', name: '&quot;', num: '&#34;' },
@@ -366,7 +233,6 @@ document.addEventListener('DOMContentLoaded', function() {
             { char: 'ú', name: '&uacute;', num: '&#250;' }, { char: 'û', name: '&ucirc;', num: '&#251;' },
             { char: 'ü', name: '&uuml;', num: '&#252;' }, { char: 'ý', name: '&yacute;', num: '&#253;' },
             { char: 'þ', name: '&thorn;', num: '&#254;' }, { char: 'ÿ', name: '&yuml;', num: '&#255;' }
-            // Note: Some chars share a name, e.g. &mu; is in math and ISO. This is fine.
         ];
 
         // --- Create Lookup Maps ---
@@ -374,7 +240,6 @@ document.addEventListener('DOMContentLoaded', function() {
         let decodeMap = {}; // name -> char
         try {
             entityDatabase.forEach(entity => {
-                // Prioritize core HTML entities first, then others
                 if (entity.char && (!encodeMap[entity.char] || ['&lt;', '&gt;', '&amp;', '&quot;', '&apos;'].includes(entity.name))) {
                     encodeMap[entity.char] = entity.name;
                 }
@@ -382,42 +247,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     decodeMap[entity.name] = entity.char;
                 }
             });
-            console.log("HEC V1: Encode/Decode maps built.");
-        } catch (e) {
-             console.error("HEC V1: Failed to build lookup maps:", e);
-             showError("Critical error building entity maps.", true);
-             return;
-        }
+            console.log("HEC V1.1: Encode/Decode maps built.");
+        } catch (e) { console.error("HEC V1.1: Failed to build maps:", e); showError("Critical error building entity maps.", true); return; }
 
-        // Build a regex from all characters in the encode map
-        // Escape special regex characters in the keys
-        const encodeRegex = new RegExp(
-             Object.keys(encodeMap).map(c => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 
-            'g'
-        );
-        console.log("HEC V1: Encode regex created.");
-
+        const encodeRegex = new RegExp( Object.keys(encodeMap).map(c => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g');
+        console.log("HEC V1.1: Encode regex created.");
 
         // --- Functions ---
-        
         function showMessage(message, isError = false, duration = 2500) {
             messageArea.textContent = message;
             messageArea.className = isError ? 'hec-message error' : 'hec-message';
-            // Clear previous timeout if one exists
-            if (messageArea.timeoutId) {
-                clearTimeout(messageArea.timeoutId);
-            }
-            // Set new timeout to clear the message
-            messageArea.timeoutId = setTimeout(() => {
-                messageArea.textContent = '';
-                messageArea.className = 'hec-message';
-            }, duration);
+            if (messageArea.timeoutId) { clearTimeout(messageArea.timeoutId); }
+            messageArea.timeoutId = setTimeout(() => { messageArea.textContent = ''; messageArea.className = 'hec-message'; }, duration);
         }
 
         function populateReferenceTable(filter = '') {
-            console.log("HEC V1: Populating table. Filter:", filter);
+            console.log("HEC V1.1: Populating table. Filter:", filter);
             try {
-                tableBody.innerHTML = ''; // Clear existing rows
+                tableBody.innerHTML = '';
                 const lowerFilter = filter.toLowerCase();
                 let rowsAdded = 0;
                 
@@ -426,7 +273,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     entity.char.toLowerCase().includes(lowerFilter) ||
                     entity.name.toLowerCase().includes(lowerFilter) ||
                     entity.num.toLowerCase().includes(lowerFilter) ||
-                    // Also check description-like words
                     (entity.name === '&copy;' && 'copyright'.includes(lowerFilter)) ||
                     (entity.name === '&reg;' && 'registered'.includes(lowerFilter)) ||
                     (entity.name === '&trade;' && 'trademark'.includes(lowerFilter)) ||
@@ -439,10 +285,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (filteredData.length === 0) {
                     const row = tableBody.insertRow();
                     const cell = row.insertCell(0);
-                    cell.colSpan = 3;
-                    cell.textContent = "No entities found matching your search.";
-                    cell.style.textAlign = 'center';
-                    cell.style.color = '#6b7280';
+                    cell.colSpan = 3; cell.textContent = "No entities found matching your search.";
+                    cell.style.textAlign = 'center'; cell.style.color = '#6b7280';
                 } else {
                     filteredData.forEach(entity => {
                         const row = tableBody.insertRow();
@@ -452,118 +296,88 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     rowsAdded = filteredData.length;
                 }
-                console.log(`HEC V1: Table populated with ${rowsAdded} rows.`);
-            } catch (e) {
-                 console.error("HEC V1: Error populating table:", e);
-                 showError("Error displaying reference list.", true);
-            }
+                console.log(`HEC V1.1: Table populated with ${rowsAdded} rows.`);
+            } catch (e) { console.error("HEC V1.1: Error populating table:", e); showMessage("Error displaying reference list.", true); }
         }
 
         function encodeText() {
-            console.log("HEC V1: Encode clicked.");
+            console.log("HEC V1.1: Encode clicked.");
             try {
                 const text = inputArea.value;
-                if (text === "") {
-                    outputArea.value = "";
-                    showMessage("Encoded (empty).");
-                    return;
-                }
-                
-                // Use the regex built from the encodeMap
+                if (text === "") { outputArea.value = ""; showMessage("Encoded (empty)."); return; }
                 const encoded = text.replace(encodeRegex, (match) => encodeMap[match]);
-                
                 outputArea.value = encoded;
                 showMessage("Text successfully encoded!");
-            } catch (e) {
-                 console.error("HEC V1: Error during encode:", e);
-                 showMessage("An error occurred during encoding.", true);
-            }
+            } catch (e) { console.error("HEC V1.1: Error encode:", e); showMessage("An error occurred during encoding.", true); }
         }
 
         function decodeText() {
-            console.log("HEC V1: Decode clicked.");
+            console.log("HEC V1.1: Decode clicked.");
             try {
-                let text = outputArea.value;
-                if (text === "") {
-                    inputArea.value = "";
-                    showMessage("Decoded (empty).");
-                    return;
-                }
+                let text = outputArea.value; // Read from the (now writable) output area
+                if (text === "") { inputArea.value = ""; showMessage("Decoded (empty)."); return; }
                 
-                // 1. Decode Named Entities (using the generated decodeMap)
+                // 1. Decode Named
                 text = text.replace(/&([a-zA-Z0-9]+);/g, (match, entityName) => {
                      const fullEntity = `&${entityName};`;
-                     return decodeMap[fullEntity] || match; // If in map, replace, else keep original
+                     return decodeMap[fullEntity] || match;
                 });
-
-                // 2. Decode Numeric Entities (e.g., &#169;)
+                // 2. Decode Numeric
                 text = text.replace(/&#(\d+);/g, (match, num) => {
-                     try {
-                         return String.fromCharCode(parseInt(num, 10));
-                     } catch(e) { return match; } // Fallback
+                     try { return String.fromCharCode(parseInt(num, 10)); } catch(e) { return match; }
                 });
-
-                // 3. Decode Hexadecimal Entities (e.g., &#x20AC;)
+                // 3. Decode Hex
                 text = text.replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => {
-                     try {
-                        return String.fromCharCode(parseInt(hex, 16));
-                     } catch(e) { return match; } // Fallback
+                     try { return String.fromCharCode(parseInt(hex, 16)); } catch(e) { return match; }
                 });
-
                 inputArea.value = text;
                 showMessage("Entities successfully decoded!");
-            } catch (e) {
-                 console.error("HEC V1: Error during decode:", e);
-                 showMessage("An error occurred during decoding.", true);
-            }
+            } catch (e) { console.error("HEC V1.1: Error decode:", e); showMessage("An error occurred during decoding.", true); }
         }
 
         function copyOutput() {
-            console.log("HEC V1: Copy clicked.");
-            if (outputArea.value === "") {
-                 showMessage("Nothing to copy.", true);
-                 return;
-            }
+            console.log("HEC V1.1: Copy clicked.");
+            if (outputArea.value === "") { showMessage("Nothing to copy.", true); return; }
             try {
-                // Use execCommand for broader compatibility in iframes
+                // Select text for copy
                 outputArea.select();
-                document.execCommand('copy');
-                showMessage("Copied to clipboard!");
-            } catch (e) {
-                 console.error("HEC V1: Copy failed:", e);
-                 showMessage("Copy failed. Please copy manually.", true);
-            }
-             // Deselect text
-             window.getSelection().removeAllRanges();
+                outputArea.setSelectionRange(0, 99999); // For mobile
+                // Use clipboard API if available (more modern), fallback to execCommand
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(outputArea.value).then(() => {
+                        showMessage("Copied to clipboard!");
+                    }).catch(err => {
+                        console.warn("HEC V1.1: navigator.clipboard.writeText failed, falling back...", err);
+                        document.execCommand('copy'); // Fallback
+                        showMessage("Copied to clipboard! (fallback)");
+                    });
+                } else {
+                    document.execCommand('copy'); // Fallback for older browsers/insecure contexts
+                    showMessage("Copied to clipboard!");
+                }
+            } catch (e) { console.error("HEC V1.1: Copy failed:", e); showMessage("Copy failed. Please copy manually.", true); }
+            // Deselect text
+             if (window.getSelection) { window.getSelection().removeAllRanges(); }
+             else if (document.selection) { document.selection.empty(); }
         }
 
         function clearAll() {
-            console.log("HEC V1: Clear clicked.");
-            inputArea.value = "";
-            outputArea.value = "";
-            showMessage(""); // Clear message
+            console.log("HEC V1.1: Clear clicked.");
+            inputArea.value = ""; outputArea.value = ""; showMessage("");
         }
 
         // --- Initialization ---
         try {
-            populateReferenceTable(); // Initial population of the table
-
-            // Attach listeners
+            populateReferenceTable();
             encodeBtn.addEventListener('click', encodeText);
             decodeBtn.addEventListener('click', decodeText);
             copyBtn.addEventListener('click', copyOutput);
             clearBtn.addEventListener('click', clearAll);
-            searchBar.addEventListener('input', (e) => {
-                populateReferenceTable(e.target.value);
-            });
-            console.log("HEC V1: Listeners attached.");
-        } catch (e) {
-             console.error("HEC V1: Error during init listeners:", e);
-             showError("Failed to attach controls.", true);
-        }
+            searchBar.addEventListener('input', (e) => { populateReferenceTable(e.target.value); });
+            console.log("HEC V1.1: Listeners attached.");
+        } catch (e) { console.error("HEC V1.1: Error attaching listeners:", e); showMessage("Failed to attach controls.", true, 5000); }
         
-        console.log("HEC V1: Initialization complete.");
-    }
-}); // End DOMContentLoaded
+        console.log("HEC V1.1: Initialization complete.");
+    } // --- End initializeConverter ---
+});
 </script>
-<!-- HTML Entity Encoder/Decoder App V1 - End -->
