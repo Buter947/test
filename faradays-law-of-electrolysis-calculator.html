@@ -62,9 +62,7 @@
 
 <style>
 /* --- 
-   Faraday's Law Calculator 樣式表 (全新 App ID)
-   核心規範: 所有規則均以 #faraday-law-calculator-app 為前缀
-   核心規範: 大量使用 !important 確保覆蓋主題樣式
+   Faraday's Law Calculator 樣式表 (V1.2 - Layout Fix)
 --- */
 
 #faraday-law-calculator-app {
@@ -85,7 +83,6 @@
   box-sizing: inherit !important;
 }
 
-/* 標題樣式 */
 #faraday-law-calculator-app h3 {
   color: #B45309 !important;
   font-size: 24px !important;
@@ -96,7 +93,6 @@
   line-height: 1.3 !important;
 }
 
-/* 輸入群組 */
 #faraday-law-calculator-app .flc-input-group {
   margin-bottom: 18px !important;
 }
@@ -109,10 +105,9 @@
   margin-bottom: 8px !important;
 }
 
-/* 輸入框容器 (輸入框 + 單位/選擇) */
 #faraday-law-calculator-app .flc-input-wrapper {
   display: flex !important;
-  align-items: center !important;
+  align-items: center !important; /* Vertically center items */
   border: 1px solid #cbd5e1 !important;
   border-radius: 8px !important;
   background-color: #f8fafc !important;
@@ -123,7 +118,6 @@
   box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
 }
 
-/* 文字/數字 輸入框 */
 #faraday-law-calculator-app .flc-input {
   flex-grow: 1 !important;
   width: 100% !important; 
@@ -137,8 +131,8 @@
   box-shadow: none !important;
   outline: none !important;
   margin: 0 !important;
-  border-radius: 8px 0 0 8px !important; /* Round left */
-   -moz-appearance: textfield !important; /* For number input */
+  border-radius: 8px 0 0 8px !important; 
+   -moz-appearance: textfield !important; 
 }
 #faraday-law-calculator-app input[type="number"]::-webkit-inner-spin-button,
 #faraday-law-calculator-app input[type="number"]::-webkit-outer-spin-button {
@@ -147,7 +141,6 @@
 }
 
 
-/* 單位選擇框 或 靜態單位顯示 */
 #faraday-law-calculator-app .flc-unit-select,
 #faraday-law-calculator-app .flc-unit-display {
   padding: 10px 12px !important;
@@ -158,31 +151,31 @@
   background-color: #eef2f6 !important; 
   border: none !important;
   border-left: 1px solid #cbd5e1 !important;
-  border-radius: 0 7px 7px 0 !important; /* Round right */
+  border-radius: 0 7px 7px 0 !important; 
   margin: 0 !important;
   box-shadow: none !important;
   outline: none !important;
-  height: 100% !important; 
-  align-self: stretch !important;
-  display: flex !important; /* For vertical centering */
-  align-items: center !important;
+  /* V1.2 Fix: Removed height and align-self */
+  /* height: 100% !important; */
+  /* align-self: stretch !important; */
+  display: flex !important; 
+  align-items: center !important; /* Keep vertical align */
   justify-content: center !important;
-  min-width: 85px; /* Ensure unit text fits */
+  min-width: 85px; 
   text-align: center;
 }
 #faraday-law-calculator-app select.flc-unit-select {
   cursor: pointer !important;
   appearance: none !important; 
   -webkit-appearance: none !important;
-  padding-right: 30px !important; /* Space for arrow */
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%2364748b%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E') !important;
+  padding-right: 30px !important; 
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%2364748b%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%Fsvg%3E') !important;
   background-repeat: no-repeat !important;
   background-position: right 8px center !important;
   background-size: 14px 14px !important;
 }
 
 
-/* 單位提示 */
 #faraday-law-calculator-app .flc-unit-note {
   display: block !important;
   font-size: 12px !important;
@@ -191,27 +184,29 @@
   padding-left: 2px !important;
 }
 
-/* 訊息區域 */
 #faraday-law-calculator-app .flc-message {
   font-size: 14px !important;
   font-weight: 500 !important;
   padding: 6px 4px 0 4px !important;
-  min-height: 1.4em !important; /* Placeholder */
-  color: #dc2626 !important; /* Error red */
+  min-height: 1.4em !important; 
+  color: #dc2626 !important; 
   text-align: center !important;
 }
 
-/* 結果區域 */
 #faraday-law-calculator-app .flc-result-group {
   margin-top: 20px !important;
   border-top: 2px dashed #e2e8f0 !important;
   padding-top: 20px !important;
 }
 
-/* 唯讀的結果輸出框容器 */
 #faraday-law-calculator-app .flc-output-wrapper {
    background-color: #f1f5f9 !important;
    border-color: #d1d5db !important;
+   /* V1.2 Fix: Ensure align-items is still set for output */
+   display: flex !important;
+   align-items: center !important;
+   border: 1px solid #d1d5db !important;
+   border-radius: 8px !important;
 }
 #faraday-law-calculator-app .flc-output-wrapper:focus-within {
   border-color: #d1d5db !important; 
@@ -221,11 +216,13 @@
 #faraday-law-calculator-app #flc-result-mass[readonly] {
   font-size: 20px !important; 
   font-weight: 700 !important;
-  color: #16a34a !important; /* Green result */
+  color: #16a34a !important; 
   background: transparent !important;
   cursor: default !important;
    border: none !important; 
   border-radius: 8px 0 0 8px !important; 
+  flex-grow: 1 !important; /* Added back flex-grow */
+  width: 100% !important; /* Added back width */
 }
 #faraday-law-calculator-app #flc-unit-mass-out {
     border-radius: 0 8px 8px 0 !important;
@@ -233,6 +230,9 @@
     background-color: #e2e8f0 !important; 
     border-left: 1px solid #d1d5db !important;
      min-width: 85px !important;
+     /* V1.2 Fix: Removed height/stretch from here too */
+     display: flex !important;
+     align-items: center !important;
 }
 #faraday-law-calculator-app #flc-unit-mass-out:focus {
      border-color: #d1d5db !important; 
@@ -241,7 +241,6 @@
 }
 
 
-/* 常數提示 */
 #faraday-law-calculator-app .flc-constants-note {
   display: block !important;
   text-align: center !important;
@@ -310,7 +309,6 @@
         const cleanedStr = inputStr.trim();
          if (cleanedStr === '') return NaN;
          const value = parseInt(cleanedStr, 10);
-         // Check if it's actually an integer and matches the float parse
          if (isNaN(value) || !Number.isInteger(value) || parseFloat(cleanedStr) !== value) return NaN; 
          return value;
      }
@@ -321,7 +319,6 @@
     function formatValue(value) {
         if (isNaN(value) || !isFinite(value)) return '---';
         if (value === 0) return '0';
-        // Use scientific notation if magnitude is very large or small, else precision
         if (Math.abs(value) >= 1e6 || (Math.abs(value) < 1e-4 && Math.abs(value) > 0)) {
             return value.toExponential(4); 
         } else {
@@ -330,49 +327,56 @@
     }
     
     /**
-     * Core Function: Calculate Mass
+     * Core Function V1.2: Calculate Mass (Removed allFilled check)
      */
     function calculate() {
         messageArea.textContent = ''; // Clear previous errors
         resultMass.value = '---'; // Clear previous result
 
         try {
-            // Get values
+            // Get values using parseValue/parseIntValue
             const currentVal = parseValue(currentInput.value);
             const currentUnitVal = currentUnit.value;
             const timeVal = parseValue(timeInput.value);
             const timeUnitVal = timeUnit.value;
             const molarMassVal = parseValue(molarMassInput.value);
-            const electronsVal = parseIntValue(electronsInput.value); // Use integer parse
+            const electronsVal = parseIntValue(electronsInput.value); 
             const massUnitOutVal = massUnitOut.value;
 
-            // --- Input Validation ---
-            let allFilled = true;
-            if (currentInput.value.trim() === '') allFilled = false;
-            if (timeInput.value.trim() === '') allFilled = false;
-            if (molarMassInput.value.trim() === '') allFilled = false;
-            if (electronsInput.value.trim() === '') allFilled = false;
-
-            if (!allFilled) {
-                resultMass.value = '---'; 
-                return; // Exit calculation early if not all filled
+            // --- Input Validation V1.2 ---
+            // Check if ALL essential inputs are parsed to valid numbers
+            // Only show error if the input box is NOT empty but IS invalid
+            if (isNaN(currentVal)) {
+                if (currentInput.value.trim() !== '') messageArea.textContent = 'Invalid Current (I) format.';
+                return; 
             }
-
-            // Validate the filled values
-            if (isNaN(currentVal) || currentVal <= 0) { messageArea.textContent = 'Current (I) must be a positive number.'; return; }
-            if (isNaN(timeVal) || timeVal <= 0) { messageArea.textContent = 'Time (t) must be a positive number.'; return; }
-            if (isNaN(molarMassVal) || molarMassVal <= 0) { messageArea.textContent = 'Molar Mass (M) must be a positive number.'; return; }
-            if (isNaN(electronsVal) || electronsVal < 1) { messageArea.textContent = 'Electrons transferred (z) must be a positive integer.'; return; }
+            if (isNaN(timeVal)) {
+                if (timeInput.value.trim() !== '') messageArea.textContent = 'Invalid Time (t) format.';
+                return; 
+            }
+             if (isNaN(molarMassVal)) {
+                if (molarMassInput.value.trim() !== '') messageArea.textContent = 'Invalid Molar Mass (M) format.';
+                return; 
+            }
+             if (isNaN(electronsVal)) {
+                if (electronsInput.value.trim() !== '') messageArea.textContent = 'Electrons transferred (z) must be an integer.';
+                return; 
+            }
+            
+            // Further validation for positive values and z >= 1 (Only check AFTER confirming they are numbers)
+            if (currentVal <= 0) { messageArea.textContent = 'Current (I) must be positive.'; return; }
+            if (timeVal <= 0) { messageArea.textContent = 'Time (t) must be positive.'; return; }
+            if (molarMassVal <= 0) { messageArea.textContent = 'Molar Mass (M) must be positive.'; return; }
+            if (electronsVal < 1) { messageArea.textContent = 'Electrons transferred (z) must be >= 1.'; return; }
             
 
             // --- Convert Inputs to Base SI Units ---
             const I_amps = currentVal * (currentFactors[currentUnitVal] || 1);
             const t_sec = timeVal * (timeFactors[timeUnitVal] || 1);
-            const M_gmol = molarMassVal; // Already in g/mol
+            const M_gmol = molarMassVal; 
             const z_val = electronsVal;
 
             // --- Calculate Mass in Grams ---
-            // m = (I * t * M) / (z * F)
             const mass_g = (I_amps * t_sec * M_gmol) / (z_val * F);
 
             // --- Convert Mass to Output Unit ---
@@ -383,12 +387,13 @@
              if (!isNaN(displayMass) && isFinite(displayMass)) {
                   resultMass.value = formatValue(displayMass);
              } else {
+                 // This case should be less likely now unless F=0 or z=0 which is prevented
                  messageArea.textContent = 'Calculation resulted in an invalid number.';
              }
 
         } catch (e) {
             console.error("Faraday Calc Error:", e);
-            messageArea.textContent = "Calculation error. Check inputs.";
+            messageArea.textContent = "Calculation error. Please check inputs.";
         }
     }
 
