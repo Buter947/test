@@ -1,0 +1,492 @@
+<div id="limiting-reactant-parser-app">
+  
+  <h3>Limiting Reactant Calculator (V2.0)</h3>
+  
+  <div class="lrcp-section">
+    <label for="lrcp-equation-input">1. Enter Balanced Chemical Equation</label>
+    <input type="text" id="lrcp-equation-input" placeholder="e.g., 2H2 + O2 -> 2H2O" autocapitalize="off" autocomplete="off" spellcheck="false">
+    <div id="lrcp-error-area" class="lrcp-message-area"></div>
+  </div>
+
+  <div class="lrcp-section">
+    <label>2. Enter Starting Mass for Reactants</label>
+    <div id="lrcp-reactant-inputs">
+      <p class="lrcp-placeholder">Please enter a valid equation above...</p>
+    </div>
+  </div>
+  
+  <div class="lrcp-section">
+    <button id="lrcp-calculate-btn">Find Limiting Reactant</button>
+  </div>
+
+  <div id="lrcp-result-area" class="lrcp-message-area">
+    </div>
+</div>
+
+<style>
+/* --- 
+   Limiting Reactant Parser 樣式表 (全新 App ID)
+   核心規範: 所有規則均以 #limiting-reactant-parser-app 為前缀
+   核心規範: 大量使用 !important 確保覆蓋主題樣式
+--- */
+
+#limiting-reactant-parser-app {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  padding: 24px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1) !important;
+  max-width: 550px !important;
+  margin: 25px auto !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
+  box-sizing: border-box !important;
+}
+
+#limiting-reactant-parser-app *,
+#limiting-reactant-parser-app *::before,
+#limiting-reactant-parser-app *::after {
+  box-sizing: inherit !important;
+}
+
+/* 標題樣式 */
+#limiting-reactant-parser-app h3 {
+  color: #B45309 !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  margin-top: 0 !important;
+  margin-bottom: 24px !important;
+  text-align: center !important;
+  line-height: 1.3 !important;
+}
+
+/* 每個步驟的區塊 */
+#limiting-reactant-parser-app .lrcp-section {
+  margin-bottom: 20px !important;
+}
+
+#limiting-reactant-parser-app .lrcp-section > label {
+  display: block !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  margin-bottom: 10px !important;
+  padding-left: 2px !important;
+}
+
+/* 方程式輸入框 */
+#limiting-reactant-parser-app #lrcp-equation-input {
+  width: 100% !important;
+  padding: 12px 14px !important;
+  font-size: 16px !important;
+  font-family: 'Courier New', Courier, monospace !important;
+  font-weight: 600 !important;
+  color: #0f172a !important;
+  background-color: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+#limiting-reactant-parser-app #lrcp-equation-input:focus {
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+  outline: none !important;
+}
+
+/* 訊息/錯誤區域 */
+#limiting-reactant-parser-app .lrcp-message-area {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 8px 4px 0 4px !important;
+  min-height: 1.5em !important; /* 佔位 */
+}
+
+#limiting-reactant-parser-app #lrcp-error-area {
+  color: #dc2626 !important; /* 錯誤紅色 */
+}
+
+/* 動態生成的質量輸入區域 */
+#limiting-reactant-parser-app #lrcp-reactant-inputs {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding: 16px !important;
+}
+
+#limiting-reactant-parser-app .lrcp-placeholder {
+  font-size: 14px !important;
+  color: #64748b !important;
+  text-align: center !important;
+  margin: 0 !important;
+  padding: 10px 0 !important;
+}
+
+/* 動態生成的每一行 */
+#limiting-reactant-parser-app .lrcp-dynamic-input-row {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+  align-items: center !important;
+  margin-bottom: 12px !important;
+}
+#limiting-reactant-parser-app .lrcp-dynamic-input-row:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* 動態生成的標籤 */
+#limiting-reactant-parser-app .lrcp-reactant-label {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  color: #1e293b !important;
+  text-align: right !important;
+}
+#limiting-reactant-parser-app .lrcp-reactant-label strong {
+  font-weight: 700 !important;
+  font-family: 'Courier New', Courier, monospace !important;
+}
+
+/* 動態生成的輸入框 */
+#limiting-reactant-parser-app .lrcp-reactant-mass-input {
+  width: 100% !important;
+  padding: 10px 12px !important;
+  font-size: 15px !important;
+  font-family: inherit !important;
+  color: #0f172a !important;
+  background-color: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  margin: 0 !important;
+  -moz-appearance: textfield !important;
+}
+#limiting-reactant-parser-app .lrcp-reactant-mass-input:focus {
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+  outline: none !important;
+}
+
+/* 計算按鈕 - 遵循設計原則 */
+#limiting-reactant-parser-app #lrcp-calculate-btn {
+  width: 100% !important;
+  padding: 12px 16px !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  background-color: #16a34a !important; /* 設計原則：綠色 */
+  border: none !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s !important;
+}
+
+#limiting-reactant-parser-app #lrcp-calculate-btn:hover {
+  background-color: #15803d !important;
+}
+
+/* 結果顯示區域 */
+#limiting-reactant-parser-app #lrcp-result-area {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  color: #0284c7 !important; /* 藍色 */
+  background-color: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding: 16px !important;
+  display: none; /* 預設隱藏 */
+}
+#limiting-reactant-parser-app #lrcp-result-area strong {
+  font-weight: 700 !important;
+  font-family: 'Courier New', Courier, monospace !important;
+}
+
+</style>
+
+<script>
+// 核心規範：使用 IIFE 保護命名空間
+(function() {
+
+  /**
+   * App 主執行函數
+   */
+  function initializeLimitingReactantParser() {
+  
+    // --- 數據庫 1: 原子量 (g/mol) ---
+    const atomicWeights = {
+      'H': 1.008, 'He': 4.003, 'Li': 6.94, 'Be': 9.012, 'B': 10.81, 'C': 12.011, 'N': 14.007, 
+      'O': 16.00, 'F': 18.998, 'Ne': 20.180, 'Na': 22.990, 'Mg': 24.305, 'Al': 26.982, 
+      'Si': 28.085, 'P': 30.974, 'S': 32.06, 'Cl': 35.45, 'Ar': 39.948, 'K': 39.098, 
+      'Ca': 40.078, 'Sc': 44.956, 'Ti': 47.867, 'V': 50.942, 'Cr': 51.996, 'Mn': 54.938, 
+      'Fe': 55.845, 'Co': 58.933, 'Ni': 58.693, 'Cu': 63.546, 'Zn': 65.38, 'Ga': 69.723,
+      'Ge': 72.630, 'As': 74.922, 'Se': 78.971, 'Br': 79.904, 'Kr': 83.798, 'Rb': 85.468,
+      'Sr': 87.62, 'Y': 88.906, 'Zr': 91.224, 'Nb': 92.906, 'Mo': 95.96, 'Tc': 98,
+      'Ru': 101.07, 'Rh': 102.91, 'Pd': 106.42, 'Ag': 107.87, 'Cd': 112.41, 'In': 114.82,
+      'Sn': 118.71, 'Sb': 121.76, 'Te': 127.60, 'I': 126.90, 'Xe': 131.29, 'Cs': 132.91,
+      'Ba': 137.33, 'La': 138.91, 'Pt': 195.08, 'Au': 196.97, 'Hg': 200.59, 'Pb': 207.2,
+      'Bi': 208.98, 'U': 238.03
+    };
+    
+    // --- 獲取 DOM 元素 ---
+    const appContainer = document.getElementById('limiting-reactant-parser-app');
+    if (!appContainer) {
+      console.error('Limiting Reactant Parser: 找不到 App 容器。腳本終止。');
+      return;
+    }
+    
+    const equationInput = appContainer.querySelector('#lrcp-equation-input');
+    const reactantInputsContainer = appContainer.querySelector('#lrcp-reactant-inputs');
+    const calcButton = appContainer.querySelector('#lrcp-calculate-btn');
+    const resultArea = appContainer.querySelector('#lrcp-result-area');
+    const errorArea = appContainer.querySelector('#lrcp-error-area');
+    
+    // Failsafe
+    if (!equationInput || !reactantInputsContainer || !calcButton || !resultArea || !errorArea) {
+        console.error('Limiting Reactant Parser: 缺少一個或多個 UI 元件。腳本終止。');
+        return;
+    }
+
+    // App 狀態變數, 儲存解析後的數據
+    let parsedReactants = [];
+    let debounceTimer;
+
+    // --- 核心輔助函數 (來自 V2.0 Parser) ---
+    
+    /**
+     * 輔助函數 1: 解析化學式片段 (e.g., "(NH4)2SO4")
+     */
+    function parseFormulaSegment(segment) {
+      let mapStack = [{}];
+      let i = 0;
+      while (i < segment.length) {
+        const char = segment[i];
+        if (char === '(') {
+          mapStack.push({});
+          i++;
+        } else if (char === ')') {
+          i++;
+          let numStr = '';
+          while (i < segment.length && segment[i] >= '0' && segment[i] <= '9') { numStr += segment[i]; i++; }
+          const multiplier = parseInt(numStr || '1', 10);
+          if (mapStack.length < 2) return { error: `Mismatched parentheses near ')'` };
+          const poppedMap = mapStack.pop();
+          const currentMap = mapStack[mapStack.length - 1];
+          for (const el in poppedMap) {
+            currentMap[el] = (currentMap[el] || 0) + poppedMap[el] * multiplier;
+          }
+        } else if (char >= 'A' && char <= 'Z') {
+          let el = char;
+          i++;
+          if (i < segment.length && segment[i] >= 'a' && segment[i] <= 'z') { el += segment[i]; i++; }
+          if (!atomicWeights[el]) return { error: `Invalid element: ${el}` };
+          let numStr = '';
+          while (i < segment.length && segment[i] >= '0' && segment[i] <= '9') { numStr += segment[i]; i++; }
+          const count = parseInt(numStr || '1', 10);
+          const currentMap = mapStack[mapStack.length - 1];
+          currentMap[el] = (currentMap[el] || 0) + count;
+        } else {
+          return { error: `Invalid character: ${char}` };
+        }
+      }
+      if (mapStack.length !== 1) return { error: "Mismatched parentheses" };
+      return mapStack[0];
+    }
+    
+    /**
+     * 輔助函數 2: 計算莫耳質量
+     */
+    function calculateMolarMass(elementsMap) {
+        let totalMass = 0;
+        for (const el in elementsMap) {
+            if (!atomicWeights[el]) return { error: `Invalid element: ${el}` };
+            totalMass += atomicWeights[el] * elementsMap[el];
+        }
+        return totalMass;
+    }
+    
+    /**
+     * 輔助函數 3: 解析化學方程式
+     */
+    function parseEquation(equation) {
+        equation = equation.replace(/\s+/g, ''); // 移除所有空白
+        
+        // 1. 找到反應物一側
+        const parts = equation.split('->');
+        if (parts.length < 2) return { error: "Invalid equation: Missing '->'" };
+        const reactantsStr = parts[0];
+        if (reactantsStr.length === 0) return { error: "No reactants found" };
+
+        // 2. 分割反應物
+        const reactantTerms = reactantsStr.split('+');
+        let finalReactants = [];
+        
+        for (const term of reactantTerms) {
+            if (term.length === 0) continue;
+            
+            // 3. 分離係數和化學式
+            const match = term.match(/^(\d*)(.*)/);
+            if (!match) return { error: `Could not parse term: ${term}` };
+            
+            const coeff = parseInt(match[1] || '1', 10);
+            const formula = match[2];
+            
+            if (formula.length === 0) return { error: `Missing formula for coefficient ${coeff}`};
+            
+            // 4. 解析化學式並計算莫耳質量
+            const elementsMap = parseFormulaSegment(formula);
+            if (elementsMap.error) return { error: `In formula ${formula}: ${elementsMap.error}` };
+            
+            const molarMass = calculateMolarMass(elementsMap);
+            if (molarMass.error) return molarMass;
+            
+            finalReactants.push({ formula, coeff, molarMass });
+        }
+        
+        if (finalReactants.length === 0) return { error: "No valid reactants parsed" };
+        return finalReactants;
+    }
+
+    // --- 事件處理器 ---
+
+    /**
+     * 處理 1: 當用戶在方程式框中輸入時 (使用 Debounce)
+     */
+    function onEquationInput() {
+        // 清除舊的計時器
+        clearTimeout(debounceTimer);
+        
+        // 清除舊的結果
+        resultArea.style.display = 'none';
+        resultArea.innerHTML = '';
+        
+        // 設置一個新的計時器, 在 500ms 後執行解析
+        debounceTimer = setTimeout(() => {
+            updateReactantInputs();
+        }, 500);
+    }
+    
+    /**
+     * 處理 2: 更新動態輸入欄位 (被 Debounce 調用)
+     */
+    function updateReactantInputs() {
+        errorArea.textContent = '';
+        reactantInputsContainer.innerHTML = ''; // 清空舊的輸入框
+        parsedReactants = []; // 清空舊的狀態
+        
+        const eq = equationInput.value;
+        if (eq.trim() === '') {
+            reactantInputsContainer.innerHTML = '<p class="lrcp-placeholder">Please enter a valid equation above...</p>';
+            return;
+        }
+
+        const reactants = parseEquation(eq);
+        
+        // 檢查解析是否出錯
+        if (reactants.error) {
+            errorArea.textContent = reactants.error;
+            return;
+        }
+
+        // 儲存狀態並動態創建 HTML
+        parsedReactants = reactants;
+        reactants.forEach(r => {
+            const row = document.createElement('div');
+            row.className = 'lrcp-dynamic-input-row';
+            
+            const label = document.createElement('label');
+            label.className = 'lrcp-reactant-label';
+            label.innerHTML = `Mass of <strong>${r.formula}</strong> (g):`;
+            
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'lrcp-reactant-mass-input';
+            input.placeholder = `grams of ${r.formula}`;
+            input.dataset.formula = r.formula; // 儲存公式以供後續計算
+            
+            row.appendChild(label);
+            row.appendChild(input);
+            reactantInputsContainer.appendChild(row);
+        });
+    }
+
+    /**
+     * 處理 3: 當用戶點擊 "Calculate" 按鈕時
+     */
+    function onCalculateClick() {
+        errorArea.textContent = '';
+        resultArea.style.display = 'none';
+        resultArea.innerHTML = '';
+        
+        if (parsedReactants.length === 0) {
+            errorArea.textContent = "Please enter an equation first.";
+            return;
+        }
+        
+        let equivalents = [];
+        let minEquiv = Infinity;
+        let limitingReactantFormula = '';
+        let allMassesEntered = true;
+
+        const massInputs = reactantInputsContainer.querySelectorAll('.lrcp-reactant-mass-input');
+        
+        for (let i = 0; i < massInputs.length; i++) {
+            const input = massInputs[i];
+            const mass = parseFloat(input.value);
+            const formula = input.dataset.formula;
+            
+            if (!mass || mass <= 0) {
+                allMassesEntered = false;
+                break; // 停止循環
+            }
+            
+            // 從儲存的狀態中獲取數據
+            const data = parsedReactants.find(r => r.formula === formula);
+            if (!data) { // Failsafe
+                errorArea.textContent = "An internal error occurred. Please re-type the equation.";
+                return;
+            }
+
+            const moles = mass / data.molarMass;
+            const equiv = moles / data.coeff;
+            
+            equivalents.push({ formula, equiv });
+            
+            if (equiv < minEquiv) {
+                minEquiv = equiv;
+                limitingReactantFormula = formula;
+            }
+        }
+        
+        if (!allMassesEntered) {
+            errorArea.textContent = "Please enter a valid starting mass for all reactants.";
+            return;
+        }
+
+        // 檢查是否完美比例
+        const isPerfect = equivalents.every(e => Math.abs(e.equiv - minEquiv) < 0.00001); // 設置一個小的容錯範圍
+        
+        // 顯示結果
+        if (isPerfect) {
+            resultArea.innerHTML = 'Result: The reactants are in <strong>perfect stoichiometric ratio</strong>.';
+        } else {
+            resultArea.innerHTML = `Result: The Limiting Reactant is <strong>${limitingReactantFormula}</strong>.`;
+        }
+        resultArea.style.display = 'block';
+    }
+
+    // --- 綁定事件監聽器 ---
+    equationInput.addEventListener('input', onEquationInput);
+    calcButton.addEventListener('click', onCalculateClick);
+    
+  } // 結束 initializeLimitingReactantParser()
+
+  
+  // ---
+  // ** V2.0 啟動邏輯 (強健版) **
+  // ---
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeLimitingReactantParser);
+  } else {
+    // DOM 已載入
+    initializeLimitingReactantParser();
+  }
+
+})(); // 結束 IIFE
+</script>
