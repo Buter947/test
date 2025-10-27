@@ -1,0 +1,450 @@
+<div id="molecular-mass-parser-app">
+  
+  <h3>Molecular Mass & Percent Parser</h3>
+  
+  <div class="mmp-input-group">
+    <label for="mmp-formula-input">Enter Chemical Formula</label>
+    <input type="text" id="mmp-formula-input" placeholder="e.g., C2H6 or (NH4)2SO4.5H2O" autocapitalize="off" autocomplete="off" spellcheck="false">
+    <div id="mmp-message-area"></div>
+  </div>
+
+  <div class="mmp-input-group">
+    <label for="mmp-total-mass">Total Molecular Weight</label>
+    <div class="mmp-output-wrapper">
+      <input type="text" id="mmp-total-mass" value="0.000" readonly>
+      <span>g/mol</span>
+    </div>
+  </div>
+  
+  <div id="mmp-percentage-breakdown">
+    </div>
+
+</div>
+
+<style>
+/* --- 
+   Molecular Mass Parser 樣式表 (全新 App ID)
+   核心規範: 所有規則均以 #molecular-mass-parser-app 為前缀
+   核心規範: 大量使用 !important 確保覆蓋主題樣式
+--- */
+
+#molecular-mass-parser-app {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  padding: 24px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1) !important;
+  max-width: 550px !important;
+  margin: 25px auto !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
+  box-sizing: border-box !important;
+}
+
+#molecular-mass-parser-app *,
+#molecular-mass-parser-app *::before,
+#molecular-mass-parser-app *::after {
+  box-sizing: inherit !important;
+}
+
+/* 標題樣式 */
+#molecular-mass-parser-app h3 {
+  color: #B45309 !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  margin-top: 0 !important;
+  margin-bottom: 24px !important;
+  text-align: center !important;
+  line-height: 1.3 !important;
+}
+
+/* 輸入/輸出群組佈局 */
+#molecular-mass-parser-app .mmp-input-group {
+  margin-bottom: 18px !important;
+}
+
+/* 標籤樣式 */
+#molecular-mass-parser-app label {
+  display: block !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  margin-bottom: 8px !important;
+  padding-left: 2px !important;
+}
+
+/* 化學式文字輸入框 */
+#molecular-mass-parser-app #mmp-formula-input {
+  width: 100% !important;
+  padding: 12px 14px !important;
+  font-size: 18px !important;
+  font-family: 'Courier New', Courier, monospace !important;
+  font-weight: 600 !important;
+  color: #0f172a !important;
+  background-color: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+#molecular-mass-parser-app #mmp-formula-input:focus {
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+  outline: none !important;
+}
+
+/* 訊息/錯誤區域 */
+#molecular-mass-parser-app #mmp-message-area {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 8px 4px 0 4px !important;
+  height: 1.5em !important; /* 佔位以防佈局跳動 */
+  color: #dc2626 !important; /* 錯誤紅色 */
+}
+
+/* 輸出結果框的容器 (總質量) */
+#molecular-mass-parser-app .mmp-output-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 8px !important;
+  background-color: #f1f5f9 !important;
+}
+
+/* 唯讀 (readonly) 的輸出框 */
+#molecular-mass-parser-app #mmp-total-mass {
+  flex-grow: 1 !important;
+  width: 100% !important;
+  padding: 12px 14px !important;
+  font-size: 20px !important;
+  font-family: 'Courier New', Courier, monospace !important;
+  font-weight: 700 !important;
+  color: #B45309 !important; /* 主題色 */
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  margin: 0 !important;
+  cursor: default !important;
+  -moz-appearance: textfield !important;
+}
+
+#molecular-mass-parser-app .mmp-output-wrapper span {
+  padding: 0 14px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #475569 !important;
+  background-color: #e2e8f0 !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-left: 1px solid #d1d5db !important;
+  align-self: stretch !important;
+  min-width: 65px !important;
+  text-align: center !important;
+  border-top-right-radius: 7px !important;
+  border-bottom-right-radius: 7px !important;
+}
+
+/* 質量百分比區域 */
+#molecular-mass-parser-app #mmp-percentage-breakdown {
+  border-top: 2px dashed #e2e8f0 !important;
+  margin-top: 24px !important;
+  padding-top: 18px !important;
+  display: none; /* 預設隱藏 */
+}
+
+/* 欄位標題行 */
+#molecular-mass-parser-app .mmp-percent-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  padding: 0 14px 8px 14px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  margin-bottom: 8px !important;
+}
+
+#molecular-mass-parser-app .mmp-percent-header span {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #475569 !important;
+}
+
+/* 元素數據行 */
+#molecular-mass-parser-app .mmp-element-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background-color: #f8fafc !important;
+  border: 1px solid #eef2f6 !important;
+  border-radius: 6px !important;
+  padding: 10px 14px !important;
+  margin-bottom: 8px !important;
+  font-size: 15px !important;
+}
+
+/* 欄位樣式 (3 欄) */
+#molecular-mass-parser-app .mmp-el-name {
+  font-weight: 500 !important;
+  color: #1e293b !important;
+  text-align: left !important;
+  flex-basis: 30% !important;
+}
+#molecular-mass-parser-app .mmp-el-mass {
+  font-weight: 500 !important;
+  color: #334155 !important;
+  font-family: 'Courier New', Courier, monospace !important;
+  font-size: 16px !important;
+  text-align: right !important;
+  flex-basis: 35% !important;
+}
+#molecular-mass-parser-app .mmp-el-percent {
+  font-weight: 600 !important;
+  color: #0284c7 !important;
+  font-family: 'Courier New', Courier, monospace !important;
+  font-size: 16px !important;
+  text-align: right !important;
+  flex-basis: 25% !important;
+}
+
+/* 標題行欄位寬度 */
+#molecular-mass-parser-app .mmp-percent-header span:nth-child(1) {
+  text-align: left !important;
+  flex-basis: 30% !important;
+}
+#molecular-mass-parser-app .mmp-percent-header span:nth-child(2) {
+  text-align: right !important;
+  flex-basis: 35% !important;
+}
+#molecular-mass-parser-app .mmp-percent-header span:nth-child(3) {
+  text-align: right !important;
+  flex-basis: 25% !important;
+}
+</style>
+
+<script>
+// 核心規範：使用 IIFE 保護命名空間
+(function() {
+
+  /**
+   * App 主執行函數
+   * 包含所有變數、函數和事件
+   */
+  function initializeFormulaParser() {
+  
+    // --- 數據庫: 原子量 (g/mol) ---
+    const atomicWeights = {
+      'H': 1.008, 'He': 4.003, 'Li': 6.94, 'Be': 9.012, 'B': 10.81, 'C': 12.011, 'N': 14.007, 
+      'O': 16.00, 'F': 18.998, 'Ne': 20.180, 'Na': 22.990, 'Mg': 24.305, 'Al': 26.982, 
+      'Si': 28.085, 'P': 30.974, 'S': 32.06, 'Cl': 35.45, 'Ar': 39.948, 'K': 39.098, 
+      'Ca': 40.078, 'Sc': 44.956, 'Ti': 47.867, 'V': 50.942, 'Cr': 51.996, 'Mn': 54.938, 
+      'Fe': 55.845, 'Co': 58.933, 'Ni': 58.693, 'Cu': 63.546, 'Zn': 65.38, 'Ga': 69.723,
+      'Ge': 72.630, 'As': 74.922, 'Se': 78.971, 'Br': 79.904, 'Kr': 83.798, 'Rb': 85.468,
+      'Sr': 87.62, 'Y': 88.906, 'Zr': 91.224, 'Nb': 92.906, 'Mo': 95.96, 'Tc': 98,
+      'Ru': 101.07, 'Rh': 102.91, 'Pd': 106.42, 'Ag': 107.87, 'Cd': 112.41, 'In': 114.82,
+      'Sn': 118.71, 'Sb': 121.76, 'Te': 127.60, 'I': 126.90, 'Xe': 131.29, 'Cs': 132.91,
+      'Ba': 137.33, 'La': 138.91, 'Pt': 195.08, 'Au': 196.97, 'Hg': 200.59, 'Pb': 207.2,
+      'Bi': 208.98, 'U': 238.03
+    };
+    
+    // --- 獲取 DOM 元素 ---
+    const appContainer = document.getElementById('molecular-mass-parser-app');
+    if (!appContainer) return;
+
+    const formulaInput = appContainer.querySelector('#mmp-formula-input');
+    const totalMassDisplay = appContainer.querySelector('#mmp-total-mass');
+    const breakdownDisplay = appContainer.querySelector('#mmp-percentage-breakdown');
+    const messageArea = appContainer.querySelector('#mmp-message-area');
+
+    if (!formulaInput || !totalMassDisplay || !breakdownDisplay || !messageArea) {
+      console.error('Molecular Mass Parser: 缺少必要的 UI 元素。');
+      return;
+    }
+
+    /**
+     * 核心解析器：解析化學式片段
+     * @param {string} segment - 一段不含 '.' 的化學式, e.g., "C2H6" or "(NH4)2SO4"
+     * @returns {Object} - 元素計數, e.g., { C: 2, H: 6 } or { error: "..." }
+     */
+    function parseSegment(segment) {
+      if (segment.trim() === '') return {};
+      
+      let mapStack = [{}];
+      let i = 0;
+      
+      while (i < segment.length) {
+        const char = segment[i];
+        
+        if (char === '(') {
+          mapStack.push({});
+          i++;
+        } else if (char === ')') {
+          i++;
+          let numStr = '';
+          while (i < segment.length && segment[i] >= '0' && segment[i] <= '9') {
+            numStr += segment[i];
+            i++;
+          }
+          const multiplier = parseInt(numStr || '1', 10);
+          
+          if (mapStack.length < 2) return { error: "Mismatched parentheses" };
+          
+          const poppedMap = mapStack.pop();
+          const currentMap = mapStack[mapStack.length - 1];
+          
+          for (const el in poppedMap) {
+            currentMap[el] = (currentMap[el] || 0) + poppedMap[el] * multiplier;
+          }
+        } else if (char >= 'A' && char <= 'Z') {
+          let el = char;
+          i++;
+          if (i < segment.length && segment[i] >= 'a' && segment[i] <= 'z') {
+            el += segment[i];
+            i++;
+          }
+          
+          if (!atomicWeights[el]) return { error: `Invalid element: ${el}` };
+          
+          let numStr = '';
+          while (i < segment.length && segment[i] >= '0' && segment[i] <= '9') {
+            numStr += segment[i];
+            i++;
+          }
+          const count = parseInt(numStr || '1', 10);
+          
+          const currentMap = mapStack[mapStack.length - 1];
+          currentMap[el] = (currentMap[el] || 0) + count;
+        } else {
+          return { error: `Invalid character: ${char}` };
+        }
+      }
+      
+      if (mapStack.length !== 1) return { error: "Mismatched parentheses" };
+      return mapStack[0];
+    }
+    
+    /**
+     * 主解析器：處理水合物 (hydrates)
+     * @param {string} formula - 完整的化學式, e.g., "CuSO4.5H2O"
+     * @returns {Object} - 元素計數, e.g., { C: 2, H: 6 } or { error: "..." }
+     */
+    function parseFormula(formula) {
+      formula = formula.replace(/\s+/g, ''); // 移除所有空白
+      if (formula === '') return {};
+      
+      const parts = formula.split('.');
+      let totalCounts = {};
+      
+      // 解析第一部分 (基礎化合物)
+      const baseCounts = parseSegment(parts.shift());
+      if (baseCounts.error) return baseCounts;
+      Object.assign(totalCounts, baseCounts);
+      
+      // 解析所有水合物
+      for (const part of parts) {
+        let multiplier = 1;
+        let segment = part;
+        
+        // 檢查水合物是否有前綴數字, e.g., "5H2O"
+        const match = part.match(/^(\d+)(.*)/);
+        if (match) {
+          multiplier = parseInt(match[1], 10);
+          segment = match[2];
+        }
+        
+        const hydrateCounts = parseSegment(segment);
+        if (hydrateCounts.error) return hydrateCounts;
+        
+        for (const el in hydrateCounts) {
+          totalCounts[el] = (totalCounts[el] || 0) + hydrateCounts[el] * multiplier;
+        }
+      }
+      
+      return totalCounts;
+    }
+
+    /**
+     * 主事件處理器：在每次輸入時觸發
+     */
+    function handleInput() {
+      const formula = formulaInput.value;
+      
+      // 1. 解析化學式
+      const elementCounts = parseFormula(formula);
+      
+      // 清空舊結果
+      messageArea.textContent = '';
+      breakdownDisplay.innerHTML = '';
+      breakdownDisplay.style.display = 'none';
+      totalMassDisplay.value = '0.000';
+      
+      // 2. 檢查錯誤
+      if (elementCounts.error) {
+        if (formula.length > 0) { // 僅在有輸入時顯示錯誤
+          messageArea.textContent = elementCounts.error;
+        }
+        return;
+      }
+      
+      // 3. 計算總質量和元素質量
+      let totalMass = 0;
+      const elementMasses = {};
+      const sortedElements = Object.keys(elementCounts).sort();
+
+      for (const el of sortedElements) {
+        const count = elementCounts[el];
+        const atomicWeight = atomicWeights[el];
+        const mass = count * atomicWeight;
+        elementMasses[el] = mass;
+        totalMass += mass;
+      }
+      
+      if (totalMass === 0) return; // 如果總質量為 0 (例如空輸入), 不顯示
+      
+      // 4. 顯示總質量
+      totalMassDisplay.value = totalMass.toFixed(3);
+      
+      // 5. 顯示百分比細目
+      // 創建標題行
+      const header = document.createElement('div');
+      header.className = 'mmp-percent-header';
+      header.innerHTML = '<span>Element</span><span>Mass (g/mol)</span><span>Percent</span>';
+      breakdownDisplay.appendChild(header);
+      
+      // 創建數據行
+      for (const el of sortedElements) {
+        const mass = elementMasses[el];
+        const percentage = (mass / totalMass) * 100;
+
+        const row = document.createElement('div');
+        row.className = 'mmp-element-row';
+        
+        row.innerHTML = `
+          <span class="mmp-el-name">${el}</span>
+          <span class="mmp-el-mass">${mass.toFixed(3)}</span>
+          <span class="mmp-el-percent">${percentage.toFixed(2)}%</span>
+        `;
+        breakdownDisplay.appendChild(row);
+      }
+      
+      breakdownDisplay.style.display = 'block';
+    }
+
+    // --- 綁定事件監聽器 ---
+    formulaInput.addEventListener('input', handleInput);
+    
+  } // 結束 initializeFormulaParser()
+
+  
+  // ---
+  // ** V2.0 啟動邏輯 (強健版) **
+  // 檢查 DOM 狀態以防止 race condition
+  // ---
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeFormulaParser);
+  } else {
+    // DOM 已載入 (e.g., 腳本被 defer)
+    initializeFormulaParser();
+  }
+
+})(); // 結束 IIFE
+</script>
