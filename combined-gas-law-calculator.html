@@ -1,90 +1,502 @@
-<h2>How to Use the Combined Gas Law Calculator</h2>
+<div id="combined-gas-law-calculator-app">
+  
+  <h3>Combined Gas Law Calculator</h3>
+  
+  <div class="cglc-chooser-group">
+    <label>Which value do you want to solve for?</label>
+    <div class="cglc-button-group">
+      <button class="cglc-chooser-btn" data-solve="p1">Initial Pressure (P₁)</button>
+      <button class="cglc-chooser-btn" data-solve="v1">Initial Volume (V₁)</button>
+      <button class="cglc-chooser-btn" data-solve="t1">Initial Temp. (T₁)</button>
+      <button class="cglc-chooser-btn active" data-solve="p2">Final Pressure (P₂)</button>
+      <button class="cglc-chooser-btn" data-solve="v2">Final Volume (V₂)</button>
+      <button class="cglc-chooser-btn" data-solve="t2">Final Temp. (T₂)</button>
+    </div>
+  </div>
 
-<p>This calculator solves problems involving the <strong>Combined Gas Law</strong>, which relates the pressure (P), volume (V), and absolute temperature (T) of a fixed amount of gas undergoing changes. The formula is:</p>
-<p style="font-family: 'Courier New', Courier, monospace; font-size: 1.2em; text-align: center; background: #f8f8f8; padding: 15px; border-radius: 5px; border: 1px solid #eee; line-height: 1.6; color: #333;">
-  (P₁V₁) / T₁ = (P₂V₂) / T₂
-</p>
-<p>This tool allows you to solve for any one of the six variables (P₁, V₁, T₁, P₂, V₂, T₂) if you know the other five. It automatically handles temperature unit conversions.</p>
+  <div class="cglc-state-section">
+    <h4>Initial State (1)</h4>
+    <div class="cglc-input-row">
+      <label for="cglc-p1">Pressure (P₁)</label>
+      <input type="number" class="cglc-input" id="cglc-p1" step="any" placeholder="Enter P₁...">
+      <select class="cglc-unit-select" id="cglc-unit-p1">
+        <option value="atm">atm</option> <option value="kPa">kPa</option> <option value="Pa">Pa</option> 
+        <option value="mmHg">mmHg</option> <option value="torr">torr</option> 
+        <option value="psi">psi</option> <option value="bar">bar</option>
+      </select>
+    </div>
+    <div class="cglc-input-row">
+      <label for="cglc-v1">Volume (V₁)</label>
+      <input type="number" class="cglc-input" id="cglc-v1" min="0" step="any" placeholder="Enter V₁...">
+       <select class="cglc-unit-select" id="cglc-unit-v1">
+        <option value="L">L</option> <option value="mL">mL</option> 
+        <option value="m3">m³</option> <option value="cm3">cm³</option> 
+      </select>
+    </div>
+     <div class="cglc-input-row">
+      <label for="cglc-t1">Temperature (T₁)</label>
+      <input type="number" class="cglc-input" id="cglc-t1" step="any" placeholder="Enter T₁...">
+       <select class="cglc-unit-select" id="cglc-unit-t1">
+        <option value="K">K</option> <option value="C">°C</option> <option value="F">°F</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="cglc-state-section">
+     <h4>Final State (2)</h4>
+     <div class="cglc-input-row">
+      <label for="cglc-p2">Pressure (P₂)</label>
+       <input type="number" class="cglc-input cglc-answer-field" id="cglc-p2" step="any" placeholder="Result..." readonly>
+       <select class="cglc-unit-select" id="cglc-unit-p2">
+         <option value="atm">atm</option> <option value="kPa">kPa</option> <option value="Pa">Pa</option> 
+        <option value="mmHg">mmHg</option> <option value="torr">torr</option> 
+        <option value="psi">psi</option> <option value="bar">bar</option>
+      </select>
+    </div>
+    <div class="cglc-input-row">
+      <label for="cglc-v2">Volume (V₂)</label>
+      <input type="number" class="cglc-input" id="cglc-v2" min="0" step="any" placeholder="Enter V₂...">
+      <select class="cglc-unit-select" id="cglc-unit-v2">
+         <option value="L">L</option> <option value="mL">mL</option> 
+        <option value="m3">m³</option> <option value="cm3">cm³</option> 
+      </select>
+    </div>
+     <div class="cglc-input-row">
+      <label for="cglc-t2">Temperature (T₂)</label>
+      <input type="number" class="cglc-input" id="cglc-t2" step="any" placeholder="Enter T₂...">
+       <select class="cglc-unit-select" id="cglc-unit-t2">
+         <option value="K">K</option> <option value="C">°C</option> <option value="F">°F</option>
+      </select>
+    </div>
+  </div>
 
-<h3>Step-by-Step Guide</h3>
-<ol>
-    <li><strong>Choose Your Goal:</strong> Click one of the six buttons at the top to select the variable you want to calculate (e.g., "Final Pressure (P₂)"). The corresponding input field will become the read-only result box.</li>
-    <li><strong>Enter Known Values:</strong> Input the five known values into their respective boxes under "Initial State (1)" and "Final State (2)".</li>
-    <li><strong>Select Units for Each Value:</strong> Use the dropdown menus next to each input box to specify the units for every pressure, volume, and temperature value you entered.
-        <ul>
-            <li><strong>Crucially: Temperature values entered in °C or °F will be automatically converted to Kelvin (K) for the calculation.</strong></li>
-            <li>Ensure the pressure units for P₁ and P₂ match conceptually (e.g., both atm, or both kPa).</li>
-            <li>Ensure the volume units for V₁ and V₂ match conceptually (e.g., both L, or both mL).</li>
-        </ul>
-    </li>
-    <li><strong>View the Result:</strong> The calculated value will appear instantly in the designated result box, displayed in the unit you selected for that variable.</li>
-</ol>
+  <div id="cglc-message-area" class="cglc-message"></div>
+   
+   <small class="cglc-unit-note">Note: Pressure units (P₁ & P₂) must match conceptually, same for Volume units (V₁ & V₂). Temperature (T₁ & T₂) MUST be calculated in Kelvin (absolute scale).</small>
 
-<h4>Example Calculation: Finding Final Pressure (P₂)</h4>
-<p><strong>Problem:</strong> A gas occupies 2.0 L at 25°C and 1.0 atm. What pressure will it exert if the volume is changed to 1.5 L and the temperature is raised to 50°C?</p>
-<ol>
-    <li><strong>Select Target:</strong> Click "<strong>Final Pressure (P₂)</strong>" (this is the default).</li>
-    <li><strong>Enter Initial State (1):</strong>
-        <ul>
-            <li>P₁ = <code>1.0</code>, Unit = <code>atm</code></li>
-            <li>V₁ = <code>2.0</code>, Unit = <code>L</code></li>
-            <li>T₁ = <code>25</code>, Unit = <code>°C</code></li>
-        </ul>
-    </li>
-     <li><strong>Enter Final State (2):</strong>
-        <ul>
-            <li>V₂ = <code>1.5</code>, Unit = <code>L</code></li>
-            <li>T₂ = <code>50</code>, Unit = <code>°C</code></li>
-        </ul>
-    </li>
-     <li><strong>Select P₂ Unit:</strong> Choose <code>atm</code>.</li>
-    <li><strong>View the Result:</strong> The "Pressure (P₂)" field will instantly show the result ≈ <strong>1.45 atm</strong>.</li>
-</ol>
+</div>
 
-<hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 24px 0;">
+<style>
+/* --- 
+   Combined Gas Law Calculator 樣式表 (V1.1)
+   (CSS 樣式與 V1.0 完全相同)
+--- */
 
-<h2>Understanding the Combined Gas Law</h2>
+#combined-gas-law-calculator-app {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  padding: 24px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1) !important;
+  max-width: 650px !important; 
+  margin: 25px auto !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
+  box-sizing: border-box !important;
+}
 
-<p>This law combines Boyle's Law, Charles's Law, and Gay-Lussac's Law into a single expression relating pressure, volume, and temperature for a fixed amount of gas.</p>
+#combined-gas-law-calculator-app *,
+#combined-gas-law-calculator-app *::before,
+#combined-gas-law-calculator-app *::after {
+  box-sizing: inherit !important;
+}
 
-<h3>Q: What is the Combined Gas Law equation?</h3>
-<p>A: The formula is:</p>
-<p style="font-family: 'Courier New', Courier, monospace; font-size: 1.1em; background: #f8f8f8; padding: 10px 14px; border-radius: 5px; border: 1px solid #eee; line-height: 1.6; color: #333;">
-  (P₁ &times; V₁) / T₁ = (P₂ &times; V₂) / T₂
-</p>
-<p>Where:</p>
-<ul>
-    <li>P₁ = Initial Pressure</li>
-    <li>V₁ = Initial Volume</li>
-    <li>T₁ = Initial Absolute Temperature (in Kelvin)</li>
-    <li>P₂ = Final Pressure</li>
-    <li>V₂ = Final Volume</li>
-    <li>T₂ = Final Absolute Temperature (in Kelvin)</li>
-</ul>
-<p>This law holds true as long as the amount of gas (moles) remains constant.</p>
+#combined-gas-law-calculator-app h3 {
+  color: #B45309 !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  margin-top: 0 !important;
+  margin-bottom: 24px !important;
+  text-align: center !important;
+  line-height: 1.3 !important;
+}
 
-<h3>Q: Why MUST temperature be in Kelvin?</h3>
-<p>A: The relationship between volume/pressure and temperature in gas laws is directly proportional to the **absolute temperature**. Absolute temperature scales (like Kelvin) start at absolute zero (0 K), the theoretical point where gas particles have minimal motion. Celsius (°C) and Fahrenheit (°F) are relative scales with arbitrary zero points. Using °C or °F directly in the P₁V₁/T₁ = P₂V₂/T₂ formula will lead to incorrect results because the ratios T₂/T₁ would be wrong (and you could even encounter division by zero if T=0°C).</p>
-<p>This calculator automatically converts any °C or °F inputs to K before performing the calculation:
-    <ul>
-        <li><code>K = °C + 273.15</code></li>
-        <li><code>K = (°F - 32) &times; 5/9 + 273.15</code></li>
-    </ul>
-If you are solving for a temperature, the result is calculated in Kelvin and then converted back to your chosen unit (°C, °F, or K).</p>
+#combined-gas-law-calculator-app .cglc-chooser-group {
+  margin-bottom: 20px !important;
+}
+#combined-gas-law-calculator-app .cglc-chooser-group label {
+  display: block !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  margin-bottom: 10px !important;
+  text-align: center !important;
+}
+#combined-gas-law-calculator-app .cglc-button-group {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 8px !important;
+}
+#combined-gas-law-calculator-app .cglc-chooser-btn {
+  font-family: inherit !important;
+  font-size: 13px !important; 
+  font-weight: 600 !important;
+  padding: 10px 6px !important; 
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  cursor: pointer !important;
+  text-align: center !important;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s !important;
+  appearance: none !important;
+}
+#combined-gas-law-calculator-app .cglc-chooser-btn.active {
+  background-color: #B45309 !important;
+  color: #ffffff !important;
+  border-color: #B45309 !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
 
-<h3>Q: Do Pressure and Volume units need specific conversions?</h3>
-<p>A: No, not for this specific formula. The formula works as long as the units are **consistent** within pairs. For example:</p>
-<ul>
-    <li>If P₁ is in atmospheres (atm), P₂ must also be in atmospheres (atm) for the result to be correct in atm.</li>
-    <li>If V₁ is in milliliters (mL), V₂ must also be in milliliters (mL) for the calculation to work.</li>
-</ul>
-<p>The units effectively cancel out in the ratio. Just ensure you select the correct, matching units in the dropdowns for your initial and final states.</p>
+#combined-gas-law-calculator-app {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  grid-template-areas: 
+    "header header"
+    "chooser chooser"
+    "initial final"
+    "message message"
+    "note note";
+  gap: 16px 20px !important;
+}
+#combined-gas-law-calculator-app h3 { grid-area: header !important; }
+#combined-gas-law-calculator-app .cglc-chooser-group { grid-area: chooser !important; }
+#combined-gas-law-calculator-app .cglc-state-section:nth-of-type(1) { grid-area: initial !important; }
+#combined-gas-law-calculator-app .cglc-state-section:nth-of-type(2) { grid-area: final !important; }
+#combined-gas-law-calculator-app .cglc-message { grid-area: message !important; }
+#combined-gas-law-calculator-app .cglc-unit-note { grid-area: note !important; }
 
-<h3>Q: What if one variable remains constant (e.g., constant temperature)?</h3>
-<p>A: The Combined Gas Law simplifies to the other gas laws if a variable is held constant:</p>
-<ul>
-    <li><strong>Constant Temperature (T₁ = T₂):</strong> The formula becomes P₁V₁ = P₂V₂ (Boyle's Law). You can still use this calculator; just enter the same value and unit for T₁ and T₂.</li>
-    <li><strong>Constant Pressure (P₁ = P₂):</strong> The formula becomes V₁/T₁ = V₂/T₂ (Charles's Law). Enter the same value and unit for P₁ and P₂.</li>
-    <li><strong>Constant Volume (V₁ = V₂):</strong> The formula becomes P₁/T₁ = P₂/T₂ (Gay-Lussac's Law). Enter the same value and unit for V₁ and V₂.</li>
-</ul>
-<p>This calculator effectively covers all these scenarios.</p>
+
+#combined-gas-law-calculator-app .cglc-state-section {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding: 16px !important;
+}
+#combined-gas-law-calculator-app .cglc-state-section h4 {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  margin-top: 0 !important;
+  margin-bottom: 16px !important;
+  text-align: center !important;
+}
+
+#combined-gas-law-calculator-app .cglc-input-row {
+  display: grid !important;
+  grid-template-columns: 0.8fr 1.2fr 1fr !important; 
+  gap: 8px !important;
+  align-items: center !important;
+  margin-bottom: 12px !important;
+}
+#combined-gas-law-calculator-app .cglc-input-row:last-child {
+    margin-bottom: 0 !important;
+}
+#combined-gas-law-calculator-app .cglc-input-row label {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #475569 !important;
+  text-align: right !important;
+  padding-right: 5px !important;
+  margin: 0 !important;
+}
+
+#combined-gas-law-calculator-app .cglc-input {
+  width: 100% !important;
+  padding: 10px 12px !important;
+  font-size: 15px !important;
+  font-family: inherit !important;
+  color: #0f172a !important;
+  background-color: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s !important;
+  -moz-appearance: textfield !important;
+}
+#combined-gas-law-calculator-app .cglc-input::-webkit-inner-spin-button,
+#combined-gas-law-calculator-app .cglc-input::-webkit-outer-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+#combined-gas-law-calculator-app .cglc-input:focus {
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+}
+
+#combined-gas-law-calculator-app .cglc-unit-select {
+  width: 100% !important;
+  padding: 10px 8px !important;
+  font-size: 13px !important;
+  font-family: inherit !important;
+  color: #0f172a !important;
+  background-color: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+}
+#combined-gas-law-calculator-app .cglc-unit-select:focus {
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+  outline: none !important;
+}
+
+#combined-gas-law-calculator-app .cglc-message {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 0 4px !important;
+  min-height: 1.5em !important; 
+  color: #dc2626 !important; 
+  text-align: center !important;
+}
+
+#combined-gas-law-calculator-app .cglc-unit-note {
+    font-size: 13px !important;
+    color: #64748b !important;
+    text-align: center !important;
+    margin-top: -8px !important; 
+    padding: 0 10px !important;
+}
+
+
+#combined-gas-law-calculator-app .cglc-input.cglc-answer-field[readonly] {
+  background-color: #f1f5f9 !important;
+  border-color: #d1d5db !important;
+  color: #16a34a !important; 
+  font-weight: 700 !important;
+  font-size: 16px !important; 
+  cursor: default !important;
+  text-align: left !important;
+}
+
+</style>
+
+<script>
+// Core Spec: IIFE
+(function() {
+
+  /**
+   * App Main Execution
+   */
+  function initializeCombinedGasLawCalc() {
+  
+    // --- Get DOM Elements ---
+    const appContainer = document.getElementById('combined-gas-law-calculator-app');
+    if (!appContainer) return;
+    
+    // Input/Output fields
+    const inputs = {
+        p1: appContainer.querySelector('#cglc-p1'), v1: appContainer.querySelector('#cglc-v1'), t1: appContainer.querySelector('#cglc-t1'),
+        p2: appContainer.querySelector('#cglc-p2'), v2: appContainer.querySelector('#cglc-v2'), t2: appContainer.querySelector('#cglc-t2')
+    };
+    // Unit selects
+    const units = {
+        p1: appContainer.querySelector('#cglc-unit-p1'), v1: appContainer.querySelector('#cglc-unit-v1'), t1: appContainer.querySelector('#cglc-unit-t1'),
+        p2: appContainer.querySelector('#cglc-unit-p2'), v2: appContainer.querySelector('#cglc-unit-v2'), t2: appContainer.querySelector('#cglc-unit-t2')
+    };
+    
+    // Other elements
+    const chooserButtons = appContainer.querySelectorAll('.cglc-chooser-btn');
+    const messageArea = appContainer.querySelector('#cglc-message-area');
+    
+    // All elements that trigger calculation
+    const triggerElements = [...Object.values(inputs), ...Object.values(units)];
+
+    // State
+    let solveFor = 'p2'; // Default target
+
+    // Failsafe check
+    if (!inputs.p1 || !units.t1 || chooserButtons.length !== 6 || !messageArea) {
+        console.error('Combined Gas Law Calc: Missing UI elements.');
+        return;
+    }
+
+    // --- Unit Conversion Helpers ---
+    function toKelvin(temp, unit) {
+        temp = parseFloat(temp);
+        if (isNaN(temp)) return NaN;
+        if (unit === 'C') return temp + 273.15;
+        if (unit === 'F') return (temp - 32) * 5/9 + 273.15;
+        return temp; // Already Kelvin
+    }
+
+    function fromKelvin(kelvinTemp, targetUnit) {
+         if (isNaN(kelvinTemp)) return NaN;
+         if (targetUnit === 'C') return kelvinTemp - 273.15;
+         if (targetUnit === 'F') return (kelvinTemp - 273.15) * 9/5 + 32;
+         return kelvinTemp; // Target is Kelvin
+    }
+
+
+    /**
+     * Core Function V1.1: Calculate based on solveFor state
+     */
+    function calculate() {
+      // Clear previous messages
+      messageArea.textContent = '';
+      
+      // Get the answer field for potential clearing later
+      const answerInput = inputs[solveFor];
+       if (answerInput) { answerInput.value = ''; } // Clear previous result immediately
+
+      // 1. Read all values and units
+      let values = {};
+      let tempsInK = {};
+      let allInputsValid = true;
+
+      for (const key in inputs) {
+          if (key === solveFor) continue; // Skip the target field
+          
+          const inputVal = parseFloat(inputs[key].value);
+          const unitVal = units[key].value;
+
+          if (isNaN(inputVal)) {
+              allInputsValid = false;
+              break; // Stop if any non-target input is not a number
+          }
+          
+          values[key] = inputVal;
+          
+          // Convert temperature to Kelvin immediately
+          if (key === 't1' || key === 't2') {
+              tempsInK[key] = toKelvin(inputVal, unitVal);
+              if (isNaN(tempsInK[key])) {
+                   messageArea.textContent = `Invalid temperature input for ${key.toUpperCase()}.`;
+                   allInputsValid = false;
+                   break;
+              }
+              if (tempsInK[key] < 0) {
+                   messageArea.textContent = `Temperature ${key.toUpperCase()} cannot be below absolute zero.`;
+                   allInputsValid = false;
+                   break;
+              }
+          }
+      }
+
+      // Only proceed if all necessary inputs are valid numbers
+      if (!allInputsValid) {
+           if (answerInput) { answerInput.value = ''; } // Ensure result is clear
+           return; 
+      }
+
+      let result = NaN;
+      let resultUnit = units[solveFor].value; // Get target unit
+      
+      try {
+        // Use tempsInK for calculations
+        const { p1, v1 } = values;
+        const { p2, v2 } = values;
+        const { t1 } = tempsInK;
+        const { t2 } = tempsInK;
+
+        // 3. Perform calculation based on solveFor
+        switch (solveFor) {
+          case 'p1': 
+            if (t2 > 0 && v1 > 0) result = (p2 * v2 * t1) / (t2 * v1); 
+            else throw new Error("Division by zero (T₂ or V₁).");
+            break;
+          case 'v1': 
+            if (t2 > 0 && p1 > 0) result = (p2 * v2 * t1) / (t2 * p1); 
+            else throw new Error("Division by zero (T₂ or P₁).");
+            break;
+          case 't1': // Result in K
+            if (p2 > 0 && v2 > 0) result = (p1 * v1 * t2) / (p2 * v2); 
+            else throw new Error("Division by zero (P₂ or V₂).");
+            break; 
+          case 'p2': 
+            if (t1 > 0 && v2 > 0) result = (p1 * v1 * t2) / (t1 * v2); 
+            else throw new Error("Division by zero (T₁ or V₂).");
+            break;
+          case 'v2': 
+            if (t1 > 0 && p2 > 0) result = (p1 * v1 * t2) / (t1 * p2); 
+            else throw new Error("Division by zero (T₁ or P₂).");
+            break;
+          case 't2': // Result in K
+            if (p1 > 0 && v1 > 0) result = (p2 * v2 * t1) / (p1 * v1); 
+            else throw new Error("Division by zero (P₁ or V₁).");
+            break;
+        }
+
+        // 4. Convert temperature result back if needed
+        let displayValue;
+        if (solveFor === 't1' || solveFor === 't2') {
+            const tempResult = fromKelvin(result, resultUnit);
+            // Check if converted result is valid
+             const tempInKCheck = toKelvin(tempResult, resultUnit);
+             if (isNaN(tempResult) || (!isNaN(tempInKCheck) && tempInKCheck < -0.01)) { // Allow tolerance
+                 messageArea.textContent = 'Calculated temperature is below absolute zero.';
+                 displayValue = ''; // Clear result
+             } else {
+                 displayValue = tempResult.toFixed(2);
+             }
+        } else {
+             // Check if other results are valid (e.g., positive pressure/volume)
+             if (result < 0 && (solveFor === 'p1' || solveFor === 'v1' || solveFor === 'p2' || solveFor === 'v2')) {
+                  messageArea.textContent = `Calculated ${solveFor.toUpperCase()} is negative, check inputs.`;
+                  displayValue = '';
+             } else {
+                 displayValue = result.toPrecision(6);
+             }
+        }
+
+        // 5. Display the result
+        if (answerInput && !isNaN(parseFloat(displayValue))) { // Ensure it's a valid number string
+             answerInput.value = displayValue;
+        } else if (answerInput) {
+             answerInput.value = ''; // Clear if displayValue ended up empty or invalid
+        }
+        
+      } catch (e) {
+        console.error("Combined Gas Law calc error:", e);
+        if (answerInput) { answerInput.value = ''; }
+        // Display specific error if available, else generic
+        messageArea.textContent = e.message || 'Calculation error. Check inputs.';
+      }
+    }
+
+    /**
+     * UI Update Function: Switch target variable
+     */
+    function updateInputFields(newSolveFor) {
+      solveFor = newSolveFor;
+      
+      chooserButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.solve === newSolveFor);
+      });
+      
+      for (const key in inputs) {
+        const input = inputs[key];
+        const isAnswer = (key === newSolveFor);
+        
+        input.readOnly = isAnswer;
+        input.classList.toggle('cglc-answer-field', isAnswer);
+        input.placeholder = isAnswer ? 'Result...' : `Enter ${key.toUpperCase()}...`;
+        input.value = ''; // Clear all fields on switch
+      }
+       messageArea.textContent = ''; // Clear message area
+    }
+
+    // --- Attach Event Listeners ---
+    chooserButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        updateInputFields(this.dataset.solve);
+      });
+    });
+    
+    triggerElements.forEach(el => {
+      el.addEventListener('input', calculate); 
+      el.addEventListener('change', calculate); 
+    });
+    
+  } // End initializeCombinedGasLawCalc
+
+  
+  // --- Robust Startup Logic ---
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeCombinedGasLawCalc);
+  } else {
+    initializeCombinedGasLawCalc();
+  }
+
+})(); // End IIFE
+</script>
