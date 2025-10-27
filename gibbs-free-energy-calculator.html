@@ -1,0 +1,73 @@
+<h2>How to Use the Gibbs Free Energy Calculator (ΔG)</h2>
+
+<p>This calculator determines the <strong>Gibbs Free Energy change (ΔG)</strong> for a reaction, which indicates whether a reaction will occur spontaneously under constant temperature and pressure. It uses the fundamental equation:</p>
+<p style="font-family: 'Courier New', Courier, monospace; font-size: 1.2em; text-align: center; background: #f8f8f8; padding: 15px; border-radius: 5px; border: 1px solid #eee; line-height: 1.6; color: #333;">
+  ΔG = ΔH - TΔS
+</p>
+<p>The calculator instantly determines ΔG and the spontaneity of the reaction as you input the values.</p>
+
+<h3>Step-by-Step Guide</h3>
+<ol>
+    <li><strong>Enter Enthalpy Change (ΔH):</strong> Input the change in enthalpy for the reaction. Select the appropriate unit (kJ/mol, J/mol, kcal/mol).</li>
+    <li><strong>Enter Temperature (T):</strong> Input the temperature at which the reaction occurs. You can use Kelvin (K), Celsius (°C), or Fahrenheit (°F); the calculator will automatically convert it to Kelvin for the calculation.</li>
+    <li><strong>Enter Entropy Change (ΔS):</strong> Input the change in entropy for the reaction. Select the unit (J/mol·K, kJ/mol·K, kcal/mol·K). Ensure the energy component of this unit is compatible with the unit you chose for ΔH (e.g., if ΔH is in kJ, using J for ΔS is common and handled correctly).</li>
+    <li><strong>View the Results:</strong>
+        <ul>
+            <li>The calculated <strong>Gibbs Free Energy Change (ΔG)</strong> appears instantly. You can select the desired output unit (kJ/mol, J/mol, kcal/mol).</li>
+            <li>Below ΔG, the calculator indicates the <strong>spontaneity</strong> of the reaction based on the sign of ΔG.</li>
+        </ul>
+    </li>
+</ol>
+<p><strong>Note:</strong> You must enter valid numbers for ΔH, T, and ΔS for the calculation to proceed.</p>
+
+<h4>Example Calculation: Water Vaporization</h4>
+<p><strong>Problem:</strong> Consider the vaporization of water at 100°C (373.15 K): H₂O(l) → H₂O(g). Given ΔH ≈ +40.7 kJ/mol and ΔS ≈ +109 J/mol·K, calculate ΔG and determine spontaneity.</p>
+<ol>
+    <li><strong>ΔH:</strong> Enter <code>40.7</code>, Unit = <code>kJ/mol</code></li>
+    <li><strong>T:</strong> Enter <code>100</code>, Unit = <code>°C</code> (Calculator converts to 373.15 K)</li>
+    <li><strong>ΔS:</strong> Enter <code>109</code>, Unit = <code>J/mol·K</code></li>
+    <li><strong>Output Unit for ΔG:</strong> Select <code>kJ/mol</code></li>
+</ol>
+<p><strong>Results:</strong></p>
+<ul>
+    <li>ΔG will be ≈ <strong>0.00 kJ/mol</strong>.</li>
+    <li>Spontaneity will indicate: <strong>Reaction is at Equilibrium (ΔG ≈ 0)</strong>, which makes sense for boiling water at its boiling point.</li>
+</ul>
+
+<hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 24px 0;">
+
+<h2>Understanding Gibbs Free Energy (ΔG)</h2>
+
+<p>ΔG is a crucial thermodynamic quantity that combines enthalpy and entropy to predict reaction spontaneity.</p>
+
+<h3>Q: What is the Gibbs Free Energy equation?</h3>
+<p>A: The equation relates Gibbs Free Energy change (ΔG) to enthalpy change (ΔH), absolute temperature (T), and entropy change (ΔS):</p>
+<p style="font-family: 'Courier New', Courier, monospace; font-size: 1.1em; background: #f8f8f8; padding: 10px 14px; border-radius: 5px; border: 1px solid #eee; line-height: 1.6; color: #333;">
+  ΔG = ΔH - TΔS
+</p>
+<p>Where:</p>
+<ul>
+    <li><strong>ΔG:</strong> Change in Gibbs Free Energy. Determines spontaneity.</li>
+    <li><strong>ΔH:</strong> Change in Enthalpy. Represents heat absorbed or released (negative is exothermic, positive is endothermic).</li>
+    <li><strong>T:</strong> Absolute Temperature (in Kelvin).</li>
+    <li><strong>ΔS:</strong> Change in Entropy. Represents the change in disorder or randomness (positive means more disorder).</li>
+</ul>
+
+<h3>Q: How does ΔG predict spontaneity?</h3>
+<p>A: The sign of ΔG at a given temperature and pressure indicates whether a reaction can proceed spontaneously (without external energy input):</p>
+<ul>
+    <li><strong>ΔG < 0 (Negative):</strong> The reaction is <strong>spontaneous</strong> in the forward direction (product-favored).</li>
+    <li><strong>ΔG > 0 (Positive):</strong> The reaction is <strong>non-spontaneous</strong> in the forward direction. The reverse reaction is spontaneous.</li>
+    <li><strong>ΔG = 0:</strong> The reaction is at <strong>equilibrium</strong>. The rates of the forward and reverse reactions are equal, and there is no net change.</li>
+</ul>
+<p>This calculator determines spontaneity based on these criteria.</p>
+
+<h3>Q: Why are the units for ΔH and ΔS so important?</h3>
+<p>A: The term `TΔS` must have the same energy units as `ΔH` for the subtraction `ΔH - TΔS` to be valid. Enthalpy (ΔH) is often given in kilojoules (kJ/mol), while entropy (ΔS) is often given in joules per Kelvin per mole (J/mol·K). Notice the difference: kJ vs J.</p>
+<p>This calculator automatically handles this conversion. When calculating `TΔS`, it typically converts ΔS from J/mol·K to kJ/mol·K (by dividing by 1000) if ΔH is given in kJ/mol, ensuring the units match before calculating ΔG. It then converts the final ΔG result to your chosen output unit.</p>
+
+<h3>Q: Why must Temperature (T) be in Kelvin?</h3>
+<p>A: Thermodynamic calculations, including the `TΔS` term, require absolute temperature measured from absolute zero. Kelvin (K) is the absolute scale. Using Celsius (°C) or Fahrenheit (°F) directly would lead to incorrect results, including nonsensical negative ΔG values at low Celsius temperatures. This calculator ensures T is always converted to Kelvin before being used in the equation.</p>
+
+<h3>Q: Does this calculator work for standard conditions (ΔG°)?</h3>
+<p>A: Yes, if you input the standard enthalpy change (ΔH°) and standard entropy change (ΔS°) and use the standard temperature (usually 298.15 K or 25°C), the calculator will compute the standard Gibbs Free Energy change (ΔG°).</p>
