@@ -1,0 +1,90 @@
+<h2>How to Use the Combined Gas Law Calculator</h2>
+
+<p>This calculator solves problems involving the <strong>Combined Gas Law</strong>, which relates the pressure (P), volume (V), and absolute temperature (T) of a fixed amount of gas undergoing changes. The formula is:</p>
+<p style="font-family: 'Courier New', Courier, monospace; font-size: 1.2em; text-align: center; background: #f8f8f8; padding: 15px; border-radius: 5px; border: 1px solid #eee; line-height: 1.6; color: #333;">
+  (P₁V₁) / T₁ = (P₂V₂) / T₂
+</p>
+<p>This tool allows you to solve for any one of the six variables (P₁, V₁, T₁, P₂, V₂, T₂) if you know the other five. It automatically handles temperature unit conversions.</p>
+
+<h3>Step-by-Step Guide</h3>
+<ol>
+    <li><strong>Choose Your Goal:</strong> Click one of the six buttons at the top to select the variable you want to calculate (e.g., "Final Pressure (P₂)"). The corresponding input field will become the read-only result box.</li>
+    <li><strong>Enter Known Values:</strong> Input the five known values into their respective boxes under "Initial State (1)" and "Final State (2)".</li>
+    <li><strong>Select Units for Each Value:</strong> Use the dropdown menus next to each input box to specify the units for every pressure, volume, and temperature value you entered.
+        <ul>
+            <li><strong>Crucially: Temperature values entered in °C or °F will be automatically converted to Kelvin (K) for the calculation.</strong></li>
+            <li>Ensure the pressure units for P₁ and P₂ match conceptually (e.g., both atm, or both kPa).</li>
+            <li>Ensure the volume units for V₁ and V₂ match conceptually (e.g., both L, or both mL).</li>
+        </ul>
+    </li>
+    <li><strong>View the Result:</strong> The calculated value will appear instantly in the designated result box, displayed in the unit you selected for that variable.</li>
+</ol>
+
+<h4>Example Calculation: Finding Final Pressure (P₂)</h4>
+<p><strong>Problem:</strong> A gas occupies 2.0 L at 25°C and 1.0 atm. What pressure will it exert if the volume is changed to 1.5 L and the temperature is raised to 50°C?</p>
+<ol>
+    <li><strong>Select Target:</strong> Click "<strong>Final Pressure (P₂)</strong>" (this is the default).</li>
+    <li><strong>Enter Initial State (1):</strong>
+        <ul>
+            <li>P₁ = <code>1.0</code>, Unit = <code>atm</code></li>
+            <li>V₁ = <code>2.0</code>, Unit = <code>L</code></li>
+            <li>T₁ = <code>25</code>, Unit = <code>°C</code></li>
+        </ul>
+    </li>
+     <li><strong>Enter Final State (2):</strong>
+        <ul>
+            <li>V₂ = <code>1.5</code>, Unit = <code>L</code></li>
+            <li>T₂ = <code>50</code>, Unit = <code>°C</code></li>
+        </ul>
+    </li>
+     <li><strong>Select P₂ Unit:</strong> Choose <code>atm</code>.</li>
+    <li><strong>View the Result:</strong> The "Pressure (P₂)" field will instantly show the result ≈ <strong>1.45 atm</strong>.</li>
+</ol>
+
+<hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 24px 0;">
+
+<h2>Understanding the Combined Gas Law</h2>
+
+<p>This law combines Boyle's Law, Charles's Law, and Gay-Lussac's Law into a single expression relating pressure, volume, and temperature for a fixed amount of gas.</p>
+
+<h3>Q: What is the Combined Gas Law equation?</h3>
+<p>A: The formula is:</p>
+<p style="font-family: 'Courier New', Courier, monospace; font-size: 1.1em; background: #f8f8f8; padding: 10px 14px; border-radius: 5px; border: 1px solid #eee; line-height: 1.6; color: #333;">
+  (P₁ &times; V₁) / T₁ = (P₂ &times; V₂) / T₂
+</p>
+<p>Where:</p>
+<ul>
+    <li>P₁ = Initial Pressure</li>
+    <li>V₁ = Initial Volume</li>
+    <li>T₁ = Initial Absolute Temperature (in Kelvin)</li>
+    <li>P₂ = Final Pressure</li>
+    <li>V₂ = Final Volume</li>
+    <li>T₂ = Final Absolute Temperature (in Kelvin)</li>
+</ul>
+<p>This law holds true as long as the amount of gas (moles) remains constant.</p>
+
+<h3>Q: Why MUST temperature be in Kelvin?</h3>
+<p>A: The relationship between volume/pressure and temperature in gas laws is directly proportional to the **absolute temperature**. Absolute temperature scales (like Kelvin) start at absolute zero (0 K), the theoretical point where gas particles have minimal motion. Celsius (°C) and Fahrenheit (°F) are relative scales with arbitrary zero points. Using °C or °F directly in the P₁V₁/T₁ = P₂V₂/T₂ formula will lead to incorrect results because the ratios T₂/T₁ would be wrong (and you could even encounter division by zero if T=0°C).</p>
+<p>This calculator automatically converts any °C or °F inputs to K before performing the calculation:
+    <ul>
+        <li><code>K = °C + 273.15</code></li>
+        <li><code>K = (°F - 32) &times; 5/9 + 273.15</code></li>
+    </ul>
+If you are solving for a temperature, the result is calculated in Kelvin and then converted back to your chosen unit (°C, °F, or K).</p>
+
+<h3>Q: Do Pressure and Volume units need specific conversions?</h3>
+<p>A: No, not for this specific formula. The formula works as long as the units are **consistent** within pairs. For example:</p>
+<ul>
+    <li>If P₁ is in atmospheres (atm), P₂ must also be in atmospheres (atm) for the result to be correct in atm.</li>
+    <li>If V₁ is in milliliters (mL), V₂ must also be in milliliters (mL) for the calculation to work.</li>
+</ul>
+<p>The units effectively cancel out in the ratio. Just ensure you select the correct, matching units in the dropdowns for your initial and final states.</p>
+
+<h3>Q: What if one variable remains constant (e.g., constant temperature)?</h3>
+<p>A: The Combined Gas Law simplifies to the other gas laws if a variable is held constant:</p>
+<ul>
+    <li><strong>Constant Temperature (T₁ = T₂):</strong> The formula becomes P₁V₁ = P₂V₂ (Boyle's Law). You can still use this calculator; just enter the same value and unit for T₁ and T₂.</li>
+    <li><strong>Constant Pressure (P₁ = P₂):</strong> The formula becomes V₁/T₁ = V₂/T₂ (Charles's Law). Enter the same value and unit for P₁ and P₂.</li>
+    <li><strong>Constant Volume (V₁ = V₂):</strong> The formula becomes P₁/T₁ = P₂/T₂ (Gay-Lussac's Law). Enter the same value and unit for V₁ and V₂.</li>
+</ul>
+<p>This calculator effectively covers all these scenarios.</p>
