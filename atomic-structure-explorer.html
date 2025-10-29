@@ -1,0 +1,550 @@
+<!-- Atomic Structure Explorer V1 - Start -->
+<div id="atomic-structure-explorer-app-v1">
+    <style>
+        #atomic-structure-explorer-app-v1 {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+            line-height: 1.6 !important; color: #333 !important;
+            max-width: 700px;
+            margin: 2rem auto !important;
+            padding: 1rem !important;
+        }
+        #atomic-structure-explorer-app-v1 .ase-card {
+            background-color: #ffffff !important; padding: 1.5rem 2rem !important; border-radius: 0.75rem !important;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1) !important;
+            border: 1px solid #e5e7eb !important;
+        }
+        #atomic-structure-explorer-app-v1 h2 {
+            color: #B45309 !important; font-size: 1.75rem !important; font-weight: 700 !important;
+            margin-top: 0 !important; margin-bottom: 0.5rem !important; text-align: center !important;
+        }
+        #atomic-structure-explorer-app-v1 .ase-subtitle {
+            text-align: center !important; color: #4b5563 !important; margin-bottom: 2rem !important;
+        }
+        
+        /* --- Search UI --- */
+        #atomic-structure-explorer-app-v1 .ase-search-container {
+            position: relative; max-width: 450px; margin: 0 auto 1.5rem auto;
+        }
+        #atomic-structure-explorer-app-v1 .ase-input-group label {
+            font-weight: 600 !important; color: #374151 !important; font-size: 0.9rem !important;
+            text-align: left; display: block; margin-bottom: 0.5rem;
+        }
+        #atomic-structure-explorer-app-v1 .ase-search-input {
+            padding: 0.75rem 1rem !important; border: 1px solid #d1d5db !important; border-radius: 0.5rem !important;
+            font-size: 1.1rem !important; color: #111827 !important; width: 100% !important; box-sizing: border-box !important;
+        }
+        #atomic-structure-explorer-app-v1 .ase-search-input:focus {
+            outline: none !important; border-color: #0284c7 !important; box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2) !important;
+        }
+        #atomic-structure-explorer-app-v1 .ase-results-dropdown {
+            display: none; position: absolute; top: 100%; left: 0; right: 0;
+            background: #ffffff !important; border: 1px solid #d1d5db !important; border-top: none !important;
+            border-radius: 0 0 0.5rem 0.5rem !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+            max-height: 250px; overflow-y: auto; z-index: 100;
+        }
+        #atomic-structure-explorer-app-v1 .ase-dropdown-item {
+            padding: 0.75rem 1rem !important; cursor: pointer !important;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        #atomic-structure-explorer-app-v1 .ase-dropdown-item:last-child { border-bottom: none; }
+        #atomic-structure-explorer-app-v1 .ase-dropdown-item:hover { background-color: #f9fafb !important; }
+        #atomic-structure-explorer-app-v1 .ase-item-name { font-weight: 600; font-size: 0.95rem; color: #1f2937; }
+        #atomic-structure-explorer-app-v1 .ase-item-formula { font-family: "Courier New", Courier, monospace; font-size: 0.9rem; color: #4b5563; }
+
+        /* --- Results Display Area --- */
+        #ase-results-area-v1 {
+            width: 100% !important; margin-top: 2rem !important; padding-top: 1.5rem;
+            border-top: 1px solid #eee; display: none; /* Hidden by default */
+        }
+        #ase-results-area-v1 .ase-result-name {
+            font-size: 1.5rem; font-weight: 700; color: #B45309; text-align: center; margin-bottom: 1.5rem;
+        }
+        #ase-results-area-v1 h3 {
+             font-size: 1.2rem; color: #1e293b; margin-top: 1.5rem; margin-bottom: 1rem; text-align: left;
+             padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb;
+        }
+        
+        #ase-results-area-v1 .ase-detail-grid {
+             display: grid; grid-template-columns: 1fr; gap: 0.75rem;
+        }
+         @media (min-width: 500px) {
+             #ase-results-area-v1 .ase-detail-grid { grid-template-columns: 1fr 1fr; }
+         }
+        #ase-results-area-v1 .ase-detail-item {
+             background: #f9fafb; padding: 0.75rem 1rem; border-radius: 0.5rem;
+             border: 1px solid #f3f4f6;
+        }
+        #ase-results-area-v1 .ase-detail-item label {
+             display: block; font-size: 0.85rem; font-weight: 500; color: #6b7280;
+        }
+        #ase-results-area-v1 .ase-detail-item span {
+             font-size: 1rem; font-weight: 600; color: #1f2937; word-break: break-word;
+        }
+        #ase-results-area-v1 .ase-detail-item.full-width { grid-column: 1 / -1; }
+        #ase-results-area-v1 .ase-detail-item span.formula {
+             font-family: "Courier New", Courier, monospace; font-size: 1.1rem;
+             font-weight: 700; color: #0369a1;
+        }
+        
+        /* 3D Iframe Viewer */
+        #ase-3d-model-container-v1 {
+            width: 100%;
+            padding-top: 75%; /* Aspect ratio 4:3 */
+            position: relative;
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        #ase-3d-model-container-v1 iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: 0;
+        }
+        
+        /* 2D SVG Diagram */
+        #ase-2d-diagram-container-v1 {
+            width: 100%;
+            max-width: 350px;
+            margin: 1rem auto 0 auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            background: #fdfdfd;
+        }
+        #ase-2d-diagram-container-v1 svg {
+             width: 100%; height: auto; display: block;
+        }
+        /* SVG Element Styles */
+        .ase-svg-shape .axis { stroke: #e5e7eb; stroke-width: 1; }
+        .ase-svg-shape .cube { fill: none; stroke: #9ca3af; stroke-width: 1; }
+        .ase-svg-shape .bond { stroke: #6b7280; stroke-width: 1.5; }
+        .ase-svg-shape .atom-A { fill: #3b82f6; stroke: #1d4ed8; stroke-width: 1; } /* Blue (e.g., Na) */
+        .ase-svg-shape .atom-B { fill: #16a34a; stroke: #065f46; stroke-width: 1; } /* Green (e.g., Cl) */
+        .ase-svg-shape .atom-C { fill: #4b5563; stroke: #1f2937; stroke-width: 1; } /* Gray (e.g., C) */
+        .ase-svg-shape .atom-H { fill: #f1f5f9; stroke: #9ca3af; stroke-width: 1; } /* White (e.g., H) */
+        
+        #ase-explanation-v1 {
+             font-size: 0.95rem; color: #374151; background: #f8fafc;
+             padding: 1rem; border-radius: 0.5rem; border: 1px solid #e2e8f0;
+             margin-top: 1.5rem;
+        }
+        
+        #ase-init-error-v1 { color: red; text-align: center; padding: 1.5rem; border: 1px solid red; border-radius: 0.5rem; background-color: #fee2e2; display: none; }
+    </style>
+
+    <div class="ase-card">
+        <h2>Atomic Structure Explorer</h2>
+        <p class="ase-subtitle">Visually explore common crystal lattice structures.</p>
+        
+        <div id="ase-init-error-v1">Error: Failed to initialize. Please check console.</div>
+
+        <!-- V1: Search Section -->
+        <div class="ase-search-container">
+            <div class="ase-input-group">
+                <label for="ase-search-input-v1">Search for a Structure</label>
+                <input type="text" id="ase-search-input-v1" class="ase-search-input" placeholder="e.g., Diamond, NaCl, or FCC..." autocapitalize="none">
+            </div>
+            <!-- This div will hold the search results dropdown -->
+            <div id="ase-results-dropdown-v1" class="ase-results-dropdown"></div>
+        </div>
+
+        <!-- V1: Results Display Area -->
+        <div id="ase-results-area-v1">
+            <h2 id="ase-result-name-v1" class="ase-result-name"></h2>
+            
+            <h3>Information</h3>
+            <div class="ase-detail-grid">
+                <div class="ase-detail-item full-width">
+                    <label>Chemical Formula</label>
+                    <span id="ase-formula-v1" class="formula">--</span>
+                </div>
+                 <div class="ase-detail-item">
+                    <label>Crystal System</label>
+                    <span id="ase-crystal-system-v1">--</span>
+                </div>
+                <div class="ase-detail-item">
+                    <label>Lattice Type</label>
+                    <span id="ase-lattice-type-v1">--</span>
+                </div>
+                <div class="ase-detail-item">
+                    <label>Coordination Number</label>
+                    <span id="ase-coordination-v1">--</span>
+                </div>
+                <div class="ase-detail-item">
+                    <label>Example(s)</label>
+                    <span id="ase-examples-v1">--</span>
+                </div>
+            </div>
+            
+            <h3>Interactive 3D Model</h3>
+            <div id="ase-3d-model-container-v1">
+                <!-- Iframe will be injected here -->
+            </div>
+            <p style="font-size: 0.8rem; text-align: center; color: #6b7280; margin-top: 0.5rem;">(Click and drag to rotate, scroll to zoom)</p>
+
+            <h3>2D Unit Cell Diagram</h3>
+            <div id="ase-2d-diagram-container-v1">
+                <!-- 2D SVG will be injected here -->
+            </div>
+
+            <h3>Description</h3>
+            <div id="ase-explanation-v1" class="ase-explanation-box">
+                --
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+console.log("ASE V1: Script starting.");
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("ASE V1: DOMContentLoaded.");
+    setTimeout(initializeExplorer, 300); // Delay init
+
+    function initializeExplorer() {
+        console.log("ASE V1: Initializing app...");
+        const container = document.getElementById('atomic-structure-explorer-app-v1'); // V1 ID
+        if (!container) { console.error("ASE V1: Container not found."); return; }
+
+        let searchInput, resultsDropdown, resultsArea, initErrorMessage,
+            resultName, resultFormula, resultChemName, resultCategory,
+            resultHardness, resultColors, resultLatticeType, resultCoordNum,
+            resultCrystalSystem, resultExamples, iframeContainer, svgContainer, explanation;
+
+        try {
+            // --- Elements ---
+            searchInput = container.querySelector('#ase-search-input-v1');
+            resultsDropdown = container.querySelector('#ase-results-dropdown-v1');
+            resultsArea = container.querySelector('#ase-results-area-v1');
+            initErrorMessage = container.querySelector('#ase-init-error-v1');
+            
+            // Result fields
+            resultName = container.querySelector('#ase-result-name-v1');
+            resultFormula = container.querySelector('#ase-formula-v1');
+            resultCrystalSystem = container.querySelector('#ase-crystal-system-v1');
+            resultLatticeType = container.querySelector('#ase-lattice-type-v1');
+            resultCoordNum = container.querySelector('#ase-coordination-v1');
+            resultExamples = container.querySelector('#ase-examples-v1');
+            iframeContainer = container.querySelector('#ase-3d-model-container-v1');
+            svgContainer = container.querySelector('#ase-2d-diagram-container-v1');
+            explanation = container.querySelector('#ase-explanation-v1');
+
+            if (!searchInput || !resultsDropdown || !resultsArea || !initErrorMessage || !resultName || !iframeContainer || !svgContainer) {
+                throw new Error("One or more UI elements are missing!");
+            }
+            console.log("ASE V1: All UI elements found.");
+        } catch(e) {
+            console.error("ASE V1: Error finding UI elements:", e.message);
+            if(initErrorMessage) { initErrorMessage.textContent = "Error: Failed to initialize calculator UI."; initErrorMessage.style.display = 'block'; }
+            return;
+        }
+
+        // --- V1: Crystal "Database" ---
+        // 3D Iframe URL: Replace "YOUR_GITHUB_PAGES_URL" with your actual GitHub Pages URL
+        // e.g., "https://myusername.github.io/my-3d-repo/"
+        const GITHUB_PAGES_URL = "https://YOUR_GITHUB_PAGES_URL_HERE/"; // <<< --- IMPORTANT
+        
+        const crystalDatabase = [
+            {
+                id: "nacl",
+                name: "Sodium Chloride (Rock Salt)",
+                formula: "NaCl",
+                crystalSystem: "Cubic",
+                latticeType: "Face-Centered Cubic (FCC)",
+                coordinationNumber: "6:6",
+                examples: "NaCl, KBr, AgCl",
+                svg_id: "nacl",
+                description: "The classic ionic lattice. Each Na+ ion (blue) is surrounded by 6 Cl- ions (green), and each Cl- is surrounded by 6 Na+."
+            },
+            {
+                id: "cscl",
+                name: "Cesium Chloride",
+                formula: "CsCl",
+                crystalSystem: "Cubic",
+                latticeType: "Simple Cubic (with ion in center)",
+                coordinationNumber: "8:8",
+                examples: "CsCl, CsBr, TlCl",
+                svg_id: "cscl",
+                description: "A simple cubic lattice of anions (green) with a single cation (blue) in the center of the cube (the 'body center')."
+            },
+            {
+                id: "diamond",
+                name: "Diamond",
+                formula: "C",
+                crystalSystem: "Cubic",
+                latticeType: "Diamond Cubic (FCC variant)",
+                coordinationNumber: "4",
+                examples: "C (Diamond), Si, Ge",
+                svg_id: "diamond",
+                description: "A strong covalent network. Each carbon atom (gray) is bonded to four other atoms in a perfect tetrahedral arrangement (109.5°)."
+            },
+            {
+                id: "graphite",
+                name: "Graphite",
+                formula: "C",
+                crystalSystem: "Hexagonal",
+                latticeType: "Layered Hexagonal Sheets",
+                coordinationNumber: "3",
+                examples: "C (Graphite)",
+                svg_id: "graphite",
+                description: "Carbon atoms arranged in flat hexagonal layers (like graphene). Each atom is bonded to 3 others (120°). The layers are held together by weak forces, allowing them to slide."
+            },
+            {
+                id: "fcc",
+                name: "Face-Centered Cubic (FCC)",
+                formula: "N/A (Metallic)",
+                crystalSystem: "Cubic",
+                latticeType: "Face-Centered Cubic",
+                coordinationNumber: "12",
+                examples: "Cu, Au, Ag, Al, Pb",
+                svg_id: "fcc",
+                description: "A 'cubic close-packed' structure. Atoms are located at each corner and in the center of every face of the cube. This is a very dense and stable arrangement."
+            },
+            {
+                id: "bcc",
+                name: "Body-Centered Cubic (BCC)",
+                formula: "N/A (Metallic)",
+                crystalSystem: "Cubic",
+                latticeType: "Body-Centered Cubic",
+                coordinationNumber: "8",
+                examples: "Fe (Alpha), Cr, W",
+                svg_id: "bcc",
+                description: "A cubic structure with atoms at each corner and one single atom in the very center of the cube's body."
+            },
+            {
+                id: "hcp",
+                name: "Hexagonal Close-Packed (HCP)",
+                formula: "N/A (Metallic)",
+                crystalSystem: "Hexagonal",
+                latticeType: "Hexagonal Close-Packed",
+                coordinationNumber: "12",
+                examples: "Mg, Zn, Ti, Co",
+                svg_id: "hcp",
+                description: "A close-packed structure with hexagonal layers. The layers stack in an A-B-A-B... pattern. It has the same packing efficiency (74%) as FCC."
+            },
+            {
+                id: "ice",
+                name: "Ice (Water)",
+                formula: "H₂O",
+                crystalSystem: "Hexagonal",
+                latticeType: "Hexagonal (Molecular)",
+                coordinationNumber: "4 (via H-bonds)",
+                examples: "H₂O(s)",
+                svg_id: "ice",
+                description: "Water molecules (O=blue, H=white) form a hexagonal lattice held together by hydrogen bonds. This open structure is why ice is less dense than liquid water."
+            }
+        ];
+
+        // --- V1: 2D SVG Library ---
+        // (Simplified 2D representations)
+        const svgLibrary = {
+            fcc: `<svg class="ase-svg-shape" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path class="cube" d="M 30 25 L 70 25 L 70 65 L 30 65 Z"/>
+                <path class="cube" d="M 30 25 L 50 10 L 90 10 L 70 25"/>
+                <path class="cube" d="M 70 65 L 90 50 L 90 10"/>
+                <circle class="atom-C" cx="30" cy="25" r="5"/><circle class="atom-C" cx="70" cy="25" r="5"/>
+                <circle class="atom-C" cx="30" cy="65" r="5"/><circle class="atom-C" cx="70" cy="65" r="5"/>
+                <circle class="atom-C" cx="50" cy="10" r="5"/><circle class="atom-C" cx="90" cy="10" r="5"/>
+                <circle class="atom-C" cx="50" cy="50" r="5"/><circle class="atom-C" cx="80" cy="17.5" r="5"/>
+                <circle class="atom-C" cx="80" cy="57.5" r="5"/><circle class="atom-C" cx="40" cy="72.5" r="5"/>
+                <circle class="atom-C" cx="20" cy="32.5" r="5"/><circle class="atom-C" cx="60" cy="37.5" r="5"/>
+                <circle class="atom-C" cx="90" cy="50" r="5"/><circle class="atom-C" cx="50" cy="80" r="5"/>
+                </svg>`,
+            bcc: `<svg class="ase-svg-shape" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path class="cube" d="M 30 25 L 70 25 L 70 65 L 30 65 Z"/>
+                <path class="cube" d="M 30 25 L 50 10 L 90 10 L 70 25"/>
+                <path class="cube" d="M 70 65 L 90 50 L 90 10"/>
+                <circle class="atom-C" cx="30" cy="25" r="5"/><circle class="atom-C" cx="70" cy="25" r="5"/>
+                <circle class="atom-C" cx="30" cy="65" r="5"/><circle class="atom-C" cx="70" cy="65" r="5"/>
+                <circle class="atom-C" cx="50" cy="10" r="5"/><circle class="atom-C" cx="90" cy="10" r="5"/>
+                <circle class="atom-C" cx="90" cy="50" r="5"/><circle class="atom-C" cx="50" cy="80" r="5"/>
+                <circle class="atom-C" cx="60" cy="37.5" r="5" stroke-width="2"/>
+                </svg>`,
+            nacl: `<svg class="ase-svg-shape" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path class="cube" d="M 30 25 L 70 25 L 70 65 L 30 65 Z"/>
+                <path class="cube" d="M 30 25 L 50 10 L 90 10 L 70 25"/>
+                <path class="cube" d="M 70 65 L 90 50 L 90 10"/>
+                <circle class="atom-A" cx="30" cy="25" r="5"/><circle class="atom-B" cx="50" cy="25" r="5"/><circle class="atom-A" cx="70" cy="25" r="5"/>
+                <circle class="atom-B" cx="30" cy="45" r="5"/><circle class="atom-A" cx="50" cy="45" r="5"/><circle class="atom-B" cx="70" cy="45" r="5"/>
+                <circle class="atom-A" cx="30" cy="65" r="5"/><circle class="atom-B" cx="50" cy="65" r="5"/><circle class="atom-A" cx="70" cy="65" r="5"/>
+                <circle class="atom-B" cx="50" cy="10" r="5"/><circle class="atom-A" cx="70" cy="10" r="5"/><circle class="atom-B" cx="90" cy="10" r="5"/>
+                <circle class="atom-A" cx="50" cy="30" r="5"/><circle class="atom-B" cx="70" cy="30" r="5"/><circle class="atom-A" cx="90" cy="30" r="5"/>
+                <circle class="atom-B" cx="50" cy="50" r="5"/><circle class="atom-A" cx="70" cy="50" r="5"/><circle class="atom-B" cx="90" cy="50" r="5"/>
+                </svg>`,
+            cscl: `<svg class="ase-svg-shape" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path class="cube" d="M 30 25 L 70 25 L 70 65 L 30 65 Z"/>
+                <path class="cube" d="M 30 25 L 50 10 L 90 10 L 70 25"/>
+                <path class="cube" d="M 70 65 L 90 50 L 90 10"/>
+                <circle class="atom-B" cx="30" cy="25" r="5"/><circle class="atom-B" cx="70" cy="25" r="5"/>
+                <circle class="atom-B" cx="30" cy="65" r="5"/><circle class="atom-B" cx="70" cy="65" r="5"/>
+                <circle class="atom-B" cx="50" cy="10" r="5"/><circle class="atom-B" cx="90" cy="10" r="5"/>
+                <circle class="atom-B" cx="90" cy="50" r="5"/><circle class="atom-B" cx="50" cy="80" r="5"/>
+                <circle class="atom-A" cx="60" cy="37.5" r="8"/>
+                </svg>`,
+            diamond: `<svg class="ase-svg-shape" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path class="cube" d="M 30 25 L 70 25 L 70 65 L 30 65 Z"/>
+                <path class="cube" d="M 30 25 L 50 10 L 90 10 L 70 25"/>
+                <path class="cube" d="M 70 65 L 90 50 L 90 10"/>
+                <circle class="atom-C" cx="30" cy="25" r="5"/><circle class="atom-C" cx="70" cy="25" r="5"/>
+                <circle class="atom-C" cx="30" cy="65" r="5"/><circle class="atom-C" cx="70" cy="65" r="5"/>
+                <circle class="atom-C" cx="50" cy="10" r="5"/><circle class="atom-C" cx="90" cy="10" r="5"/>
+                <circle class="atom-C" cx="90" cy="50" r="5"/><circle class="atom-C" cx="50" cy="80" r="5"/>
+                <circle class="atom-C" cx="50" cy="50" r="5"/><circle class="atom-C" cx="80" cy="17.5" r="5"/>
+                <circle class="atom-C" cx="80" cy="57.5" r="5"/><circle class="atom-C" cx="40" cy="72.5" r="5"/>
+                <circle class="atom-C" cx="20" cy="32.5" r="5"/><circle class="atom-C" cx="60" cy="37.5" r="5"/>
+                <circle class="atom-C" cx="42.5" cy="31.25" r="4" fill="#A0A0A0"/>
+                <circle class="atom-C" cx="42.5" cy="56.25" r="4" fill="#A0A0A0"/>
+                <circle class="atom-C" cx="77.5" cy="31.25" r="4" fill="#A0A0A0"/>
+                <circle class="atom-C" cx="77.5" cy="56.25" r="4" fill="#A0A0A0"/>
+                </svg>`,
+            graphite: `<svg class="ase-svg-shape" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <polygon class="bond" points="30 40, 50 30, 70 40, 70 60, 50 70, 30 60, 30 40" stroke-width="1"/>
+                <polygon class="bond" points="50 30, 70 20, 90 30, 90 50, 70 60, 50 50, 50 30" stroke-width="1"/>
+                <polygon class="bond" points="30 60, 50 70, 70 60, 70 80, 50 90, 30 80, 30 60" stroke-width="1"/>
+                <circle class="atom-C" cx="30" cy="40" r="3"/><circle class="atom-C" cx="50" cy="30" r="3"/>
+                <circle class="atom-C" cx="70" cy="40" r="3"/><circle class="atom-C" cx="70" cy="60" r="3"/>
+                <circle class="atom-C" cx="50" cy="70" r="3"/><circle class="atom-C" cx="30" cy="60" r="3"/>
+                <circle class="atom-C" cx="70" cy="20" r="3"/><circle class="atom-C" cx="90" cy="30" r="3"/>
+                <circle class="atom-C" cx="90" cy="50" r="3"/><circle class="atom-C" cx="50" cy="50" r="3"/>
+                <circle class="atom-C" cx="70" cy="80" r="3"/><circle class="atom-C" cx="50" cy="90" r="3"/>
+                <circle class="atom-C" cx="30" cy="80" r="3"/>
+                </svg>`,
+            ice: `<svg class="ase-svg-shape" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <polygon class="bond" points="30 40, 50 30, 70 40, 70 60, 50 70, 30 60, 30 40" stroke-dasharray="2 2" stroke-width="1"/>
+                <circle class="atom-A" cx="50" cy="50" r="6"/>
+                <circle class="atom-H" cx="42" cy="45" r="3"/><circle class="atom-H" cx="58" cy="45" r="3"/>
+                <circle class="atom-A" cx="30" cy="40" r="6"/><circle class="atom-A" cx="50" cy="30" r="6"/>
+                <circle class="atom-A" cx="70" cy="40" r="6"/><circle class="atom-A" cx="70" cy="60" r="6"/>
+                <circle class="atom-A" cx="50" cy="70" r="6"/><circle class="atom-A" cx="30" cy="60" r="6"/>
+                </svg>`,
+            hcp: `<svg class="ase-svg-shape" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <polygon class="bond" points="30 35, 50 25, 70 35, 70 55, 50 65, 30 55, 30 35" stroke-width="1" opacity="0.5"/>
+                <polygon class="bond" points="30 55, 50 65, 70 55, 70 75, 50 85, 30 75, 30 55" stroke-width="1"/>
+                <circle class="atom-C" cx="50" cy="45" r="4"/><circle class="atom-C" cx="30" cy="45" r="4" opacity="0.5"/>
+                <circle class="atom-C" cx="70" cy="45" r="4" opacity="0.5"/>
+                <circle class="atom-C" cx="30" cy="35" r="4" opacity="0.5"/><circle class="atom-C" cx="50" cy="25" r="4" opacity="0.5"/><circle class="atom-C" cx="70" cy="35" r="4" opacity="0.5"/>
+                <circle class="atom-C" cx="30" cy="75" r="4"/><circle class="atom-C" cx="50" cy="85" r="4"/><circle class="atom-C" cx="70" cy="75" r="4"/>
+                <circle class="atom-C" cx="30" cy="55" r="4"/><circle class="atom-C" cx="50" cy="65" r="4"/><circle class="atom-C" cx="70" cy="55" r="4"/>
+                </svg>`
+        };
+
+        // --- Functions ---
+        function showInitError(message) { if(initErrorMessage) { initErrorMessage.textContent = message; initErrorMessage.style.display = 'block'; } console.error("ASE V1 Init Error:", message); }
+        function hideError() { /* Hide error div if one exists */ }
+
+        function displayStructureDetails(compound) {
+             console.log("ASE V1: Displaying details for:", compound.name);
+             hideError();
+             try {
+                // Populate text fields
+                resultName.textContent = `${compound.name} (${compound.formula})`;
+                resultFormula.textContent = compound.formula;
+                resultCrystalSystem.textContent = compound.crystalSystem;
+                resultLatticeType.textContent = compound.latticeType;
+                resultCoordNum.textContent = compound.coordinationNumber;
+                resultExamples.textContent = compound.examples;
+                explanation.textContent = compound.description;
+                
+                // V1: Inject 2D SVG
+                if (svgLibrary[compound.svg_id]) {
+                    svgContainer.innerHTML = svgLibrary[compound.svg_id];
+                } else {
+                    svgContainer.innerHTML = `<p style='text-align:center; padding: 1rem; color: #6b7280;'>No 2D diagram available.</p>`;
+                }
+                
+                // V1: Inject 3D Iframe
+                if (GITHUB_PAGES_URL.startsWith("https://YOUR_GITHUB_PAGES_URL_HERE")) {
+                     iframeContainer.innerHTML = `<p style='text-align:center; padding: 1rem; color: #b91c1c;'>3D Model Error: GitHub Pages URL not set in script.</p>`;
+                } else {
+                    const iframe_url = `${GITHUB_PAGES_URL}?model=${compound.id}`;
+                    iframeContainer.innerHTML = `<iframe src="${iframe_url}" title="Interactive 3D model of ${compound.name}" allowfullscreen></iframe>`;
+                }
+                
+                resultsArea.style.display = 'block';
+                console.log("ASE V1: Display complete.");
+             } catch (error) {
+                 console.error("ASE V1: Display error:", error);
+                 showError(error.message);
+             }
+        }
+        
+        function handleSearchInput() {
+            const filterText = searchInput.value.toLowerCase().trim();
+            console.log("ASE V1: Filtering with:", filterText);
+            
+            resultsDropdown.innerHTML = '';
+            
+            if (filterText.length < 1) {
+                resultsDropdown.style.display = 'none';
+                return;
+            }
+
+            const filteredDb = crystalDatabase.filter(item => {
+                 if (!item.searchTags) item.searchTags = [];
+                 return item.name.toLowerCase().includes(filterText) ||
+                        item.formula.toLowerCase().includes(filterText) ||
+                        item.id.toLowerCase().includes(filterText) ||
+                        item.latticeType.toLowerCase().includes(filterText) ||
+                        item.examples.toLowerCase().includes(filterText);
+            }).slice(0, 7); // Limit to top 7 results
+
+            if (filteredDb.length === 0) {
+                 resultsDropdown.style.display = 'none';
+                 return;
+            }
+
+            filteredDb.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'ase-dropdown-item';
+                div.dataset.id = item.id; 
+                div.innerHTML = `<div class="ase-item-name">${item.name}</div><div class="ase-item-formula">${item.formula}</div>`;
+                
+                div.addEventListener('click', function() {
+                    console.log("ASE V1: Item selected:", item.name);
+                    searchInput.value = item.name; // Put selected name in bar
+                    resultsDropdown.style.display = 'none'; // Hide dropdown
+                    // Find the compound in the DB again to pass the full object
+                    const selectedItem = crystalDatabase.find(m => m.id === item.id);
+                    if (selectedItem) {
+                         displayStructureDetails(selectedItem);
+                    }
+                });
+                resultsDropdown.appendChild(div);
+            });
+            
+            resultsDropdown.style.display = 'block';
+        }
+        
+        // --- Initialization ---
+        try {
+            searchInput.addEventListener('input', handleSearchInput);
+            
+            // Hide dropdown if user clicks outside
+            document.addEventListener('click', function(event) {
+                if (!container.contains(event.target)) {
+                    resultsDropdown.style.display = 'none';
+                }
+            });
+            
+             // Check if GitHub URL is set and warn if not
+            if (GITHUB_PAGES_URL.startsWith("https://YOUR_GITHUB_PAGES_URL_HERE")) {
+                 console.warn("ASE V1: GITHUB_PAGES_URL is not set! 3D models will not load.");
+                 // You could show a non-critical error here if needed
+            }
+            
+            console.log("ASE V1: Listeners attached.");
+
+        } catch (initError) {
+             console.error("ASE V1: CRITICAL INIT ERROR:", initError);
+             showInitError(initError.message || "Initialization failed.");
+             const section = container.querySelector('.ase-search-container');
+             if(section) section.style.display = 'none';
+        }
+        
+        console.log("ASE V1: Initialization complete.");
+    }
+});
+</script>
+<!-- Atomic Structure Explorer V1 - End -->
