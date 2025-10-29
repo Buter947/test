@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Crystal Structure Viewer</title>
+    <style>
+        /* Basic reset */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #f8fafc; /* Light gray background to match parent */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            display: block;
+            cursor: grab;
+        }
+        #canvas-container:active {
+            cursor: grabbing;
+        }
+        #loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 500;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+    <div id="loader">Loading 3D Model...</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        console.log("3D Viewer: Initializing...");
+
+        // --- Main 3D Viewer Logic ---
+        (function() {
+            let scene, camera, renderer, controls;
+            let currentModelGroup = new THREE.Group();
+            const canvasContainer = document.getElementById('canvas-container');
+            const loader = document.getElementById('loader');
+
+            if (!canvasContainer || !loader) {
+                console.error("3D Viewer: Canvas or Loader not found.");
+                return;
+            }
+
+            // --- Database of Colors & Sizes ---
+            const ATOM_COLORS = {
+                'Na': 0x3b82f6, // Blue
+                'Cl': 0x16a34a, // Green
+                'Cs': 0x6366f1, // Indigo
+                'C': 0x4b5563,  // Gray
+                'Fe': 0xd97706, // Amber
+                'Cu': 0xb97C46, // Copper-brown
+                'Mg': 0x84cc16, // Lime
+                'Zn': 0x71717a, // Zinc-gray
+                'O': 0xef4444,  // Red
+                'H': 0xe5e7eb,  // White/Light Gray
+                'Default': 0xcccccc
+            };
+            const ATOM_RADIUS = { 'Na': 0.6, 'Cl': 0.8, 'Cs': 0.8, 'C': 0.4, 'Fe': 0.5, 'Cu': 0.5, 'Mg': 0.5, 'Zn': 0.5, 'O': 0.4, 'H': 0.25, 'Default': 0.4 };
+            const BOND_COLOR = 0x6b7280; // Gray
+            const BOND_RADIUS = 0.05;
+
+            // --- Helper Functions ---
+            function createAtom(name, position) {
+                const color = ATOM_COLORS[name] || ATOM_COLORS['Default'];
+                const radius = ATOM_RADIUS[name] || ATOM_RADIUS['Default'];
+                const geometry = new THREE.SphereGeometry(radius, 32, 32);
+                const material = new THREE.MeshPhongMaterial({ color: color });
+                const atom = new THREE.Mesh(geometry, material);
+                atom.position.set(position.x, position.y, position.z);
+                return atom;
+            }
+
+            function createBond(pos1, pos2) {
+                const path = new THREE.LineCurve3(pos1, pos2);
+                const geometry = new THREE.TubeGeometry(path, 1, BOND_RADIUS, 8, false);
+                const material = new THREE.MeshPhongMaterial({ color: BOND_COLOR });
+                const bond = new THREE.Mesh(geometry, material);
+                return bond;
+            }
+            
+            function createUnitCellBox() {
+                const box = new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(0, 0, 0), new THREE.Vector3(2, 2, 2));
+                const helper = new THREE.Box3Helper(box, 0x9ca3af); // Gray box
+                helper.material.linewidth = 2;
+                return helper;
+            }
+
+            // --- Model Drawing Functions ---
+            
+            function draw_nacl() {
+                const model = new THREE.Group();
+                const atoms = [
+                    { name: 'Na', pos: [0, 0, 0] }, { name: 'Cl', pos: [1, 0, 0] }, { name: 'Na', pos: [2, 0, 0] },
+                    { name: 'Cl', pos: [0, 1, 0] }, { name: 'Na', pos: [1, 1, 0] }, { name: 'Cl', pos: [2, 1, 0] },
+                    { name: 'Na', pos: [0, 2, 0] }, { name: 'Cl', pos: [1, 2, 0] }, { name: 'Na', pos: [2, 2, 0] },
+                    
+                    { name: 'Cl', pos: [0, 0, 1] }, { name: 'Na', pos: [1, 0, 1] }, { name: 'Cl', pos: [2, 0, 1] },
+                    { name: 'Na', pos: [0, 1, 1] }, { name: 'Cl', pos: [1, 1, 1] }, { name: 'Na', pos: [2, 1, 1] },
+                    { name: 'Cl', pos: [0, 2, 1] }, { name: 'Na', pos: [1, 2, 1] }, { name: 'Cl', pos: [2, 2, 1] },
+                    
+                    { name: 'Na', pos: [0, 0, 2] }, { name: 'Cl', pos: [1, 0, 2] }, { name: 'Na', pos: [2, 0, 2] },
+                    { name: 'Cl', pos: [0, 1, 2] }, { name: 'Na', pos: [1, 1, 2] }, { name: 'Cl', pos: [2, 1, 2] },
+                    { name: 'Na', pos: [0, 2, 2] }, { name: 'Cl', pos: [1, 2, 2] }, { name: 'Na', pos: [2, 2, 2] }
+                ];
+                atoms.forEach(atom => {
+                    model.add(createAtom(atom.name, new THREE.Vector3(atom.pos[0]-1, atom.pos[1]-1, atom.pos[2]-1)));
+                });
+                model.add(createUnitCellBox());
+                return model;
+            }
+            
+            function draw_cscl() {
+                 const model = new THREE.Group();
+                 const atoms = [
+                    { name: 'Cl', pos: [0,0,0] }, { name: 'Cl', pos: [2,0,0] }, { name: 'Cl', pos: [0,2,0] }, { name: 'Cl', pos: [0,0,2] },
+                    { name: 'Cl', pos: [2,2,0] }, { name: 'Cl', pos: [2,0,2] }, { name: 'Cl', pos: [0,2,2] }, { name: 'Cl', pos: [2,2,2] },
+                    { name: 'Cs', pos: [1,1,1] } // Body center
+                 ];
+                 atoms.forEach(atom => {
+                    model.add(createAtom(atom.name, new THREE.Vector3(atom.pos[0]-1, atom.pos[1]-1, atom.pos[2]-1)));
+                 });
+                 model.add(createUnitCellBox());
+                 return model;
+            }
+
+            function draw_diamond() {
+                const model = new THREE.Group();
+                const atoms = [
+                    // FCC atoms
+                    { name: 'C', pos: [0,0,0] }, { name: 'C', pos: [2,0,0] }, { name: 'C', pos: [0,2,0] }, { name: 'C', pos: [0,0,2] },
+                    { name: 'C', pos: [2,2,0] }, { name: 'C', pos: [2,0,2] }, { name: 'C', pos: [0,2,2] }, { name: 'C', pos: [2,2,2] },
+                    { name: 'C', pos: [1,1,0] }, { name: 'C', pos: [1,0,1] }, { name: 'C', pos: [0,1,1] },
+                    { name: 'C', pos: [2,1,1] }, { name: 'C', pos: [1,2,1] }, { name: 'C', pos: [1,1,2] },
+                    // Tetrahedral atoms
+                    { name: 'C', pos: [0.5, 0.5, 0.5] }, { name: 'C', pos: [1.5, 1.5, 0.5] },
+                    { name: 'C', pos: [0.5, 1.5, 1.5] }, { name: 'C', pos: [1.5, 0.5, 1.5] }
+                ];
+                atoms.forEach(atom => {
+                    model.add(createAtom(atom.name, new THREE.Vector3(atom.pos[0]-1, atom.pos[1]-1, atom.pos[2]-1)));
+                });
+                model.add(createUnitCellBox());
+                return model;
+            }
+            
+            function draw_fcc_bcc_hcp(type) {
+                const model = new THREE.Group();
+                let atoms = [
+                    // Corners
+                    { name: 'C', pos: [0,0,0] }, { name: 'C', pos: [2,0,0] }, { name: 'C', pos: [0,2,0] }, { name: 'C', pos: [0,0,2] },
+                    { name: 'C', pos: [2,2,0] }, { name: 'C', pos: [2,0,2] }, { name: 'C', pos: [0,2,2] }, { name: 'C', pos: [2,2,2] }
+                ];
+                if (type === 'fcc') {
+                     atoms.push(
+                        { name: 'C', pos: [1,1,0] }, { name: 'C', pos: [1,0,1] }, { name: 'C', pos: [0,1,1] },
+                        { name: 'C', pos: [2,1,1] }, { name: 'C', pos: [1,2,1] }, { name: 'C', pos: [1,1,2] }
+                     );
+                }
+                if (type === 'bcc') {
+                     atoms.push({ name: 'C', pos: [1,1,1] }); // Body center
+                }
+                 if (type === 'hcp') {
+                     // HCP is not a cube, draw a simple representation
+                     atoms = [
+                        { name: 'C', pos: [0,0,0] }, { name: 'C', pos: [2,0,0] }, { name: 'C', pos: [1, 1.73, 0] },
+                        { name: 'C', pos: [0,0,2] }, { name: 'C', pos: [2,0,2] }, { name: 'C', pos: [1, 1.73, 2] },
+                        { name: 'C', pos: [1, 0.58, 1] } // Center atom
+                     ];
+                     atoms.forEach(atom => model.add(createAtom(atom.name, new THREE.Vector3(atom.pos[0]-1, atom.pos[1]-1, atom.pos[2]-1))));
+                     return model; // Return early for HCP
+                 }
+                 
+                atoms.forEach(atom => {
+                    model.add(createAtom(atom.name, new THREE.Vector3(atom.pos[0]-1, atom.pos[1]-1, atom.pos[2]-1)));
+                });
+                model.add(createUnitCellBox());
+                return model;
+            }
+            
+            function draw_graphite() {
+                 const model = new THREE.Group();
+                 // Draw one hexagonal layer
+                 for (let i = -1; i <= 1; i++) {
+                     for (let j = -1; j <= 1; j++) {
+                         model.add(createAtom('C', new THREE.Vector3(i*1.5, j*1.732, 0)));
+                         model.add(createAtom('C', new THREE.Vector3(i*1.5 + 0.75, j*1.732 + 0.866, 0)));
+                     }
+                 }
+                 // Draw a second, offset layer
+                  for (let i = -1; i <= 1; i++) {
+                     for (let j = -1; j <= 1; j++) {
+                         model.add(createAtom('C', new THREE.Vector3(i*1.5, j*1.732, 2.0)));
+                         model.add(createAtom('C', new THREE.Vector3(i*1.5 + 0.75, j*1.732 + 0.866, 2.0)));
+                     }
+                 }
+                 model.scale.set(0.5, 0.5, 0.5); // Scale it down
+                 return model;
+            }
+            
+            function draw_ice() {
+                 const model = new THREE.Group();
+                 const atoms = [
+                     // O atoms in hexagonal structure (simplified 2D)
+                     { name: 'O', pos: [0,0,0] }, { name: 'O', pos: [2,0,0] }, { name: 'O', pos: [1, 1.73, 0] },
+                     { name: 'O', pos: [-1, 1.73, 0] }, { name: 'O', pos: [-2, 0, 0] }, { name: 'O', pos: [-1, -1.73, 0] },
+                     { name: 'O', pos: [1, -1.73, 0] },
+                     // H atoms (approximate)
+                     { name: 'H', pos: [0.8, 0, 0] }, { name: 'H', pos: [0, 0.8, 0] }
+                 ];
+                 atoms.forEach(atom => {
+                    model.add(createAtom(atom.name, new THREE.Vector3(atom.pos[0]-1, atom.pos[1]-1, atom.pos[2]-1)));
+                 });
+                 model.scale.set(0.7, 0.7, 0.7);
+                 return model;
+            }
+
+
+            // --- Main Scene Setup ---
+            function init() {
+                try {
+                    // Scene
+                    scene = new THREE.Scene();
+                    scene.background = new THREE.Color(0xf8fafc); // Match parent bg
+
+                    // Camera
+                    camera = new THREE.PerspectiveCamera(50, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000);
+                    camera.position.set(5, 5, 5);
+                    camera.lookAt(0, 0, 0);
+
+                    // Renderer
+                    renderer = new THREE.WebGLRenderer({ antialias: true });
+                    renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+                    canvasContainer.appendChild(renderer.domElement);
+
+                    // Lights
+                    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                    scene.add(ambientLight);
+                    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                    directionalLight.position.set(5, 10, 7.5);
+                    scene.add(directionalLight);
+
+                    // Controls
+                    controls = new THREE.OrbitControls(camera, renderer.domElement);
+                    controls.enableDamping = true;
+                    controls.dampingFactor = 0.1;
+                    controls.minDistance = 3;
+                    controls.maxDistance = 20;
+
+                    // Handle window resize
+                    window.addEventListener('resize', onWindowResize, false);
+
+                    // Get model from URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const modelId = urlParams.get('model');
+                    
+                    console.log("3D Viewer: Requested model ID:", modelId);
+                    loadModel(modelId);
+
+                    // Start animation loop
+                    animate();
+                    
+                    loader.style.display = 'none';
+                    console.log("3D Viewer: Initialization complete.");
+
+                } catch (e) {
+                     console.error("3D Viewer: Error during init:", e);
+                     loader.textContent = "Error: Failed to load 3D viewer.";
+                     loader.style.color = "red";
+                }
+            }
+
+            function loadModel(modelId) {
+                // Clear previous model
+                if (currentModelGroup) {
+                    scene.remove(currentModelGroup);
+                }
+                currentModelGroup = new THREE.Group();
+                
+                let model;
+                switch (modelId) {
+                    case 'nacl':
+                        model = draw_nacl();
+                        break;
+                    case 'cscl':
+                        model = draw_cscl();
+                        break;
+                    case 'diamond':
+                        model = draw_diamond();
+                        break;
+                    case 'graphite':
+                         model = draw_graphite();
+                         break;
+                    case 'fcc':
+                         model = draw_fcc_bcc_hcp('fcc');
+                         break;
+                    case 'bcc':
+                         model = draw_fcc_bcc_hcp('bcc');
+                         break;
+                    case 'hcp':
+                         model = draw_fcc_bcc_hcp('hcp');
+                         break;
+                    case 'ice':
+                         model = draw_ice();
+                         break;
+                    default:
+                        console.warn("3D Viewer: Unknown model ID. Loading default.");
+                        model = draw_fcc_bcc_hcp('bcc'); // Default to BCC
+                }
+                
+                currentModelGroup.add(model);
+                scene.add(currentModelGroup);
+                controls.target.set(0, 0, 0); // Reset camera target
+                controls.update();
+            }
+
+            function onWindowResize() {
+                if (canvasContainer && camera && renderer) {
+                    camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+                }
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update(); // Update controls (for damping)
+                renderer.render(scene, camera);
+            }
+
+            // Start the app
+            init();
+
+        })(); // End IIFE
+    </script>
+</body>
+</html>
